@@ -1,0 +1,83 @@
+:
+
+case `whoami` in
+	"root")	:
+	;;
+	*)		echo run as root
+			exit
+	;;
+esac
+
+cat << EOF | su - postgres
+
+echo 'update flow.flowspecrules set isexpired=true where validto>now();' | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+echo 'update flow.flowspecrules set isactivated=false where validto<=now();' | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+
+EOF
+
+exit 0
+
+
+INIFILE=/opt/db2dps/src/db.ini
+
+newrules=`sed '/^newrules.*=/!d; s/.*=.*select/select/' "${INIFILE}"`
+all_rules=`sed '/^all_rules.*=/!d; s/.*=.*select/select/' "${INIFILE}"`
+remove_expired_rules=`sed '/^remove_expired_rules.*=/!d; s/.*=.*select/select/' "${INIFILE}"`
+update_rules_when_announced=`sed '/^update_rules_when_announced.*=/!d; s/.*=[ \t]*\"//; s/\"//g' "${INIFILE}"`
+
+echo "newrule q = $newrules"
+echo "implemented_flowspecruleid = ${implemented_flowspecruleid}"
+
+echo "---- new rules ----"
+echo "$newrules" | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+echo "---- -- end -- ----"
+
+# massage && send to exabgp
+# update db with implemented rules
+
+implemented_flowspecruleid=$( echo `echo "$newrules" | psql -t -f' ' -a -u postgres -v on_error_stop=1 -w -d netflow | awk '{ print $1 }'` | sed 's/ /, /g' )
+
+echo "implemented_flowspecruleid = ${implemented_flowspecruleid}"
+
+if [ -n "${implemented_flowspecruleid}" ]; then
+	update_rules_when_announced=`echo "$update_rules_when_announced" | sed "s/%s/${implemented_flowspecruleid}/g"`
+	echo "${update_rules_when_announced}" | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+else
+	echo "nothing to update, ${implemented_flowspecruleid} is empty"
+fi
+
+
+exit 0
+
+#echo newrules:
+
+# send til $newrules genbrug / sammel $$implemented_flowspecruleid op og send dem til databsen
+
+
+echo "$update_rules_when_announced" #| psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+
+exit 
+
+# huske / gemme flowspecruleid
+
+#
+#echo all_rules:
+#echo $all_rules
+#echo "$all_rules" | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+#
+#echo remove_expired_rules
+#echo $remove_expired_rules
+#
+#echo "$remove_expired_rules" | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+
+# TODO: 2 stk. opdatering af databasen her, for hhv. newrules og all_rules
+
+echo "select flowspecruleid from flow.flowspecrules, flow.fastnetmoninstances where flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid AND not isexpired AND mode = 'enforce';" | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+
+
+exit 0
+
+echo "update_rules_when_announced = update flow.flowspecrules set isactivated = TRUE where flowspecruleid in ( %s );" | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+
+# afmeldte regler der ikke længere skal enforces
+update_rules_when_expired = update flow.flowspecrules set isexpired = TRUE where flowspecruleid in ( %s );" | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
