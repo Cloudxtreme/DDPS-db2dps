@@ -1,0 +1,72 @@
+
+ ``db2dps [-V] [-v] [-d] [-s seconds]``
+
+  - **-V**: print version information and exit
+  - **-v**: verbose and run in foreground
+  - **-d**: daemonize
+  - **-s** _seconds_: sleep time between database scan. Default is 20 seconds
+
+```bash
+read configuration || fail
+check args: print version and exit | daemonize | run in foreground
+
+connect to database || exit fail
+
+query(all my networks)
+
+while true; do
+{
+  if [ exit reqired ]
+  {
+    break loop
+    close database connection
+    exit normal
+  }
+  else
+  {
+    sleep except seconds on first loop
+  }
+
+  mkrulebase("annonce", all bgp hosts)
+  {
+     query(NOT isactivated and NOT expired records || all records)
+     continue if (query empty)
+     foreach (bgphosts)
+     {
+       if (destination is within all my networks)
+       {
+         build rules suitable for bgphost
+         send rulebase to bgp host || warn
+         /* notice: this may block */
+       }
+       else
+       {
+         warn about attempt to filter for external network
+       }
+    }
+  }
+  query(set isactivated for all announced rules in database)
+
+  mkrulebase("withdraw", all bgp hosts)
+  {
+     query(all isactivated rules)
+     select rules which are expired AND does not match a non-expired rule
+     foreach (bgphosts)
+     {
+       if (destination is within all my networks)
+       {
+         build rules suitable for bgphost
+         send rulebase to bgp host || warn
+         /* notice: this may block */
+       }
+       else
+       {
+         warn about attempt to filter for external network
+       }
+    }
+  }
+  query(set isexpired for withdrawn rules in database)
+}
+
+close database connection and exit normal
+```
