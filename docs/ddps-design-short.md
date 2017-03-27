@@ -10,7 +10,7 @@ This document describes the finished version 1.0 system.
 DDoS mitigation based on BGP flowspec requires some rules to _enter_ the system, and other rules to be _sent to and enforced by peering partners and upstream provider_. The drawing illustrates the different components: to the left is a customer site where fastnetmon monitor traffic to a group of networks and log traffic statistics to a local influx database.       
 When an attack is detected a set of mitigation rules are generated and sent to DDPS via an encrypted channel. The rules are added to an database and announced as flow spec rules and sent upstream and to edge . The rules are enforced on edge on the routers thereby mitigating the attack. Rules are later withdrawn.
 
-![](assets/img/workflow.svg)
+![](assets/img/workflow.png)
 
 The rules has to match the BGP community we are responsible for: it has to match
 our network only. The system has been designed to be do that from the entrance point
