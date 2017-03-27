@@ -7,10 +7,10 @@ This document describes the finished version 1.0 system.
 
 ## Workflow
 
-DDoS mitigation based on BGP flowspec requires some rules to _enter_ the system, and other rules to be _sent to pering partners and upstream provider_.
-The workflow is shown on the drawing below.
+DDoS mitigation based on BGP flowspec requires some rules to _enter_ the system, and other rules to be _sent to and enforced by peering partners and upstream provider_. The drawing illustrates the different components: to the left is a customer site where fastnetmon monitor traffic to a group of networks and log traffic statistics to a local influx database.       
+When an attack is detected a set of mitigation rules are generated and sent to DDPS via an encrypted channel. The rules are added to an database and announced as flow spec rules and sent upstream and to edge . The rules are enforced on edge on the routers thereby mitigating the attack. Rules are later withdrawn.
 
-![Drawing](assets/img/workflow.png)
+![](assets/img/workflow.svg)
 
 The rules has to match the BGP community we are responsible for: it has to match
 our network only. The system has been designed to be do that from the entrance point
@@ -74,5 +74,4 @@ We would rather like to do automatic mitigation, as time is critical and a
 spare resource during a DDoS attack. The need for manual rules would be to
 mitigate events in the future which may be likely to be attacked, e.g. national
 tests and on-line examines. That would require a GUI and we would like to integrate it with other information (network status stored in influxdb etc.). Finally we would like the database to be customer centric: administrators, network, fastnetmon configuration etc. should go there to simplify deployment.
-
 
