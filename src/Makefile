@@ -22,7 +22,7 @@ SSH_ARGS        =  -Tq -o LogLevel=error
 SRCDIR          = .
 
 # Project directory -- see project_template
-PROJDIR         = ../../DDPS-database
+PROJDIR         = ../../DDPS-db2dps
 
 #:REMOTE-INFO-END
 #
