@@ -1,120 +1,434 @@
-16:53:42 (15/03) Environment:
-16:53:42 (15/03) git_sha:        ''
-16:53:42 (15/03) build_date:     ''
-16:53:42 (15/03) TARGETHOST:     'rnd@ddps.deic.dk'
-16:53:42 (15/03) UPLOADDIR:      '/opt/db2dps/src/'
-16:53:42 (15/03) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:53:42 (15/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:53:42 (15/03) RRSYNC:         '/usr/bin/rsync'
-16:53:42 (15/03) LRSYNC:         '/usr/bin/rsync'
-16:53:42 (15/03) RSYNC_ARGS:     '-n -avzH --exclude-from=rsync_exclude.txt'
-16:53:42 (15/03) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:53:42 (15/03) SSH:            '/usr/bin/ssh'
-16:53:42 (15/03) SRCDIR:         '.'
-16:53:42 (15/03) PROJDIR:        '../../DDPS-database'
-16:53:42 (15/03) MYDIR:          '/Users/uninth/src/tmp/DDPS-database/src'
-16:53:42 (15/03) no .source_info update in dryrun
-16:54:05 (15/03) Environment:
-16:54:05 (15/03) git_sha:        ''
-16:54:05 (15/03) build_date:     ''
-16:54:05 (15/03) TARGETHOST:     'rnd@ddps.deic.dk'
-16:54:05 (15/03) UPLOADDIR:      '/opt/db2dps/src/'
-16:54:05 (15/03) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:54:05 (15/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:54:05 (15/03) RRSYNC:         '/usr/bin/rsync'
-16:54:05 (15/03) LRSYNC:         '/usr/bin/rsync'
-16:54:05 (15/03) RSYNC_ARGS:     '-n -avzH --exclude-from=rsync_exclude.txt'
-16:54:05 (15/03) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:54:05 (15/03) SSH:            '/usr/bin/ssh'
-16:54:05 (15/03) SRCDIR:         '.'
-16:54:05 (15/03) PROJDIR:        '../../DDPS-database'
-16:54:05 (15/03) MYDIR:          '/Users/uninth/src/tmp/DDPS-database/src'
-16:54:05 (15/03) no .source_info update in dryrun
-16:54:20 (15/03) Environment:
-16:54:20 (15/03) git_sha:        ''
-16:54:20 (15/03) build_date:     ''
-16:54:20 (15/03) TARGETHOST:     'rnd@ddps.deic.dk'
-16:54:20 (15/03) UPLOADDIR:      '/opt/db2dps/src/'
-16:54:20 (15/03) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:54:20 (15/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:54:20 (15/03) RRSYNC:         '/usr/bin/rsync'
-16:54:20 (15/03) LRSYNC:         '/usr/bin/rsync'
-16:54:20 (15/03) RSYNC_ARGS:     '-n -avzH --exclude-from=rsync_exclude.txt'
-16:54:20 (15/03) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:54:20 (15/03) SSH:            '/usr/bin/ssh'
-16:54:20 (15/03) SRCDIR:         '.'
-16:54:20 (15/03) PROJDIR:        '../../DDPS-database'
-16:54:20 (15/03) MYDIR:          '/Users/uninth/src/tmp/DDPS-database/src'
-16:54:20 (15/03) no .source_info update in dryrun
-16:54:23 (15/03) Environment:
-16:54:23 (15/03) git_sha:        ''
-16:54:23 (15/03) build_date:     ''
-16:54:23 (15/03) TARGETHOST:     'rnd@ddps.deic.dk'
-16:54:23 (15/03) UPLOADDIR:      '/opt/db2dps/src/'
-16:54:23 (15/03) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:54:23 (15/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:54:23 (15/03) RRSYNC:         '/usr/bin/rsync'
-16:54:23 (15/03) LRSYNC:         '/usr/bin/rsync'
-16:54:23 (15/03) RSYNC_ARGS:     '-n -avzH --exclude-from=rsync_exclude.txt'
-16:54:23 (15/03) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:54:23 (15/03) SSH:            '/usr/bin/ssh'
-16:54:23 (15/03) SRCDIR:         '.'
-16:54:23 (15/03) PROJDIR:        '../../DDPS-database'
-16:54:23 (15/03) MYDIR:          '/Users/uninth/src/tmp/DDPS-database/src'
-16:54:23 (15/03) no .source_info update in dryrun
-16:54:51 (15/03) Environment:
-16:54:51 (15/03) git_sha:        ''
-16:54:51 (15/03) build_date:     ''
-16:54:51 (15/03) TARGETHOST:     'rnd@ddps.deic.dk'
-16:54:51 (15/03) UPLOADDIR:      '/opt/db2dps/src/'
-16:54:51 (15/03) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:54:51 (15/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:54:51 (15/03) RRSYNC:         '/usr/bin/rsync'
-16:54:51 (15/03) LRSYNC:         '/usr/bin/rsync'
-16:54:51 (15/03) RSYNC_ARGS:     '-n -avzH --exclude-from=rsync_exclude.txt'
-16:54:51 (15/03) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:54:51 (15/03) SSH:            '/usr/bin/ssh'
-16:54:51 (15/03) SRCDIR:         '.'
-16:54:51 (15/03) PROJDIR:        '../../DDPS-database'
-16:54:51 (15/03) MYDIR:          '/Users/uninth/src/tmp/DDPS-database/src'
-16:54:51 (15/03) no .source_info update in dryrun
-16:55:31 (15/03) Environment:
-16:55:31 (15/03) git_sha:        ''
-16:55:31 (15/03) build_date:     ''
-16:55:31 (15/03) TARGETHOST:     'rnd@ddps.deic.dk'
-16:55:31 (15/03) UPLOADDIR:      '/opt/db2dps/src/'
-16:55:31 (15/03) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:55:31 (15/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:55:31 (15/03) RRSYNC:         '/usr/bin/rsync'
-16:55:31 (15/03) LRSYNC:         '/usr/bin/rsync'
-16:55:31 (15/03) RSYNC_ARGS:     '-n -avzH --exclude-from=rsync_exclude.txt'
-16:55:31 (15/03) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:55:31 (15/03) SSH:            '/usr/bin/ssh'
-16:55:31 (15/03) SRCDIR:         '.'
-16:55:31 (15/03) PROJDIR:        '../../DDPS-database'
-16:55:31 (15/03) MYDIR:          '/Users/uninth/src/tmp/DDPS-database/src'
-16:55:31 (15/03) no .source_info update in dryrun
-16:55:31 (15/03) rsync files to rnd@ddps.deic.dk ... 
-16:55:31 (15/03) command: /usr/bin/rsync -n -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/src/tmp/DDPS-database/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
-16:55:44 (15/03) exec 'make -n  ' on rnd@ddps.deic.dk ... 
-16:55:45 (15/03) done
-16:57:30 (15/03) Environment:
-16:57:30 (15/03) git_sha:        ''
-16:57:30 (15/03) build_date:     ''
-16:57:30 (15/03) TARGETHOST:     'rnd@ddps.deic.dk'
-16:57:30 (15/03) UPLOADDIR:      '/opt/db2dps/src/'
-16:57:30 (15/03) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:57:30 (15/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:57:30 (15/03) RRSYNC:         '/usr/bin/rsync'
-16:57:30 (15/03) LRSYNC:         '/usr/bin/rsync'
-16:57:30 (15/03) RSYNC_ARGS:     '-n -avzH --exclude-from=rsync_exclude.txt'
-16:57:30 (15/03) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:57:30 (15/03) SSH:            '/usr/bin/ssh'
-16:57:30 (15/03) SRCDIR:         '.'
-16:57:30 (15/03) PROJDIR:        '../../DDPS-database'
-16:57:30 (15/03) MYDIR:          '/Users/uninth/src/tmp/DDPS-database/src'
-16:57:30 (15/03) no .source_info update in dryrun
-16:57:30 (15/03) rsync files to rnd@ddps.deic.dk ... 
-16:57:30 (15/03) command: /usr/bin/rsync -n -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/src/tmp/DDPS-database/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
-16:57:31 (15/03) exec 'make -n  ' on rnd@ddps.deic.dk ... 
-16:57:32 (15/03) done
+11:58:16 (27/03) Begin
+11:58:16 (27/03) called as: ./remote.sh -v make
+11:58:16 (27/03) Environment:
+11:58:16 (27/03) git_sha:        'd695b115db1e666008fc659d33bd9936ad71869f'
+11:58:16 (27/03) build_date:     '2017-03-27 11:58'
+11:58:16 (27/03) TARGETHOST:     'rnd@ddps.deic.dk'
+11:58:16 (27/03) UPLOADDIR:      '/opt/db2dps/src/'
+11:58:16 (27/03) EXCLUDE_FILE:   'rsync_exclude.txt'
+11:58:16 (27/03) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
+11:58:16 (27/03) RRSYNC:         '/usr/bin/rsync'
+11:58:16 (27/03) LRSYNC:         '/usr/bin/rsync'
+11:58:16 (27/03) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
+11:58:16 (27/03) SSH_ARGS:       '-Tq -o LogLevel=error'
+11:58:16 (27/03) SSH:            '/usr/bin/ssh'
+11:58:16 (27/03) SRCDIR:         '.'
+11:58:16 (27/03) PROJDIR:        '../../DDPS-db2dps'
+11:58:16 (27/03) MYDIR:          '/Users/uninth/src/tmp/github/DDPS-db2dps/src'
+11:58:16 (27/03) rsync files to rnd@ddps.deic.dk ... 
+11:58:16 (27/03) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/src/tmp/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
+11:58:16 (27/03) building file list ... done
+11:58:16 (27/03) ./
+11:58:16 (27/03) .source_info
+11:58:16 (27/03) .version
+11:58:16 (27/03) Makefile
+11:58:16 (27/03) Makefile.old
+11:58:16 (27/03) concat.c
+11:58:16 (27/03) daemonize.c
+11:58:16 (27/03) db.ini
+11:58:16 (27/03) db.ini.OLD
+11:58:16 (27/03) db2dps.c
+11:58:16 (27/03) db2dps.h
+11:58:16 (27/03) db2dps.pl
+11:58:16 (27/03) db2dps.sh
+11:58:16 (27/03) db2dpsrc
+11:58:16 (27/03) install-sh
+11:58:16 (27/03) libssh2_config.h
+11:58:16 (27/03) license.h
+11:58:16 (27/03) md.doc
+11:58:16 (27/03) md.src
+11:58:16 (27/03) remote.sh
+11:58:16 (27/03) srctoman
+11:58:16 (27/03) strsplit.c
+11:58:16 (27/03) test.ini
+11:58:16 (27/03) version.c
+11:58:16 (27/03) version.h
+11:58:16 (27/03) version.pm
+11:58:16 (27/03) x.pl
+11:58:16 (27/03) tests/
+11:58:16 (27/03) tests/01_ssh2_echo
+11:58:16 (27/03) tests/01_ssh2_echo.c
+11:58:16 (27/03) tests/Makefile
+11:58:16 (27/03) tests/SmallSimpleSSH
+11:58:16 (27/03) tests/SmallSimpleSSH.c
+11:58:16 (27/03) tests/SmallSimpleSSH.c.næsten.org
+11:58:16 (27/03) tests/brug_denne_her_den_virker.c
+11:58:16 (27/03) tests/channel.h
+11:58:16 (27/03) tests/concat2.c
+11:58:16 (27/03) tests/crypto.h
+11:58:16 (27/03) tests/daemon
+11:58:16 (27/03) tests/daemon.c
+11:58:16 (27/03) tests/daemonize.c
+11:58:16 (27/03) tests/ddupfind.c
+11:58:16 (27/03) tests/debug.h
+11:58:16 (27/03) tests/dupfind.c
+11:58:16 (27/03) tests/err
+11:58:16 (27/03) tests/err.c
+11:58:16 (27/03) tests/lib_version.c
+11:58:16 (27/03) tests/libssh-0.7.3.tar
+11:58:16 (27/03) tests/libssh2.h
+11:58:16 (27/03) tests/libssh2_config.h
+11:58:16 (27/03) tests/libssh2_priv.h
+11:58:16 (27/03) tests/list_tables.c
+11:58:16 (27/03) tests/lscp.c
+11:58:16 (27/03) tests/main.c
+11:58:16 (27/03) tests/multiple_rows.c
+11:58:16 (27/03) tests/p.c
+11:58:16 (27/03) tests/pp
+11:58:16 (27/03) tests/pp.c
+11:58:16 (27/03) tests/psql.c
+11:58:16 (27/03) tests/qtest
+11:58:16 (27/03) tests/query_version.c
+11:58:16 (27/03) tests/s
+11:58:16 (27/03) tests/s.c
+11:58:16 (27/03) tests/scp
+11:58:16 (27/03) tests/scp.c
+11:58:16 (27/03) tests/scp_nonblock
+11:58:16 (27/03) tests/scp_nonblock.c
+11:58:16 (27/03) tests/scp_nonblock.c.OK
+11:58:16 (27/03) tests/scp_write
+11:58:16 (27/03) tests/scp_write.c
+11:58:16 (27/03) tests/senddata.c
+11:58:16 (27/03) tests/server_version.c
+11:58:16 (27/03) tests/session.h
+11:58:16 (27/03) tests/sftp_append
+11:58:16 (27/03) tests/sftp_append.c
+11:58:16 (27/03) tests/sigtrap.c
+11:58:16 (27/03) tests/solving-overlapping-rule-problem.sh
+11:58:16 (27/03) tests/split
+11:58:16 (27/03) tests/split.c
+11:58:16 (27/03) tests/split_str
+11:58:16 (27/03) tests/split_str.c
+11:58:16 (27/03) tests/ssh2_agent
+11:58:16 (27/03) tests/ssh2_agent.c
+11:58:16 (27/03) tests/ssh2_echo
+11:58:16 (27/03) tests/ssh2_echo.c
+11:58:16 (27/03) tests/ssh2_exec.c
+11:58:16 (27/03) tests/ssh_test.c
+11:58:16 (27/03) tests/sshcat
+11:58:16 (27/03) tests/sshcat.c
+11:58:16 (27/03) tests/str.c
+11:58:16 (27/03) tests/str_repl.c
+11:58:16 (27/03) tests/str_replace_all
+11:58:16 (27/03) tests/stringreplaceall
+11:58:16 (27/03) tests/stringreplaceall.c
+11:58:16 (27/03) tests/strstr
+11:58:16 (27/03) tests/strstr.c
+11:58:16 (27/03) tests/strtok
+11:58:16 (27/03) tests/strtok.c
+11:58:16 (27/03) tests/sw
+11:58:16 (27/03) tests/sw.c
+11:58:16 (27/03) tests/sys
+11:58:16 (27/03) tests/sys.c
+11:58:16 (27/03) tests/trient
+11:58:16 (27/03) tests/trient.c
+11:58:16 (27/03) tests/x
+11:58:16 (27/03) tests/x.c
+11:58:16 (27/03) tests/x.txt
+11:58:16 (27/03) tests/xxx.c.xxxxx
+11:58:16 (27/03) tests/xxxx.sh
+11:58:16 (27/03) tests/bstrlib/
+11:58:16 (27/03) tests/bstrlib/LICENSE
+11:58:16 (27/03) tests/bstrlib/bsafe.c
+11:58:16 (27/03) tests/bstrlib/bsafe.h
+11:58:16 (27/03) tests/bstrlib/bstest.c
+11:58:16 (27/03) tests/bstrlib/bstraux.c
+11:58:16 (27/03) tests/bstrlib/bstraux.h
+11:58:16 (27/03) tests/bstrlib/bstrlib.c
+11:58:16 (27/03) tests/bstrlib/bstrlib.h
+11:58:16 (27/03) tests/bstrlib/bstrlib.txt
+11:58:16 (27/03) tests/bstrlib/bstrwrap.cpp
+11:58:16 (27/03) tests/bstrlib/bstrwrap.h
+11:58:16 (27/03) tests/bstrlib/buniutil.c
+11:58:16 (27/03) tests/bstrlib/buniutil.h
+11:58:16 (27/03) tests/bstrlib/examples.zip
+11:58:16 (27/03) tests/bstrlib/gpl.txt
+11:58:16 (27/03) tests/bstrlib/porting.txt
+11:58:16 (27/03) tests/bstrlib/security.txt
+11:58:16 (27/03) tests/bstrlib/test.cpp
+11:58:16 (27/03) tests/bstrlib/testaux.c
+11:58:16 (27/03) tests/bstrlib/utf8util.c
+11:58:16 (27/03) tests/bstrlib/utf8util.h
+11:58:16 (27/03) tests/test/
+11:58:16 (27/03) tests/test/libssh-0.7.3/
+11:58:16 (27/03) tests/test/libssh-0.7.3/.clang_complete
+11:58:16 (27/03) tests/test/libssh-0.7.3/AUTHORS
+11:58:16 (27/03) tests/test/libssh-0.7.3/BSD
+11:58:16 (27/03) tests/test/libssh-0.7.3/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/COPYING
+11:58:16 (27/03) tests/test/libssh-0.7.3/CPackConfig.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/CTestConfig.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/ChangeLog
+11:58:16 (27/03) tests/test/libssh-0.7.3/ConfigureChecks.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/DefineOptions.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/INSTALL
+11:58:16 (27/03) tests/test/libssh-0.7.3/README
+11:58:16 (27/03) tests/test/libssh-0.7.3/README.CodingStyle
+11:58:16 (27/03) tests/test/libssh-0.7.3/SubmittingPatches
+11:58:16 (27/03) tests/test/libssh-0.7.3/config.h.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/libssh-build-tree-settings.cmake.in
+11:58:16 (27/03) tests/test/libssh-0.7.3/libssh-config-version.cmake.in
+11:58:16 (27/03) tests/test/libssh-0.7.3/libssh-config.cmake.in
+11:58:16 (27/03) tests/test/libssh-0.7.3/libssh.pc.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/libssh_threads.pc.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/AddCMockaTest.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/COPYING-CMAKE-SCRIPTS
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/CheckCCompilerFlagSSP.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/DefineCMakeDefaults.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/DefineCompilerFlags.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/DefineInstallationPaths.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/DefinePlatformDefaults.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/FindArgp.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/FindCMocka.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/FindGCrypt.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/FindGSSAPI.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/FindNSIS.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/FindNaCl.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/MacroEnsureOutOfSourceBuild.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/cmake/Modules/UseDoxygen.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/Doxyfile.in
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/authentication.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/command.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/curve25519-sha256@libssh.org.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/forwarding.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/guided_tour.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/introduction.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/linking.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/mainpage.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/scp.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/sftp.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/shell.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/tbd.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/doc/threading.dox
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/authentication.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/connect_ssh.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/examples_common.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/exec.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/knownhosts.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/libssh_scp.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/libsshpp.cpp
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/libsshpp_noexcept.cpp
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/proxy.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/sample.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/samplesftp.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/samplesshd-cb.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/samplesshd-kbdint.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/scp_download.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/senddata.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/ssh_server_fork.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/examples/sshnetcat.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/agent.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/auth.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/bignum.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/bind.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/blf.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/buffer.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/callbacks.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/channels.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/crc32.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/crypto.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/curve25519.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/dh.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/ecdh.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/ed25519.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/fe25519.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/ge25519.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/gssapi.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/kex.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/keys.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/knownhosts.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/legacy.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/libcrypto.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/libgcrypt.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/libssh.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/libsshpp.hpp
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/messages.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/misc.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/options.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/packet.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/pcap.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/pki.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/pki_priv.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/poll.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/priv.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/sc25519.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/scp.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/server.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/session.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/sftp.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/socket.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/ssh1.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/ssh2.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/string.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/threads.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/include/libssh/wrapper.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/agent.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/auth.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/auth1.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/base64.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/bignum.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/bind.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/buffer.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/callbacks.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/channels.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/channels1.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/client.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/config.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/connect.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/crc32.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/curve25519.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/dh.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/ecdh.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/error.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/gcrypt_missing.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/getpass.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/gssapi.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/gzip.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/init.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/kex.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/kex1.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/known_hosts.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/legacy.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/libcrypto.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/libgcrypt.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/log.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/match.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/messages.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/misc.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/options.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/packet.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/packet1.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/packet_cb.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/packet_crypt.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/pcap.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/pki.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/pki_container_openssh.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/pki_crypto.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/pki_ed25519.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/pki_gcrypt.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/poll.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/scp.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/server.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/session.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/sftp.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/sftpserver.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/socket.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/string.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/threads.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/wrapper.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/bcrypt_pbkdf.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/blowfish.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/curve25519_ref.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/ed25519.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/fe25519.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/ge25519.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/ge25519_base.data
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/external/sc25519.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/threads/
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/threads/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/src/threads/pthread.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/authentication.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/chmodtest.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/cmdline.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/connection.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/ctest-default.cmake
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/generate.py
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/test_exec.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/test_pcap.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/test_socket.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/test_ssh_bind_accept_fd.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/test_tunnel.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/tests.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/torture.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/torture.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/valgrind.supp
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/bench1.sh
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/bench2.sh
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/bench_raw.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/bench_scp.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/bench_sftp.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/benchmarks.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/benchmarks.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/benchmarks/latency.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_algorithms.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_auth.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_connect.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_forward.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_knownhosts.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_proxycommand.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_request_env.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_session.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_sftp_dir.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_sftp_read.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/client/torture_sftp_static.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_client.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_daemon.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_daemon.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_hello.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_keyutil.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_keyutil.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_util.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/pkd/pkd_util.h
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/sftp_stress/
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/sftp_stress/main.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/CMakeLists.txt
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_buffer.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_callbacks.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_channel.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_init.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_isipaddr.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_keyfiles.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_list.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_misc.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_options.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_pki.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_pki_ed25519.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_rand.c
+11:58:16 (27/03) tests/test/libssh-0.7.3/tests/unittests/torture_server_x11.c
+
+11:58:16 (27/03) sent 519537 bytes  received 54302 bytes  382559.33 bytes/sec
+11:58:16 (27/03) total size is 7990345  speedup is 13.92
+11:58:18 (27/03) exec 'make  ' on rnd@ddps.deic.dk ... 
+11:58:18 (27/03) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-64-generic x86_64)
+
+11:58:18 (27/03) * Documentation:  https://help.ubuntu.com
+11:58:18 (27/03) * Management:     https://landscape.canonical.com
+11:58:18 (27/03) * Support:        https://ubuntu.com/advantage
+
+11:58:18 (27/03) 47 packages can be updated.
+11:58:18 (27/03) 31 updates are security updates.
+
+
+11:58:18 (27/03) /opt/db2dps/src
+11:58:18 (27/03) chmod 555 /opt/db2dps/src/install-sh /opt/db2dps/src/srctoman
+11:58:18 (27/03) rm -f db2dps
+11:58:18 (27/03) ./db2dps -V
+11:58:18 (27/03) version:       1.0-1
+11:58:18 (27/03) build date:    2017-03-13 21:10
+11:58:18 (27/03) build_git_sha: 0c0dc8c7fe71b3d416dfd76c1e625cb4147ad39d
+11:58:18 (27/03) inicfg:        /opt/db2dps/etc/db.ini
+11:58:18 (27/03) sleeptime:     10
+11:58:18 (27/03) This version only handles IPv4 by design
+11:58:19 (27/03) done

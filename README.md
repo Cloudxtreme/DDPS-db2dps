@@ -1,16 +1,16 @@
 
-# DDPS database host installation
+# Database to DDPS daemon, dd2dps
 
 The following describes the _database host_ and the daemon which adds and
 queries the database for new and expired rules.
 
-The documentation is described here:
+## The documentation is described here:
 
   - [Short design overview](docs/ddps-design-short.md)
   - [Installation and configuration of the database host](docs/ddps-database-server-installation.md)
   - [Makefile](docs/Makefile) for creating pdf and html documentation
 
-Direct link to main source code below:
+## Direct link to main source code below:
 
   - [Makefile](src/Makefile): Makefile for everything
   - [README.md](src/README.md): Readme
