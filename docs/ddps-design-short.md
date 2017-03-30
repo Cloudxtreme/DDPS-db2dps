@@ -55,7 +55,7 @@ sent to our edge routeres, peers and upstream provider.
 The drawing does not show everything for version 1.0
 
   - the system is protected by a firewall / VPN gateway, and customers must
-    exist in [WAYF](www.wayf.dk/en/about-wayf/faq), be in a local database and
+    exist in [WAYF](https://www.wayf.dk/en/about-wayf/faq), be in a local database and
     has the right VPN credentials
   - the database is replicated
   - there is a customer and system wide _kill switch_ to withdraw some or all rules
