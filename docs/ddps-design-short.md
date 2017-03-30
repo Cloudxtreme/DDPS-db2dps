@@ -7,10 +7,24 @@ This document describes the finished version 1.0 system.
 
 ## Workflow
 
-DDoS mitigation based on BGP flowspec requires some rules to _enter_ the system, and other rules to be _sent to and enforced by peering partners and upstream provider_. The drawing illustrates the different components: to the left is a customer site where fastnetmon monitor traffic to a group of networks and log traffic statistics to a local influx database.       
-When an attack is detected a set of mitigation rules are generated and sent to DDPS via an encrypted channel. The rules are added to an database and announced as flow spec rules and sent upstream and to edge . The rules are enforced on edge on the routers thereby mitigating the attack. Rules are later withdrawn.
+DDoS mitigation based on BGP flowspec requires some rules to _enter_ the
+system, and other rules to be _sent to and enforced by peering partners and
+upstream provider_. The drawing illustrates the different components: to the
+left is a customer site where fastnetmon monitor traffic to a group of networks
+and log traffic statistics to a local influx database.       
 
 ![](assets/img/workflow.png)
+
+When an attack is detected a set of mitigation rules are generated and sent to
+DDPS via an encrypted channel. The rules are added to an database and announced
+as flow spec rules and sent upstream and to edge . The rules are enforced on
+edge on the routers thereby mitigating the attack. Rules are later withdrawn.
+
+![](assets/img/workflow2.png)
+
+<!--
+the image is made in Draw.io (chrome app), the src is in media/docs/workflow.xml
+-->
 
 The rules has to match the BGP community we are responsible for: it has to match
 our network only. The system has been designed to be do that from the entrance point
@@ -30,8 +44,11 @@ Rules are added to the system from two sources:
     [fastnetmon](https://github.com/pavel-odintsov/fastnetmon)
 
 Rules are uploaded to the database server and added to a
-[postgres](https://www.postgresql.org) database. A daemon queries the database for new and expired rules. The daemon converts the rules to BGP flowspec announce and withdraw rules and inserts them in two
-[exabgp](https://github.com/Exa-Networks/exabgp) instances from where they are sent to our edge routeres, peers and upstream provider.
+[postgres](https://www.postgresql.org) database. A daemon queries the database
+for new and expired rules. The daemon converts the rules to BGP flowspec
+announce and withdraw rules and inserts them in two
+[exabgp](https://github.com/Exa-Networks/exabgp) instances from where they are
+sent to our edge routeres, peers and upstream provider.
 
 ## Design
 
