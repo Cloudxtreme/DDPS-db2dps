@@ -15,16 +15,17 @@ The system is build on Ubuntu 16.01, postgres, node.js and a number of internal
 developed applications. This procedure covers both the _production_ and _development_
 environment.
 
+Throughout the documentation the following addresses will be used:
+
   - **hostname**: ddps
-  - **IPv4 address of developemet server**: 10.33.0.97 
-  - **IPv4 address of test server**: 172.16.201.113)
+  - **IPv4 address**: 172.16.201.113)
 
 ### Document warning
 
 This document contain valid commands: you may copy and paste to your hards desire or
 grab all commands at once with (please mind the **tabs**):
 
-	sed '/^	/!d; s/^	//' ddps-dev.md
+	sed '/^	/!d; s/^	//' ddps-database-server-installation.md
 
 Commands with long lines normally doesn't print well and folding such lines may
 brake with functionality. An example is printing an [ssh rsa
@@ -32,19 +33,19 @@ key](http://security.stackexchange.com/questions/23383/ssh-key-type-rsa-dsa-ecds
 as [here text](https://en.wikipedia.org/wiki/Here_document). This is not the
 case in this text: all commands may be executed without editing first.
 
-Notice the ``sudo`` is not shown for commands that require administrative
+Notice the `sudo` is not shown for commands that require administrative
 rights.
 
 ### Prerequisite
 
-Select an IPv4 address and update DNS for the host ``bgpdb``, then install
-Ubuntu server 16.01, use all disk space without LVM, set the static IPv4
-address and install add the package sshd. Do **not** select automatic update.
+Create DNS for `bgpdb` and install Ubuntu Server 16.01, use all disk space, no
+LVM, static IPv4 address, install only the package `sshd` and do _not_ select
+automatic update.
 
-Create a user - we use ``sysadm`` - and generate ssh keys for ``sysadm`` and
-``root``:
+Create a user - we use `sysadm` - and generate ssh keys for `sysadm` and
+`root`:
 
-     ssh-keygen -t rsa -b 4096
+     ssh-keygen -t ED25519
 
 Add required keys to allow for unattended access (backup, administration etc.):
 <!-- html fold -w 76 .... -->
@@ -54,13 +55,11 @@ Add required keys to allow for unattended access (backup, administration etc.):
 	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFzg7XMQuCJ/nOs4eUN734PsPEbE82xYDS04qx
 	gaC0CotkUK+4hzGUeHawuuIDAtJL6LTS304mYj7MYaFTG/Qx0QK5xopzVriX3WmZtnuDq5d7ddzO
 	IcmpYDYG6lHnEZs/LZhOEultYlEKtzNozDFqUyfuzAFpgv1harC+2YPzxgw0CLZFWz10YOQDo9sp
-	NEQX684Zy4j/0IMa+e8ijPFiGhGItZkRkHDUkf15G9K9F2rnHecIHo6IL0rMARrktexiQsVLCl0l
-	FZVDP3ApiHaaDoQClP106XuSqd+oBUGN2/3Hkn8gtnDWUREeTCtS6QHfFa1NYtR5Z0MJUjGscNGT
-	sBF8p4rHKG2sumf0HFi7mGQ5TmAGF1+/eIZTOB2Fq5YxWrwKdCqx/KbgkgGEc9Mgm3QtLEqyPr7v
-	aT0hbtSip30Ad40RWOWlIu50ljz8bijxRWMyqwbVrcaOS+KVitbWwKubf1oeHEVeLbcFNMgj74HW
-	m+wqqqRwbgaL7yU0WTnzClns/d4+zHMxK3XjKHjOJsmaeDPVDEHe66nGG1iF+zvVhaC5KHGHZwuH
-	2dbjETvF5CxnNy58GRZc098gBy+bOf6NKBHXfJgU+X22NjBPrZCZ5LDU/J6DHF5ZCAT/akJ8wmtP
-	Ian9WEQcBzRkTRq1O6w5BhJ0NB3ujaTR8TwsOw==
+	NEQX684Zy4j/0IMa+e8ijPFiGhGItZkRkHDUkf15G9K9F2rnH....
+	....
+	...
+	..
+	.
 	EOF
 
 Set mode for files and folder:
@@ -68,7 +67,8 @@ Set mode for files and folder:
 	chmod 600 *
 	chmod 700 .
 
-Add the following local developed packages from ``buh.ssi.i2.dk``:
+Add the following local developed packages from `buh.ssi.i2.dk` will setup
+our environment and enforce backup and patch installation:
 
      dpkg -i  cmod_1.1-2.deb              \
               dailybuandupdate_1.6-1.deb  \
@@ -86,8 +86,8 @@ Generate locale if required:
 	locale-gen da_DK.UTF-8
 
 ### Developers
-Add developers / system users, same password (``1qazxsw2``) - please change
-asap and upload rsa ssh keys as password based access will be disabled.
+Add developers / system users, same password (`1qazxsw2`) - please change
+asap and upload ssh keys as password based access will be disabled later:
 
 	(
 	cat << EOF | awk -F';' '
@@ -107,7 +107,10 @@ asap and upload rsa ssh keys as password based access will be disabled.
 	EOF
 	) | /bin/sh
 
-The following will allow all members of the group ``sudo`` root access without password:
+Change the above to your staff (``username`` ; gecos; ``uid``).
+
+The following will allow all members of the group ``sudo`` root access without
+password:
 
 	echo '%sudo	ALL=(ALL:ALL) NOPASSWD:ALL' > etc/sudoers.d/sudogrp
 	chmod 0440 /etc/sudoers.d/sudogrp
@@ -178,6 +181,7 @@ Credentials etc. is set up this way:
 Changing owner of the home directory prevents changes by the upload user:
 
 	chown root:root /home/sftpgroup /home/sftpgroup/newrules/
+	mkdir /home/sftpgroup/.ssh
 	chmod 755 /home/sftpgroup /home/sftpgroup/newrules/
 
 Rules will be uploaded to the upload directory ``upload`` which
@@ -187,23 +191,22 @@ has mode 777 in order for the rules to be deleted:
 	chown newrules:newrules /home/sftpgroup/newrules/upload
 	chmod 777 /home/sftpgroup/newrules/upload
 
-The users ssh configuration is locked down too, after keys etc. has been setup:
+The users ssh configuration is locked down too, after keys etc. has been setup.
+Keys - from `fastnetmon` hosts must be installed this way:
 
-	mkdir /home/sftpgroup/.ssh
-	cd 
+	chattr -i /home/sftpgroup/.ssh/authorized_keys
 	cat << EOF | tr -d '\n' > /home/sftpgroup/.ssh/authorized_keys
-	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHlbMohteTKrthwscc9r8tN19iFzB5aciX6D3X
-	0XMjiZX13Zv/0Kak+Ty6g2One2OKKxwKlO7APirFRmgLgDKUVG7X7bt9gDJHz2fg5J2AIBr5iIc8
-	8d3H+xyti4uOL0kc2RjCQKenJfKfEfA8YaFZZ/cCo9wY9Isia+6IveQSyMFg6Z870EwDEgIb5k5y
-	9CNfrZSkD3tjnrg/3QejJf3fulwa5PASwK2LFxLx5h00JOikEOjs12YaOa4bpBFblLYyMW6BWtZA
-	RrS0AYx3XJ06yBjBlo3/JkkBQfbftPzOyw/SLCB9kVXVEhoegw187cS//tADKpsUf7DeFLmzkFqZ
-	 root@fastnetmon
+	ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBgM0xg9opRyCXvRApeRsmMT6zzZ154ligQXBF8z
+	HsgS root@00:25:90:46:c2:fe-fastnetmon2.deic.dk
 	EOF
 	chown -R newrules:newrules /home/sftpgroup/.ssh
 	chattr +i /home/sftpgroup/.ssh /home/sftpgroup/.ssh/*
 
 The ``chattr`` command _prevents all changes to .ssh and authorized_keys_
 and can only be undone with ``chattr -i ... `` by an administrator.
+
+The ssh keys are from each `fastnetmon`, generated on demand and stored
+in `/opt/i2dps/etc/ssh`.
 
 Other systems may in the future upload rules the same way but as a different
 user configured the same way.
