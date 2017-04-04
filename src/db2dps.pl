@@ -3,14 +3,28 @@
 # $Header$
 #
 #++
-# #### Usage and pseudo code below for ``db2dps``
+# #### Name db2dps
+#
+# Database / rule manipulation for DDPS
+#
+# #### Synopsis
 # 
 #  ``db2dps [-V] [-v] [-d] [-s seconds]``
 # 
+# ### Description
+#
+# ``db2dps`` process new _rulefiles_, and maintain rules in the database wile
+# sending BGP flowspec updates to a number of BGP hosts. ``db2dps`` runs as
+# a daemon controlled by systemd.
+#
+# ### Options
+#
 #   - **-V**: print version information and exit
 #   - **-v**: verbose and run in foreground
 #   - **-d**: demonise
 #   - **-s** _seconds_: sleep time between database scan. Default is 20 seconds
+#
+# #### Pseudo code
 # 
 # ```bash
 # read configuration || fail
@@ -88,6 +102,16 @@
 # 
 # close database connection and exit normal
 # ```
+#
+# ### Author
+#
+# Niels Thomas Haugård, niels.thomas.haugaard@i2.dk
+#
+# ### Bugs
+#
+# Probably. Please report them to the the author or the DDPS group. Please
+# notice this is early work.
+#
 #--
 # ## Requirements:
 #		sudo apt-get install libnet-openssh-compat-perl liblist-moreutils-perl
