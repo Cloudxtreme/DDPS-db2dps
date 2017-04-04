@@ -8,7 +8,8 @@ queries the database for new and expired rules.
 
   - [Short design overview](docs/ddps-design-short.md)
   - [Installation and configuration of the database host](docs/ddps-database-server-installation.md)
-  - [Makefile](docs/Makefile) for creating pdf and html documentation
+  - [Documentation for the database daemon, db2dps]docs/db2dps-documentation.md)
+  - [Makefile](docs/Makefile) for creating pdf and html documentation in ``docs``
 
 ## Direct link to main source code below:
 
