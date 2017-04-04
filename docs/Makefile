@@ -16,7 +16,7 @@
 #	- Change author to your name and do ``make document.html and document.pdf``.
 #
 #	- If you have more than one document then go ``make document.mmd`` first  and
-#	  edit to your harts desire (add files to the file: part). Then run  make for
+#	  edit to your heart desire (add files to the file: part). Then run  make for
 #	  the html and pdf versions.
 #
 #	  If the arguments to wkhtmltopdf doesn't fit, then feel free to add your own
@@ -29,7 +29,7 @@ version	= `git describe --long --dirty --tags --always`
 author	= Niels Thomas Haugård
 
 # Default css: black text, blue headers, automatic numbering
-css		= assets/CSS/nth2-number.css
+css		= assets/CSS/g.css
 
 # Syntax highlighting - see https://highlightjs.org
 html_header = <link rel=\"stylesheet\" href=\"assets/CSS/_TYPE_.css\"> <script src=\"assets/CSS/highlight.min.js\"></script> <script>hljs.initHighlightingOnLoad();</script>
