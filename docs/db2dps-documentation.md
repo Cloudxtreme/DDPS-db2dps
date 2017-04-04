@@ -171,6 +171,46 @@ Usage and pseudo code below:
 
 <!-- make md end   -->
 
+### Rulefiles
+
+Rulefiles has the following format, with a _header_ describing the _rule type_
+where only `fnm` for fastnetmon is in use, rule format if we should ever change it
+and the _attack type_ for later optimisation. The last line is literally _last-line_
+to avoid processing incomplete files:
+
+	ruleheader
+	rule
+	rule
+	last-line
+
+The format is
+
+	Rule header: type;vesion;attack_info;
+	type: fnm | ...
+	version: 1 | ...
+	attack_info: icmp_flood | syn_flood | udp_flood | unknown | ...
+	Rules: networkid,uuid,blocktime,date,time,1,2,3,4,5,6,7,8,9,10,11,12
+	Type 1 - Destination Prefix
+	Type 2 - Source Prefix
+	Type 3 - IP Protocol
+	Type 4 – Source or Destination Port
+	Type 5 – Destination Port
+	Type 6 - Source Port
+	Type 7 – ICMP Type
+	Type 8 – ICMP Code
+	Type 9 - TCP flags
+	Type 10 - Packet length
+	Type 11 – DSCP
+	Type 12 - Fragment Encoding
+
+Example:
+
+	fnm;1;syn_flood;
+	0;00:25:90:47:2b:48;10;130.226.136.242;66.141.26.81;tcp;14372;80;14372;0;0;syn;60;63;0;0
+	0;00:25:90:47:2b:48;10;130.226.136.242;161.185.77.224;tcp;14374;80;14374;0;0;syn;60;63;0;0
+	last-line
+
+## Other versions
 A version of ``i2dps`` written in C is also available, but
 _currently with unresolved memory / heap errors_. It also lacks code for
 _white listing_ and _solving the problem with overlapping rules_.
