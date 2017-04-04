@@ -20,7 +20,7 @@ On the database host, execute
 	mkdir -p /opt/db2dps && chown sysadm:sysadm /opt/db2dps
 
 Edit ``Makefile`` and copy the source for ``db2dps`` to ``/opt/db2dps``. You only
-need to change the lines to whatever your harts desire:
+need to change the lines to whatever your heart desire:
 
 	TARGETHOST      = sysadm@ddps.deic.dk
 	GID             = sysadm
@@ -82,82 +82,80 @@ Usage and pseudo code below:
 
 #### Pseudo code
  
- ```bash
- read configuration || fail
- check args: print version and exit | demonise | run in foreground
- 
- connect to database || exit fail
- 
- query(all my networks)
- 
- while true; do
- {
-   if [ exit required ]
-   {
-     break loop
-     close database connection
-     exit normal
-   }
-   else
-   {
-     sleep except seconds on first loop
-   }
-  
-    if [ exist (new files with rules from fastnetmon) ]
-      if (query(insert rules in database) == OK)
-         delete(rulefile) or warn
- 
-   foreach bgphost do
-   {
-     mkrulebase("announce", bgphost)
-     {
-        if (bgphost requires all rules)
-           query(all rules)
-        else
-           query(NOT isactivated and NOT expired records)
-        continue if (query empty)
-        {
-          if (destination is within all my networks)
-          {
-            build rules suitable for bgphost
-            send rulebase to bgp host || warn
-            /* notice: this may block */
-          }
-          else
-          {
-            warn about attempt to filter for external network
-          }
-       }
-     }
-   }
-   query(set isactivated for all announced rules in database)
- 
-   foreach bgphost do
-   {
-     mkrulebase("withdraw", bgphost)
-     {
-        query(all isactivated rules)
-        select rules which are expired AND does not match a non-expired rule
-        foreach (bgphosts)
-        {
-          if (destination is within all my networks)
-          {
-            build rules suitable for bgphost
-            send rulebase to bgp host || warn
-            /* notice: this may block */
-          }
-          else
-          {
-            warn about attempt to filter for external network
-          }
-       }
-     }
-   }
-   query(set isexpired for withdrawn rules in database)
- }
- 
- close database connection and exit normal
- ```
+	read configuration || fail
+	check args: print version and exit | demonise | run in foreground
+	 
+	connect to database || exit fail
+	 
+	query(all my networks)
+	 
+	while true; do
+	{
+	  if [ exit required ]
+	  {
+		break loop
+		close database connection
+		exit normal
+	  }
+	  else
+	  {
+		sleep except seconds on first loop
+	  }
+	 
+	   if [ exist (new files with rules from fastnetmon) ]
+		 if (query(insert rules in database) == OK)
+			delete(rulefile) or warn
+
+	  foreach bgphost do
+	  {
+		mkrulebase("announce", bgphost)
+		{
+		   if (bgphost requires all rules)
+			  query(all rules)
+		   else
+			  query(NOT isactivated and NOT expired records)
+		   continue if (query empty)
+		   {
+			 if (destination is within all my networks)
+			 {
+			   build rules suitable for bgphost
+			   send rulebase to bgp host || warn
+			   /* notice: this may block */
+			 }
+			 else
+			 {
+			   warn about attempt to filter for external network
+			 }
+		  }
+		}
+	  }
+	  query(set isactivated for all announced rules in database)
+
+	  foreach bgphost do
+	  {
+		mkrulebase("withdraw", bgphost)
+		{
+		   query(all isactivated rules)
+		   select rules which are expired AND does not match a non-expired rule
+		   foreach (bgphosts)
+		   {
+			 if (destination is within all my networks)
+			 {
+			   build rules suitable for bgphost
+			   send rulebase to bgp host || warn
+			   /* notice: this may block */
+			 }
+			 else
+			 {
+			   warn about attempt to filter for external network
+			 }
+		  }
+		}
+	  }
+	  query(set isexpired for withdrawn rules in database)
+	}
+
+	close database connection and exit normal
 
 ### Author
 
@@ -167,7 +165,6 @@ Usage and pseudo code below:
 
  Probably. Please report them to the the author or the DDPS group. Please
  notice this is early work.
-
 
 <!-- make md end   -->
 
