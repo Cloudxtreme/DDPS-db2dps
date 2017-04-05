@@ -1,76 +1,64 @@
-11:57:03 (05/04) Begin
-11:57:03 (05/04) called as: ./remote.sh -v make
-11:57:03 (05/04) Environment:
-11:57:03 (05/04) git_sha:        '797fa918f7bb3e34c9df5be66f7697f35b65a22f'
-11:57:03 (05/04) build_date:     '2017-04-05 11:57'
-11:57:03 (05/04) TARGETHOST:     'rnd@ddps.deic.dk'
-11:57:03 (05/04) UPLOADDIR:      '/opt/db2dps/src/'
-11:57:03 (05/04) EXCLUDE_FILE:   'rsync_exclude.txt'
-11:57:03 (05/04) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-11:57:03 (05/04) RRSYNC:         '/usr/bin/rsync'
-11:57:03 (05/04) LRSYNC:         '/usr/bin/rsync'
-11:57:03 (05/04) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
-11:57:03 (05/04) SSH_ARGS:       '-Tq -o LogLevel=error'
-11:57:03 (05/04) SSH:            '/usr/bin/ssh'
-11:57:03 (05/04) SRCDIR:         '.'
-11:57:03 (05/04) PROJDIR:        '../../DDPS-db2dps'
-11:57:03 (05/04) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
-11:57:03 (05/04) rsync files to rnd@ddps.deic.dk ... 
-11:57:03 (05/04) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
-11:57:03 (05/04) building file list ... done
-11:57:03 (05/04) ./
-11:57:03 (05/04) .source_info
-11:57:03 (05/04) db2dps.pl
+13:50:04 (05/04) Begin
+13:50:04 (05/04) called as: ./remote.sh -v make
+13:50:04 (05/04) Environment:
+13:50:04 (05/04) git_sha:        'b703d2c260ae5cb5d8ce729a792969bc5f15b24e'
+13:50:04 (05/04) build_date:     '2017-04-05 13:50'
+13:50:04 (05/04) TARGETHOST:     'rnd@ddps.deic.dk'
+13:50:04 (05/04) UPLOADDIR:      '/opt/db2dps/src/'
+13:50:04 (05/04) EXCLUDE_FILE:   'rsync_exclude.txt'
+13:50:04 (05/04) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
+13:50:04 (05/04) RRSYNC:         '/usr/bin/rsync'
+13:50:04 (05/04) LRSYNC:         '/usr/bin/rsync'
+13:50:04 (05/04) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
+13:50:04 (05/04) SSH_ARGS:       '-Tq -o LogLevel=error'
+13:50:04 (05/04) SSH:            '/usr/bin/ssh'
+13:50:04 (05/04) SRCDIR:         '.'
+13:50:04 (05/04) PROJDIR:        '../../DDPS-db2dps'
+13:50:04 (05/04) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
+13:50:04 (05/04) rsync files to rnd@ddps.deic.dk ... 
+13:50:04 (05/04) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
+13:50:04 (05/04) building file list ... done
+13:50:04 (05/04) ./
+13:50:04 (05/04) .source_info
+13:50:04 (05/04) db2dps.pl
 
-11:57:03 (05/04) sent 6866 bytes  received 310 bytes  4784.00 bytes/sec
-11:57:03 (05/04) total size is 8005947  speedup is 1115.66
-11:57:04 (05/04) exec 'make  ' on rnd@ddps.deic.dk ... 
-11:57:04 (05/04) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-64-generic x86_64)
+13:50:04 (05/04) sent 7069 bytes  received 304 bytes  14746.00 bytes/sec
+13:50:04 (05/04) total size is 8005602  speedup is 1085.80
+13:50:04 (05/04) exec 'make  ' on rnd@ddps.deic.dk ... 
+13:50:04 (05/04) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-64-generic x86_64)
 
-11:57:04 (05/04) * Documentation:  https://help.ubuntu.com
-11:57:04 (05/04) * Management:     https://landscape.canonical.com
-11:57:04 (05/04) * Support:        https://ubuntu.com/advantage
+13:50:04 (05/04) * Documentation:  https://help.ubuntu.com
+13:50:04 (05/04) * Management:     https://landscape.canonical.com
+13:50:04 (05/04) * Support:        https://ubuntu.com/advantage
 
-11:57:04 (05/04) 7 packages can be updated.
-11:57:04 (05/04) 7 updates are security updates.
+13:50:04 (05/04) 7 packages can be updated.
+13:50:04 (05/04) 7 updates are security updates.
 
 
-11:57:04 (05/04) *** System restart required ***
-11:57:04 (05/04) /opt/db2dps/src
-11:57:04 (05/04) chmod 555 /opt/db2dps/src/install-sh /opt/db2dps/src/srctoman
-11:57:04 (05/04) rm -f db2dps
-11:57:04 (05/04) ./db2dps -V
-11:57:04 (05/04) version:       1.0-9
-11:57:04 (05/04) build date:    2017-03-13 21:10
-11:57:04 (05/04) build_git_sha: 0c0dc8c7fe71b3d416dfd76c1e625cb4147ad39d
-11:57:04 (05/04) inicfg:        /opt/db2dps/etc/db.ini
-11:57:04 (05/04) sleeptime:     10
-11:57:04 (05/04) This version only handles IPv4 by design
-11:57:04 (05/04) sudo ./db2dps -s 2 -v
-11:57:04 (05/04) 11:57:04 (2017/04/05): verbose		= 1
-11:57:04 (05/04) 11:57:04 (2017/04/05): daemonize	= 0
-11:57:04 (05/04) 11:57:04 (2017/04/05): sleeptime	= 2
-11:57:04 (05/04) 11:57:04 (2017/04/05): database	= netflow
-11:57:04 (05/04) 11:57:04 (2017/04/05): dbadmin	= dbadmin
-11:57:04 (05/04) 11:57:04 (2017/04/05): database connected successfully
-11:57:04 (05/04) 11:57:04 (2017/04/05): query general::allmyneworks ...
-11:57:04 (05/04) 11:57:04 (2017/04/05): All allowed destination networks:  95.128.24.0/21, 130.225.0.0/16, 130.226.0.0/16, 185.1.57.0/24, 192.38.0.0/17
-11:57:04 (05/04) 11:57:04 (2017/04/05): starting main loop
-11:57:04 (05/04) 11:57:04 (2017/04/05): check for new rules in '/home/sftpgroup/newrules/upload' ...
-11:57:04 (05/04) 11:57:04 (2017/04/05): found 2 files in '/home/sftpgroup/newrules/upload'
-11:57:04 (05/04) head is fnm;1;syn_flood;
-
-11:57:04 (05/04) tail is last-line
-
-11:57:04 (05/04) ---> last-line
-11:57:04 (05/04) =~ /last-line/: 1, last-line
-11:57:04 (05/04) /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491300849-bgecw3fi.dat ok
-11:57:04 (05/04) head is fnm;1;syn_flood;
-
-11:57:04 (05/04) tail is last-line
-
-11:57:04 (05/04) ---> last-line
-11:57:04 (05/04) =~ /last-line/: 1, last-line
-11:57:04 (05/04) /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491315372-csjezurb.dat ok
-11:57:04 (05/04) Exit in file ./db2dps line: 839
-11:57:05 (05/04) done
+13:50:04 (05/04) *** System restart required ***
+13:50:04 (05/04) /opt/db2dps/src
+13:50:04 (05/04) chmod 555 /opt/db2dps/src/install-sh /opt/db2dps/src/srctoman
+13:50:04 (05/04) rm -f db2dps
+13:50:04 (05/04) ./db2dps -V
+13:50:04 (05/04) version:       1.0-9
+13:50:04 (05/04) build date:    2017-03-13 21:10
+13:50:04 (05/04) build_git_sha: 0c0dc8c7fe71b3d416dfd76c1e625cb4147ad39d
+13:50:04 (05/04) inicfg:        /opt/db2dps/etc/db.ini
+13:50:04 (05/04) sleeptime:     10
+13:50:04 (05/04) This version only handles IPv4 by design
+13:50:04 (05/04) sudo ./db2dps -s 2 -v
+13:50:04 (05/04) 13:50:05 (2017/04/05): verbose		= 1
+13:50:04 (05/04) 13:50:05 (2017/04/05): daemonize	= 0
+13:50:04 (05/04) 13:50:05 (2017/04/05): sleeptime	= 2
+13:50:04 (05/04) 13:50:05 (2017/04/05): database	= netflow
+13:50:04 (05/04) 13:50:05 (2017/04/05): dbadmin	= dbadmin
+13:50:04 (05/04) 13:50:05 (2017/04/05): database connected successfully
+13:50:04 (05/04) 13:50:05 (2017/04/05): query general::allmyneworks ...
+13:50:04 (05/04) 13:50:05 (2017/04/05): All allowed destination networks:  95.128.24.0/21, 130.225.0.0/16, 130.226.0.0/16, 185.1.57.0/24, 192.38.0.0/17
+13:50:04 (05/04) 13:50:05 (2017/04/05): starting main loop
+13:50:04 (05/04) 13:50:05 (2017/04/05): check for new rules in '/home/sftpgroup/newrules/upload' ...
+13:50:04 (05/04) 13:50:05 (2017/04/05): found 2 files in '/home/sftpgroup/newrules/upload'
+13:50:04 (05/04) /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491300849-bgecw3fi.dat ok
+13:50:04 (05/04) /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491315372-csjezurb.dat ok
+13:50:04 (05/04) Exit in file ./db2dps line: 825
+13:50:05 (05/04) done

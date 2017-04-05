@@ -694,25 +694,25 @@ sub mkrulebase($$)
 				logit("validfrom/to: $validfrom - $validto");
 				if ($ipprotocol eq lc 'tcp')
 				{
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { discard; } } }";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; discard; } } }";
 					print $fh "$rule\n";
 					logit("$rule");
 				}
 				elsif ($ipprotocol eq lc 'udp')
 				{
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { discard; } } }";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; discard; } } }";
 					print $fh "$rule\n";
 					logit("$rule");
 				 }
 				 elsif ($ipprotocol eq lc 'icmp')
 				 {
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; protocol icmp; } then { discard; } } }\n";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; protocol icmp; } then { rate-limit 9600; discard; } } }\n";
 					print $fh "$rule\n";
 					logit("$rule");
 				 }
 				 else
 				 {
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; } then { discard; } } }\n";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; } then { rate-limit 9600; discard; } } }\n";
 					print $fh "$rule\n";
 					logit("$rule");
 				}
@@ -790,48 +790,34 @@ sub processnewrules()
 		my $file_finished_ok = 0;
 
 		my $file	= path($newrulesdir . "/" . $r);
-		my $head; my $tail;
+		my $head; my $tail; my $type; my $version; my $attack_info;
 
 		($head) = $file->lines( {count => 1} );
 		($tail)	= $file->lines( {count => -1});
+		($type, $version, $attack_info) = split(';', $head);
 
-		print "head is $head\ntail is $tail\n";
+		# print "head is $head ($type, $version, $attack_info)\ntail is $tail\n";
 
 		$file_finished_ok = 1 if ($tail =~ /$file_finished_ok_string/);
-		print "---> $tail =~ /$file_finished_ok_string/: $file_finished_ok, $file_finished_ok_string\n";
 
+		# process rules and add to database
 
-		#my @lines = $file->lines_utf8;
-		#{
-		#	print "--->$line\n";
-		#}
+		my @lines = $file->lines_utf8;
+		for my $line (@lines)
+		{
+			# print "--->$line\n";
+		}
 
-		#my $document = do {
-		#    local $/ = undef;
-		#	open my $fh, "<", $file
-		#	or die "could not open $file: $!";
-		#	<$fh>;
-		#};
-		#close $fh or die "can't close $file: $!";
-		#open my $input, '<', $file or die "can't open $file: $!";
-		#while (<$input>)
-		#{
-		#	chomp;
-		#	$file_finished_ok = 1 if /\Q$file_finished_ok_string/;
-		#	# read 12 flowspec fileds from file
-		#
-		#}
 		if ($file_finished_ok eq 1)
 		{
 			print "$file ok\n";
+			# remove file
 		}
 		else
 		{
 			print "$file NOT ok\n";
-			# remove file from @rulefiles
 		}
 	}
-	# process rules and add to database
 
 	# remove all files in @rulefiles
 	print "Exit in file ", __FILE__, " line: ", __LINE__, "\n";
