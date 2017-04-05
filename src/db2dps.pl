@@ -689,7 +689,7 @@ sub mkrulebase($$)
 			{
 				# build different rule(s) for: ip | icmp | tcp | udp and print to file
 				# TODO
-				# this has to be extented later with fragments etc
+				# this has to be extented later with fragments, ttl, size etc and e.g. rate-limit 9600 instead of discard by readming from 'action' field
 				my $rule = "";
 				logit("validfrom/to: $validfrom - $validto");
 				if ($ipprotocol eq lc 'tcp')
@@ -712,7 +712,8 @@ sub mkrulebase($$)
 				 }
 				 else
 				 {
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; } then { rate-limit 9600; discard; } } }\n";
+					# $rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; } then { rate-limit 9600; } } }\n";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; } then { discard; } } }\n";
 					print $fh "$rule\n";
 					logit("$rule");
 				}
@@ -796,7 +797,10 @@ sub processnewrules()
 		($tail)	= $file->lines( {count => -1});
 		($type, $version, $attack_info) = split(';', $head);
 
-		# print "head is $head ($type, $version, $attack_info)\ntail is $tail\n";
+		# TODO
+		# Use attack fileld -- see db.ini
+		# Oh, and read my_networks
+		logit( "from head: type=$type ver=$version, attack_info=$attack_info) tail=$tail");
 
 		$file_finished_ok = 1 if ($tail =~ /$file_finished_ok_string/);
 
@@ -810,17 +814,17 @@ sub processnewrules()
 
 		if ($file_finished_ok eq 1)
 		{
-			print "$file ok\n";
+			logit("$file ok");
 			# remove file
 		}
 		else
 		{
-			print "$file NOT ok\n";
+			logit("$file NOT ok");
 		}
 	}
 
 	# remove all files in @rulefiles
-	print "Exit in file ", __FILE__, " line: ", __LINE__, "\n";
+	logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done");
 	exit 0;
 }
 
