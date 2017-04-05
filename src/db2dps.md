@@ -60,6 +60,6 @@
       sudo apt-get install libnet-openssh-compat-perl liblist-moreutils-perl
       apt-get install libnet-openssh-compat-perl
       apt-get -y install libnet-ssh2-perl libproc-daemon-perl
-      apt -y install libnetaddr-ip-perl
+      apt -y install libnetaddr-ip-perl libtypes-path-tiny-perl
 ## Current version:
 ./db2dps -V

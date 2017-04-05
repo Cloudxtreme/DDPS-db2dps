@@ -113,12 +113,12 @@
 # notice this is early work.
 #
 #--
-# ## Requirements:
+# ## Requirements -- see Makefile
 #		sudo apt-get install libnet-openssh-compat-perl liblist-moreutils-perl
 #		apt-get install libnet-openssh-compat-perl
 #		apt-get -y install libnet-ssh2-perl libproc-daemon-perl
-#		apt -y install libnetaddr-ip-perl
-
+#		apt -y install libnetaddr-ip-perl libtypes-path-tiny-perl
+#
 
 #
 # Requirements
@@ -136,6 +136,7 @@ use List::MoreUtils qw(uniq);
 use Proc::Daemon;
 use Socket qw( inet_aton );
 use NetAddr::IP;
+use Path::Tiny;
 
 #
 # prototypes
@@ -149,6 +150,7 @@ sub parse_v4(@);
 sub mkrulebase($$);
 sub ip2long($);
 sub in_subnet($$);
+sub processnewrules();
 
 # URL's with useful information
 # http://www.microhowto.info/howto/connect_to_a_postgresql_database_using_perl_dbi.html
@@ -394,60 +396,11 @@ EOF
 			sleep $sleeptime;
 		}
 
-		# Check for new rules. Read all rule files execpt those
-		# not ending with "last-line"
-		# sort rules and add to database && delete rulefiles || warn
-		# function here: addnewrules()
-		{
-			my @rulefiles = ();
-			my $file_finished_ok_string = "last-line";
-			my $file_finished_ok = 0;
-			logit("check for new rules in '$newrulesdir' ... ");
-			opendir (DIR, $newrulesdir) or die $!;
-			while ( my $node = readdir(DIR) )
-			{
-				next if ($node =~ /^\./);
-				push (@rulefiles, $node);
-			}
-			closedir DIR;
-			my $i = $#unique_implemented_flowspecruleid + 1;
-			logit("found $i files in '$newrulesdir'");
-
-			foreach my $r (@rulefiles)
-			{
-				my $file_finished_ok_string = "last-line";
-				my $file_finished_ok = 0;
-				#print "$r\n";
-				my $file = $newrulesdir . "/" . $r;
-				open my $input, '<', $file or die "can't open $file: $!";
-				while (<$input>)
-				{
-					chomp;
-					$file_finished_ok = 1 if /\Q$file_finished_ok_string/;
-					# read 12 flowspec fileds from file
-
-				}
-				close $input or die "can't close $file: $!";
-				if ($file_finished_ok eq 1)
-				{
-					print "$file ok\n";
-				}
-				else
-				{
-					print "$file NOT ok\n";
-					# remove file from @rulefiles
-				}
-			}
-			# process rules and add to database
-
-			# remove all files in @rulefiles
-		}
-
-		exit 0;
-
+		processnewrules();
 
 		# announce new or all rules
 		# For each bgp-host do
+
 		mkrulebase("announce", $hostlist);
 		logit("announcement done for all exabgp hosts");
 
@@ -810,6 +763,82 @@ sub mkrulebase($$)
 	}	# end foreach host in hostlist announce ...
 }
 
+sub processnewrules()
+{
+	# Check for new rules. Read all rule files execpt those
+	# not ending with "last-line"
+	# sort rules and add to database && delete rulefiles || warn
+
+	my @rulefiles = ();
+	my $file_finished_ok_string = "last-line";
+	my $file_finished_ok = 0;
+	my $document;
+	logit("check for new rules in '$newrulesdir' ... ");
+	opendir (DIR, $newrulesdir) or die $!;
+	while ( my $node = readdir(DIR) )
+	{
+		next if ($node =~ /^\./);
+		push (@rulefiles, $node);
+	}
+	closedir DIR;
+	my $i = $#rulefiles + 1;
+	logit("found $i files in '$newrulesdir'");
+
+	foreach my $r (@rulefiles)
+	{
+		my $file_finished_ok_string = "last-line";
+		my $file_finished_ok = 0;
+
+		my $file	= path($newrulesdir . "/" . $r);
+		my $head; my $tail;
+
+		($head) = $file->lines( {count => 1} );
+		($tail)	= $file->lines( {count => -1});
+
+		print "head is $head\ntail is $tail\n";
+
+		$file_finished_ok = 1 if ($tail =~ /$file_finished_ok_string/);
+		print "---> $tail =~ /$file_finished_ok_string/: $file_finished_ok, $file_finished_ok_string\n";
+
+
+		#my @lines = $file->lines_utf8;
+		#{
+		#	print "--->$line\n";
+		#}
+
+		#my $document = do {
+		#    local $/ = undef;
+		#	open my $fh, "<", $file
+		#	or die "could not open $file: $!";
+		#	<$fh>;
+		#};
+		#close $fh or die "can't close $file: $!";
+		#open my $input, '<', $file or die "can't open $file: $!";
+		#while (<$input>)
+		#{
+		#	chomp;
+		#	$file_finished_ok = 1 if /\Q$file_finished_ok_string/;
+		#	# read 12 flowspec fileds from file
+		#
+		#}
+		if ($file_finished_ok eq 1)
+		{
+			print "$file ok\n";
+		}
+		else
+		{
+			print "$file NOT ok\n";
+			# remove file from @rulefiles
+		}
+	}
+	# process rules and add to database
+
+	# remove all files in @rulefiles
+	print "Exit in file ", __FILE__, " line: ", __LINE__, "\n";
+	exit 0;
+}
+
+
 
 __DATA__
 
@@ -930,5 +959,4 @@ sub ip2long($)
 {
 	return( unpack( 'N', inet_aton(shift) ) );
 }
-
 

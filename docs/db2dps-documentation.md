@@ -11,7 +11,7 @@ Perl modules to be installed:
     sudo apt-get -y	install libnet-openssh-compat-perl liblist-moreutils-perl \
                             libnet-openssh-compat-perl libnet-ssh2-perl       \
                             libproc-daemon-perl libnetaddr-ip-perl            \
-                            libdbi-perl libdbd-pg-perl
+                            libdbi-perl libdbd-pg-perl libtypes-path-tiny-perl
 
 ### Installation
 
