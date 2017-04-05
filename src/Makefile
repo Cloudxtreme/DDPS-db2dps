@@ -82,6 +82,7 @@ $(prog):	hostcheck db2dps.pl version.pm
 			@sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  db2dps.pl > db2dps
 			@chmod 555 db2dps
 			./$(prog) -V
+			sudo ./$(prog) -s 2 -v
 
 install:	hostcheck $(target) $(initrc) $(dbini) $(sysinit)
 
@@ -122,6 +123,17 @@ $(target):	$(prog)
 
 $(dbini):	$(PRODINI)
 			$(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(PRODINI) $(ETCDIR)
+
+
+#
+# Dependencies
+#
+install-modules:
+	sudo apt-get -y install libnet-openssh-compat-perl liblist-moreutils-perl				\
+					libnet-openssh-compat-perl libnet-ssh2-perl								\
+					libproc-daemon-perl libnetaddr-ip-perl									\
+					libdbi-perl libdbd-pg-perl libtypes-path-tiny-perl						\
+					libnetaddr-ip-perl libtypes-path-tiny-perl	libnet-sftp-foreign-perl
 
 #
 # below are only targets relevant for the c-version
