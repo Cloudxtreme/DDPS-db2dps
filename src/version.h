@@ -1,4 +1,4 @@
-/* autogen by ./remote.sh on Ons  5 Apr 2017 15:45:31 CEST */
+/* autogen by ./remote.sh on Tor  6 Apr 2017 11:52:33 CEST */
 #ifndef VERSION_H
 #define VERSION_H
 #define VERSION "1.0-10"

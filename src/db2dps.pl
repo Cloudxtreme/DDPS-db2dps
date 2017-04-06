@@ -334,7 +334,7 @@ EOF
 	close ($fh);
 
 	logit("database	= $db");
-	logit("dbadmin	= $dbuser");
+	logit("dbadmin		= $dbuser");
 
 	# from http://stackoverflow.com/questions/766397/how-can-i-run-a-perl-script-as-a-system-daemon-in-linux
 	if ($rundaemon eq 1)
@@ -354,27 +354,32 @@ EOF
 
 	logit("database connected successfully");
 
+	# Not sure this is good: all our network (forskningsnet) kept as userid 0; has placed it in
+	# the db.ini instead
+	#
 	# fetch list of all my neworks
-	$sql_query = $data{'general'}{'allmyneworks'};
-	logit("query general::allmyneworks ... ");
-	my $sth = $dbh->prepare($sql_query);
-	$sth->execute();
-	{
-		my @tmparr;
-		while (my @row = $sth->fetchrow_array)
-		{
-			#my $customernetworkid	= $row[0] ? $row[0] : '';
-			#my $customerid			= $row[1] ? $row[1] : '';
-			#my $name				= $row[2] ? $row[2] : '';
-			#my $kind				= $row[3] ? $row[3] : '';
-			#my $net_cidr			= $row[4] ? $row[4] : '';
-			#my $description		= $row[5] ? $row[5] : '';
-			push (@allmyneworks, $row[4]);
-		}
-		$sth->finish();
-		#$allmyneworks = join(', ', @allmyneworks);
-	}
-	logit("All allowed destination networks: ", join(', ', @allmyneworks), "");
+	#$sql_query = $data{'general'}{'allmyneworks'};
+	# logit("query general::allmyneworks ... ");
+	# my $sth = $dbh->prepare($sql_query);
+	# $sth->execute();
+	# {
+	# 	my @tmparr;
+	# 	while (my @row = $sth->fetchrow_array)
+	# 	{
+	# 		#my $customernetworkid	= $row[0] ? $row[0] : '';
+	# 		#my $customerid			= $row[1] ? $row[1] : '';
+	# 		#my $name				= $row[2] ? $row[2] : '';
+	# 		#my $kind				= $row[3] ? $row[3] : '';
+	# 		#my $net_cidr			= $row[4] ? $row[4] : '';
+	# 		#my $description		= $row[5] ? $row[5] : '';
+	# 		push (@allmyneworks, $row[4]);
+	# 	}
+	# 	$sth->finish();
+	# 	#$allmyneworks = join(', ', @allmyneworks);
+	# }
+
+	@allmyneworks = $data{'general'}{'ournetworks'};
+	logit("All allowed destination networks: ", join(' ', @allmyneworks), "");
 
 	my $first_loop = 1;
 
@@ -799,7 +804,6 @@ sub processnewrules()
 
 		# TODO
 		# Use attack fileld -- see db.ini
-		# Oh, and read my_networks
 		logit( "from head: type=$type ver=$version, attack_info=$attack_info) tail=$tail");
 
 		$file_finished_ok = 1 if ($tail =~ /$file_finished_ok_string/);
