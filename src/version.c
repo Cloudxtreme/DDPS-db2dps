@@ -1,5 +1,5 @@
-/* autogen by ./remote.sh on Ons  5 Apr 2017 15:45:31 CEST */
+/* autogen by ./remote.sh on Tor  6 Apr 2017 11:52:33 CEST */
 #include "version.h"
 const char * version = "1.0-10";
-const char * build_date = "2017-04-05 15:45";
-const char * build_git_sha = "39d2c59f73be6cf3a842018b1f9c132f746505a7";
+const char * build_date = "2017-04-06 11:52";
+const char * build_git_sha = "4ab1aafd1337225f37751230269e9f10aefcf9a9";
