@@ -696,6 +696,12 @@ sub mkrulebase($$)
 				# TODO
 				# this has to be extented later with fragments, ttl, size etc and e.g. rate-limit 9600 instead of discard by readming from 'action' field
 				my $rule = "";
+
+				#
+				# insert from test-bgp-rules.pl here
+				#
+
+
 				logit("validfrom/to: $validfrom - $validto");
 				if ($ipprotocol eq lc 'tcp')
 				{
