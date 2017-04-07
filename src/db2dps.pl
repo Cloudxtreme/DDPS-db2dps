@@ -694,30 +694,29 @@ sub mkrulebase($$)
 			{
 				# build different rule(s) for: ip | icmp | tcp | udp and print to file
 				# TODO
-				# this has to be extented later with fragments, ttl, size etc and e.g. rate-limit 9600 instead of discard by readming from 'action' field
+				# this has to be extented later with fragments, ttl, size etc
+				# and e.g. rate-limit 9600 instead of discard by readming from
+				# 'action' field
+				# So, insert from test-bgp-rules.pl here
+
 				my $rule = "";
-
-				#
-				# insert from test-bgp-rules.pl here
-				#
-
 
 				logit("validfrom/to: $validfrom - $validto");
 				if ($ipprotocol eq lc 'tcp')
 				{
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; discard; } } }";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; } } }";
 					print $fh "$rule\n";
 					logit("$rule");
 				}
 				elsif ($ipprotocol eq lc 'udp')
 				{
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; discard; } } }";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; } } }";
 					print $fh "$rule\n";
 					logit("$rule");
 				 }
 				 elsif ($ipprotocol eq lc 'icmp')
 				 {
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; protocol icmp; } then { rate-limit 9600; discard; } } }\n";
+					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; protocol icmp; } then { rate-limit 9600; } } }\n";
 					print $fh "$rule\n";
 					logit("$rule");
 				 }
