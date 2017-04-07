@@ -1,5 +1,5 @@
 
-# Automatic rule creation
+### Rule creation
 
 Just my random thoughts, but having to implement something I wonder what is the
 _best practice for creating rules to mitigate volumetric attacks based on flowspec_?
@@ -29,6 +29,7 @@ attacks can be detected by fastnetmon.
 
 *From [awsstatic.com](https://d0.awsstatic.com/whitepapers/DDoS_White_Paper_June2015.pdf)*
 
+<div style="page-break-before: always"> &nbsp;</div>
 Fastnetmon detects the following type of attacks:
 
   1. *syn_flood*: TCP packets with enabled SYN flag
@@ -51,6 +52,7 @@ Ethernet frame size is 64 bytes for an _empty tcp or udp packet_.
 
 ![](https://nmap.org/book/images/hdr/MJB-TCP-Header-800x564.png)
 
+<div style="page-break-before: always"> &nbsp;</div>
 We have the following values for creating a filter:
 
 	Type 1 - Destination Prefix
@@ -70,7 +72,7 @@ Suggestion for rule creation:
 
 | Attack type            | Mitigation     | Match on    |
 | :--------------------- | :------------- | :---------- |
-| syn_flood              | rate-limit     | tcp option (syn) protocol, destination port, tcp flags, size, (ttl would be nice but [is still in draft](https://tools.ietf.org/id/draft-ietf-idr-bgp-flowspec-label-00.txt), and ignore source  |
+| syn_flood              | rate-limit     | tcp option (syn) protocol, destination port, tcp flags, size, (ttl would be nice but [is still in draft](https://tools.ietf.org/id/draft-ietf-idr-bgp-flowspec-label-00.txt)), and source any  |
 | udp_flood              | rate-limit     | protocol and destination host and port  |
 | icmp flood             | discard        | protocol and destination  |
 | ip_fragmentation_flood | rate-limit     | protocol and destination  |
@@ -85,5 +87,4 @@ for UPnP discovery. The same goes for TCP / UDP port 1 - 19.
 SNMP does to my best understanding not pass the boundaries of a company
 network, even not protocol version 3. And sacrificing monitoring data for
 the sake of the network is fine with me.
-
 

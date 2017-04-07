@@ -813,7 +813,11 @@ sub processnewrules()
 		my @lines = $file->lines_utf8;
 		for my $line (@lines)
 		{
-			# print "--->$line\n";
+			next if ($line =~ /head;/);
+			next if ($line =~ /last-line/);
+			
+			my ($customernetworkid,$uuid,$blocktime,$dst,$src,$protocol,$sport,$dport,$sport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $line);
+			print "${protocol}/${flags} $dst:$dport $length bytes from $src in $blocktime min\n";
 		}
 
 		if ($file_finished_ok eq 1)

@@ -186,7 +186,10 @@ The format is
 	type: fnm | ...
 	version: 1 | ...
 	attack_info: icmp_flood | syn_flood | udp_flood | unknown | ...
-	Rules: networkid,uuid,blocktime,date,time,1,2,3,4,5,6,7,8,9,10,11,12
+	Rules:    networkid,uuid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
+	networkid Customer id (int)
+	uuid      Mac address -- identify fastnetmon instance
+	blocktime Minutes
 	Type 1 - Destination Prefix
 	Type 2 - Source Prefix
 	Type 3 - IP Protocol
