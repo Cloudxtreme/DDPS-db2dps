@@ -1,71 +1,378 @@
-11:52:33 (06/04) Begin
-11:52:33 (06/04) called as: ./remote.sh -d -v make
-11:52:33 (06/04) making developer version files ... 
-11:52:33 (06/04) Environment:
-11:52:33 (06/04) git_sha:        '4ab1aafd1337225f37751230269e9f10aefcf9a9'
-11:52:33 (06/04) build_date:     '2017-04-06 11:52'
-11:52:33 (06/04) TARGETHOST:     'rnd@ddps.deic.dk'
-11:52:33 (06/04) UPLOADDIR:      '/opt/db2dps/src/'
-11:52:33 (06/04) EXCLUDE_FILE:   'rsync_exclude.txt'
-11:52:33 (06/04) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-11:52:33 (06/04) RRSYNC:         '/usr/bin/rsync'
-11:52:33 (06/04) LRSYNC:         '/usr/bin/rsync'
-11:52:33 (06/04) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
-11:52:33 (06/04) SSH_ARGS:       '-Tq -o LogLevel=error'
-11:52:33 (06/04) SSH:            '/usr/bin/ssh'
-11:52:33 (06/04) SRCDIR:         '.'
-11:52:33 (06/04) PROJDIR:        '../../DDPS-db2dps'
-11:52:33 (06/04) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
-11:52:33 (06/04) rsync files to rnd@ddps.deic.dk ... 
-11:52:33 (06/04) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
-11:52:33 (06/04) building file list ... done
-11:52:33 (06/04) ./
-11:52:33 (06/04) .source_info
-11:52:33 (06/04) .version
-11:52:33 (06/04) db2dps.pl
-11:52:33 (06/04) version.c
-11:52:33 (06/04) version.h
-11:52:33 (06/04) version.pm
+10:14:06 (07/04) Begin
+10:14:06 (07/04) called as: ./remote.sh -d -v make
+10:14:07 (07/04) making developer version files ... 
+10:14:07 (07/04) Environment:
+10:14:07 (07/04) git_sha:        'ba798953779c7ddd7c01d2d48320703b6fe005a2'
+10:14:07 (07/04) build_date:     '2017-04-07 10:14'
+10:14:07 (07/04) TARGETHOST:     'rnd@ddps.deic.dk'
+10:14:07 (07/04) UPLOADDIR:      '/opt/db2dps/src/'
+10:14:07 (07/04) EXCLUDE_FILE:   'rsync_exclude.txt'
+10:14:07 (07/04) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
+10:14:07 (07/04) RRSYNC:         '/usr/bin/rsync'
+10:14:07 (07/04) LRSYNC:         '/usr/bin/rsync'
+10:14:07 (07/04) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
+10:14:07 (07/04) SSH_ARGS:       '-Tq -o LogLevel=error'
+10:14:07 (07/04) SSH:            '/usr/bin/ssh'
+10:14:07 (07/04) SRCDIR:         '.'
+10:14:07 (07/04) PROJDIR:        '../../DDPS-db2dps'
+10:14:07 (07/04) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
+10:14:07 (07/04) rsync files to rnd@ddps.deic.dk ... 
+10:14:07 (07/04) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
+10:14:07 (07/04) building file list ... done
+10:14:07 (07/04) ./
+10:14:07 (07/04) .source_info
+10:14:07 (07/04) .version
+10:14:07 (07/04) version.c
+10:14:07 (07/04) version.h
+10:14:07 (07/04) version.pm
 
-11:52:33 (06/04) sent 7468 bytes  received 422 bytes  15780.00 bytes/sec
-11:52:33 (06/04) total size is 8006414  speedup is 1014.75
-11:52:33 (06/04) exec 'make  ' on rnd@ddps.deic.dk ... 
-11:52:33 (06/04) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-72-generic x86_64)
+10:14:07 (07/04) sent 7215 bytes  received 178 bytes  14786.00 bytes/sec
+10:14:07 (07/04) total size is 8006678  speedup is 1083.01
+10:14:07 (07/04) exec 'make  ' on rnd@ddps.deic.dk ... 
+10:14:07 (07/04) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-72-generic x86_64)
 
-11:52:33 (06/04) * Documentation:  https://help.ubuntu.com
-11:52:33 (06/04) * Management:     https://landscape.canonical.com
-11:52:33 (06/04) * Support:        https://ubuntu.com/advantage
+10:14:07 (07/04) * Documentation:  https://help.ubuntu.com
+10:14:07 (07/04) * Management:     https://landscape.canonical.com
+10:14:07 (07/04) * Support:        https://ubuntu.com/advantage
 
-11:52:33 (06/04) 0 packages can be updated.
-11:52:33 (06/04) 0 updates are security updates.
+10:14:07 (07/04) 0 packages can be updated.
+10:14:07 (07/04) 0 updates are security updates.
 
 
-11:52:33 (06/04) /opt/db2dps/src
-11:52:33 (06/04) chmod 555 /opt/db2dps/src/install-sh /opt/db2dps/src/srctoman
-11:52:33 (06/04) rm -f db2dps
-11:52:33 (06/04) ./db2dps -V
-11:52:33 (06/04) version:       1.0-10
-11:52:33 (06/04) build date:    2017-04-06 11:52
-11:52:33 (06/04) build_git_sha: 4ab1aafd1337225f37751230269e9f10aefcf9a9
-11:52:33 (06/04) inicfg:        /opt/db2dps/etc/db.ini
-11:52:33 (06/04) sleeptime:     10
-11:52:33 (06/04) This version only handles IPv4 by design
-11:52:33 (06/04) sudo ./db2dps -s 2 -v
-11:52:33 (06/04) 11:52:33 (2017/04/06): verbose		= 1
-11:52:33 (06/04) 11:52:33 (2017/04/06): daemonize	= 0
-11:52:33 (06/04) 11:52:33 (2017/04/06): sleeptime	= 2
-11:52:33 (06/04) 11:52:33 (2017/04/06): database	= netflow
-11:52:33 (06/04) 11:52:33 (2017/04/06): dbadmin		= dbadmin
-11:52:33 (06/04) 11:52:33 (2017/04/06): database connected successfully
-11:52:33 (06/04) 11:52:33 (2017/04/06): All allowed destination networks:  95.128.24.0/21, 130.225.0.0/16, 130.226.0.0/16, 185.1.57.0/24, 192.38.0.0/17
-11:52:33 (06/04) 11:52:33 (2017/04/06): starting main loop
-11:52:33 (06/04) 11:52:33 (2017/04/06): check for new rules in '/home/sftpgroup/newrules/upload' ...
-11:52:33 (06/04) 11:52:33 (2017/04/06): found 2 files in '/home/sftpgroup/newrules/upload'
-11:52:33 (06/04) 11:52:33 (2017/04/06): from head: type=fnm ver=1, attack_info=syn_flood) tail=last-line
+10:14:07 (07/04) /opt/db2dps/src
+10:14:07 (07/04) chmod 555 /opt/db2dps/src/install-sh /opt/db2dps/src/srctoman
+10:14:07 (07/04) rm -f db2dps
+10:14:07 (07/04) ./db2dps -V
+10:14:07 (07/04) version:       1.0-10
+10:14:07 (07/04) build date:    2017-04-07 10:14
+10:14:07 (07/04) build_git_sha: ba798953779c7ddd7c01d2d48320703b6fe005a2
+10:14:07 (07/04) inicfg:        /opt/db2dps/etc/db.ini
+10:14:07 (07/04) sleeptime:     10
+10:14:07 (07/04) This version only handles IPv4 by design
+10:14:07 (07/04) "my" variable $sport masks earlier declaration in same statement at ./db2dps line 821.
+10:14:07 (07/04) sudo ./db2dps -s 2 -v
+10:14:07 (07/04) "my" variable $sport masks earlier declaration in same statement at ./db2dps line 821.
+10:14:07 (07/04) 10:14:08 (2017/04/07): verbose		= 1
+10:14:07 (07/04) 10:14:08 (2017/04/07): daemonize	= 0
+10:14:07 (07/04) 10:14:08 (2017/04/07): sleeptime	= 2
+10:14:07 (07/04) 10:14:08 (2017/04/07): database	= netflow
+10:14:07 (07/04) 10:14:08 (2017/04/07): dbadmin		= dbadmin
+10:14:07 (07/04) 10:14:08 (2017/04/07): database connected successfully
+10:14:07 (07/04) 10:14:08 (2017/04/07): All allowed destination networks:  95.128.24.0/21, 130.225.0.0/16, 130.226.0.0/16, 185.1.57.0/24, 192.38.0.0/17
+10:14:07 (07/04) 10:14:08 (2017/04/07): starting main loop
+10:14:07 (07/04) 10:14:08 (2017/04/07): check for new rules in '/home/sftpgroup/newrules/upload' ...
+10:14:07 (07/04) 10:14:08 (2017/04/07): found 4 files in '/home/sftpgroup/newrules/upload'
+10:14:07 (07/04) 10:14:08 (2017/04/07): from head: type=head ver=fnm, attack_info=1) tail=last-line
 
-11:52:33 (06/04) 11:52:33 (2017/04/06): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491300849-bgecw3fi.dat ok
-11:52:33 (06/04) 11:52:33 (2017/04/06): from head: type=fnm ver=1, attack_info=syn_flood) tail=last-line
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.141.26.81 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 161.185.77.224 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.78.187.52 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 55.107.221.218 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.5.55.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 185.143.140.238 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.154.208.141 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 213.215.143.201 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 116.71.139.117 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 91.182.88.86 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.101.119.150 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 21.30.184.209 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 64.142.81.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 11.147.190.195 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 209.150.7.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 60.40.190.183 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 73.194.122.7 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.38.143.184 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 85.37.211.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 26.202.234.213 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 0.106.111.88 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.223.115.248 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 21.190.234.97 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 23.221.224.251 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 150.154.36.58 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.81.46.248 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.217.218.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 195.38.145.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 211.142.134.195 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 22.241.65.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 28.26.234.224 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 238.82.3.202 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 190.190.126.247 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 177.239.58.161 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 42.149.9.48 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 246.67.202.96 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 250.74.190.12 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 191.139.70.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 217.55.194.120 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.117.230.211 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 248.250.184.13 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 106.216.38.7 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 8.246.233.85 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 3.134.42.182 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 245.67.53.89 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 122.69.167.215 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 144.66.183.134 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.43.84.226 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.65.57.96 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 82.88.116.126 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.85.81.139 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.149.65.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 96.85.101.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 5.7.58.115 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 9.115.191.15 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 125.121.150.72 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 55.213.189.53 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 133.65.0.21 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 239.190.36.129 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 203.194.142.43 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 58.202.149.133 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 223.116.247.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 190.115.53.9 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 117.43.214.26 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 11.222.27.182 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.246.209.95 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 48.11.138.117 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 139.133.103.134 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 201.191.101.53 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 246.182.147.144 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 38.103.245.215 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 167.86.26.241 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.85.64.153 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 24.162.97.74 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 70.58.213.141 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 106.126.182.125 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 102.86.144.107 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 185.248.150.115 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 241.87.185.58 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 224.126.154.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 224.116.190.222 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 84.167.195.231 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 139.221.95.122 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 155.122.155.191 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 144.248.106.81 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 100.142.183.15 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 86.23.3.90 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 143.255.224.146 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 100.167.126.9 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.3.103.201 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 172.138.26.183 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.65.43.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 214.7.194.167 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 141.103.150.168 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 138.68.53.133 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 115.142.87.202 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 221.248.217.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 89.224.215.55 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 38.65.168.149 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 22.209.249.183 in 10 min
+10:14:07 (07/04) 10:14:08 (2017/04/07): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491300849-bgecw3fi.dat ok
+10:14:07 (07/04) 10:14:08 (2017/04/07): from head: type=head ver=fnm, attack_info=1) tail=last-line
 
-11:52:33 (06/04) 11:52:33 (2017/04/06): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491315372-csjezurb.dat ok
-11:52:33 (06/04) 11:52:33 (2017/04/06): Exit in file ./db2dps , line: 834 . Done
-11:52:33 (06/04) done
+10:14:07 (07/04) 10:14:08 (2017/04/07): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491481572-6oczl32e.dat ok
+10:14:07 (07/04) 10:14:08 (2017/04/07): from head: type=head ver=fnm, attack_info=1) tail=last-line
+
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.141.26.81 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 161.185.77.224 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.78.187.52 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 55.107.221.218 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.5.55.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 185.143.140.238 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.154.208.141 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 213.215.143.201 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 116.71.139.117 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 91.182.88.86 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.101.119.150 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 21.30.184.209 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 64.142.81.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 11.147.190.195 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 209.150.7.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 60.40.190.183 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 73.194.122.7 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.38.143.184 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 85.37.211.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 26.202.234.213 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 0.106.111.88 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.223.115.248 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 21.190.234.97 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 23.221.224.251 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 150.154.36.58 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.81.46.248 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.217.218.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 195.38.145.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 211.142.134.195 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 22.241.65.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 28.26.234.224 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 238.82.3.202 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 190.190.126.247 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 177.239.58.161 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 42.149.9.48 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 246.67.202.96 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 250.74.190.12 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 191.139.70.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 217.55.194.120 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.117.230.211 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 248.250.184.13 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 106.216.38.7 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 8.246.233.85 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 3.134.42.182 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 245.67.53.89 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 122.69.167.215 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 144.66.183.134 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.43.84.226 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.65.57.96 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 82.88.116.126 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.85.81.139 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.149.65.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 96.85.101.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 5.7.58.115 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 9.115.191.15 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 125.121.150.72 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 55.213.189.53 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 133.65.0.21 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 239.190.36.129 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 203.194.142.43 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 58.202.149.133 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 223.116.247.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 190.115.53.9 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 117.43.214.26 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 11.222.27.182 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.246.209.95 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 48.11.138.117 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 139.133.103.134 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 201.191.101.53 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 246.182.147.144 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 38.103.245.215 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 167.86.26.241 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.85.64.153 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 24.162.97.74 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 70.58.213.141 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 106.126.182.125 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 102.86.144.107 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 185.248.150.115 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 241.87.185.58 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 224.126.154.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 224.116.190.222 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 84.167.195.231 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 139.221.95.122 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 155.122.155.191 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 144.248.106.81 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 100.142.183.15 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 86.23.3.90 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 143.255.224.146 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 100.167.126.9 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.3.103.201 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 172.138.26.183 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.65.43.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 214.7.194.167 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 141.103.150.168 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 138.68.53.133 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 115.142.87.202 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 221.248.217.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 89.224.215.55 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 38.65.168.149 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 22.209.249.183 in 10 min
+10:14:07 (07/04) 10:14:08 (2017/04/07): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491315372-csjezurb.dat ok
+10:14:07 (07/04) 10:14:08 (2017/04/07): from head: type=head ver=fnm, attack_info=1) tail=last-line
+
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.141.26.81 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 161.185.77.224 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.78.187.52 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 55.107.221.218 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.5.55.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 185.143.140.238 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.154.208.141 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 213.215.143.201 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 116.71.139.117 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 91.182.88.86 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.101.119.150 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 21.30.184.209 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 64.142.81.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 11.147.190.195 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 209.150.7.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 60.40.190.183 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 73.194.122.7 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.38.143.184 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 85.37.211.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 26.202.234.213 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 0.106.111.88 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.223.115.248 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 21.190.234.97 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 23.221.224.251 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 150.154.36.58 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.81.46.248 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.217.218.65 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 195.38.145.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 211.142.134.195 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 22.241.65.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 28.26.234.224 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 238.82.3.202 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 190.190.126.247 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 177.239.58.161 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 42.149.9.48 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 246.67.202.96 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 250.74.190.12 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 191.139.70.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 217.55.194.120 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.117.230.211 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 248.250.184.13 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 106.216.38.7 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 8.246.233.85 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 3.134.42.182 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 245.67.53.89 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 122.69.167.215 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 144.66.183.134 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.43.84.226 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 65.65.57.96 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 82.88.116.126 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.85.81.139 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 66.149.65.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 96.85.101.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 5.7.58.115 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 9.115.191.15 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 125.121.150.72 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 55.213.189.53 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 133.65.0.21 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 239.190.36.129 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 203.194.142.43 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 58.202.149.133 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 223.116.247.0 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 190.115.53.9 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 117.43.214.26 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 11.222.27.182 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.246.209.95 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 48.11.138.117 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 139.133.103.134 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 201.191.101.53 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 246.182.147.144 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 38.103.245.215 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 167.86.26.241 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 249.85.64.153 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 24.162.97.74 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 70.58.213.141 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 106.126.182.125 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 102.86.144.107 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 185.248.150.115 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 241.87.185.58 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 224.126.154.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 224.116.190.222 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 84.167.195.231 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 139.221.95.122 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 155.122.155.191 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 144.248.106.81 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 100.142.183.15 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 86.23.3.90 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 143.255.224.146 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 100.167.126.9 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 53.3.103.201 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 172.138.26.183 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 184.65.43.194 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 214.7.194.167 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 141.103.150.168 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 138.68.53.133 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 115.142.87.202 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 221.248.217.246 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 89.224.215.55 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 38.65.168.149 in 10 min
+10:14:07 (07/04) tcp/syn 130.226.136.242:80 60 bytes from 22.209.249.183 in 10 min
+10:14:07 (07/04) 10:14:08 (2017/04/07): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1491481591-bj0v0k18.dat ok
+10:14:07 (07/04) 10:14:08 (2017/04/07): Exit in file ./db2dps , line: 837 . Done
+10:14:09 (07/04) done

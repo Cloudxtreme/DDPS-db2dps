@@ -25,11 +25,12 @@
 #
 
 date	= `date`
-version	= `git describe --long --dirty --tags --always`
+version	= `git describe --long --dirty --tags --always` `git tag 2>/dev/null | sort -n -t'-' -k2,2 | tail -1 `
 author	= Niels Thomas Haugård
 
 # Default css: black text, blue headers, automatic numbering
 css		= assets/CSS/g.css
+css		= assets/CSS/i2-Book.css
 
 # Syntax highlighting - see https://highlightjs.org
 html_header = <link rel=\"stylesheet\" href=\"assets/CSS/_TYPE_.css\"> <script src=\"assets/CSS/highlight.min.js\"></script> <script>hljs.initHighlightingOnLoad();</script>
