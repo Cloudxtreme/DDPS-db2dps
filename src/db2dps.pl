@@ -454,8 +454,6 @@ EOF
 	logit("bye");
 }
 
-exit 0;
-
 #
 # subs below
 #
@@ -782,7 +780,6 @@ sub processnewrules()
 
 	my @rulefiles = ();
 	my $file_finished_ok_string = "last-line";
-	my $file_finished_ok = 0;
 	my $document;
 	logit("check for new rules in '$newrulesdir' ... ");
 	opendir (DIR, $newrulesdir) or die $!;
@@ -798,47 +795,79 @@ sub processnewrules()
 	foreach my $r (@rulefiles)
 	{
 		my $file_finished_ok_string = "last-line";
-		my $file_finished_ok = 0;
 
 		my $file	= path($newrulesdir . "/" . $r);
 		my $head; my $tail; my $type; my $version; my $attack_info;
 
-		($head) = $file->lines( {count => 1} );
-		($tail)	= $file->lines( {count => -1});
-		($type, $version, $attack_info) = split(';', $head);
+		my $tmp;
+		($head) = $file->lines( {count =>  1}); chomp($head);
+		($tail)	= $file->lines( {count => -1}); chomp($tail);
+
+		($tmp, $type, $version, $attack_info) = split(';', $head);
+		chomp($attack_info);
 
 		# TODO
 		# Use attack fileld -- see db.ini
-		logit( "from head: type=$type ver=$version, attack_info=$attack_info) tail=$tail");
-
-		$file_finished_ok = 1 if ($tail =~ /$file_finished_ok_string/);
-
-		# process rules and add to database
 
 		my @lines = $file->lines_utf8;
-		for my $line (@lines)
-		{
-			next if ($line =~ /head;/);
-			next if ($line =~ /last-line/);
-			
-			my ($customernetworkid,$uuid,$blocktime,$dst,$src,$protocol,$sport,$dport,$sport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $line);
-			print "${protocol}/${flags} $dst:$dport $length bytes from $src in $blocktime min\n";
-		}
+		my ($customernetworkid,$uuid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
 
-		if ($file_finished_ok eq 1)
+		if ($head !~ /head/)						{ logit("$file NOT ok: missing head");						next;}
+		if ($tail !~ /$file_finished_ok_string/)	{ logit("$file NOT ok: missing $file_finished_ok_string");	next;}
+		if ($#lines < 2)							{ logit("$file NOT ok: lines $#lines < 2");					next;}
+
+		logit("$file ok type=$type ver=$version attack_info=$attack_info lines=$#lines");
+		# process rules and add to database
+		# remove file
+
+		if ($attack_info =~ /_flood/)
 		{
-			logit("$file ok");
-			# remove file
+			chomp($lines[1]);
+			($customernetworkid,$uuid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
+			logit("insert into ... dest:$dst proto:$protocol port:$dport length:$length frag:$frag");
 		}
 		else
 		{
-			logit("$file NOT ok");
+			# loop all lines bla bla bla
 		}
-	}
 
+		# TODO:
+		# administratorid is int (e.g. 2) and linked to customernetworkid (e.g. 1), so the rulefile should also contain the
+		# administratorid, and the administratorid should be created in advance in the database. The same goes for
+		# fastnetmoninstanceid ('$uuid'), which also has to be created in advance
+
+		$sql_query = << "END_OF_QUERY"; 
+insert into flow.flowspecrules
+(
+	flowspecruleid, customernetworkid, rule_name,
+	administratorid,
+	direction, validfrom, validto,
+	fastnetmoninstanceid,
+	isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
+	icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding
+)
+values
+(
+	(select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '$customernetworkid', '$uuid',
+	2,
+	'in', now(), now()+interval '$blocktime minutes',
+	1,
+	false, false, '$dst', '$src', '$protocol', '$dport', '$dport', '$sport',
+	'$icmp_type', '$icmp_code', '$flags', '$length', '$dscp', '$frag'
+);
+END_OF_QUERY
+
+		#TODO change '2' and '1' !!!
+
+		#print "$sql_query\n";
+
+		#$sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
+		#$sth->execute($sql_query)			or logit("Failed to execute statement: $dbh->errstr");
+
+	}
 	# remove all files in @rulefiles
 	logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done");
-	exit 0;
+	exit 0;	# exit on debug
 }
 
 

@@ -40,7 +40,20 @@ foreach my $type (@types)
 
 	$sourceprefix		= "10.0.0.0/24";
 	$destinationprefix	= "10.0.0.1/24";
-	$destinationport	= "22,80,443";
+
+	# exabgp 4.0 (experimental) uses json, example on https://github.com/pavel-odintsov/fastnetmon/wiki/BGP-Flow-Spec-as-JSON
+	# we uses 3.x so this is a grusome hack -- and on exabgp 3 the syntax may change ...
+	# seems to work, either:
+	# port,port,port, port < something, port > something
+	# or
+	# port - range
+
+	$destinationport	= "=22 =80 =443";	# ok
+	$destinationport	= "=0-19";			# ok but do not mix
+	$destinationport	= "<19";			# ok
+	$destinationport	= "<19 >1024";		# ok
+	$destinationport	= "<19 =22 >1024";	# ok
+
 	$ipprotocol			= "tcp";
 	#$ipprotocol			= "udp";
 	#$ipprotocol			= "icmp";
@@ -53,7 +66,7 @@ foreach my $type (@types)
 	$fragmentencoding	= "";
 
 	# packet‐length <packet‐length‐expression>;
-	$packetlength		= "117";
+	$packetlength		= "=64 =117";
 
 	$action				= "rate-limit 9600";
 	$action				= "discard";
