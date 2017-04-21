@@ -810,7 +810,7 @@ sub processnewrules()
 		# Use attack fileld -- see db.ini
 
 		my @lines = $file->lines_utf8;
-		my ($customernetworkid,$uuid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
+		my ($customernetworkid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
 
 		if ($head !~ /head/)						{ logit("$file NOT ok: missing head");						next;}
 		if ($tail !~ /$file_finished_ok_string/)	{ logit("$file NOT ok: missing $file_finished_ok_string");	next;}
@@ -823,18 +823,13 @@ sub processnewrules()
 		if ($attack_info =~ /_flood/)
 		{
 			chomp($lines[1]);
-			($customernetworkid,$uuid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
-			logit("insert into ... dest:$dst proto:$protocol port:$dport length:$length frag:$frag");
+			($customernetworkid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
+			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag");
 		}
 		else
 		{
 			# loop all lines bla bla bla
 		}
-
-		# TODO:
-		# administratorid is int (e.g. 2) and linked to customernetworkid (e.g. 1), so the rulefile should also contain the
-		# administratorid, and the administratorid should be created in advance in the database. The same goes for
-		# fastnetmoninstanceid ('$uuid'), which also has to be created in advance
 
 		$sql_query = << "END_OF_QUERY"; 
 insert into flow.flowspecrules
@@ -849,17 +844,15 @@ insert into flow.flowspecrules
 values
 (
 	(select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '$customernetworkid', '$uuid',
-	2,
+	$administratorid,
 	'in', now(), now()+interval '$blocktime minutes',
-	1,
+	$fastnetmoninstanceid,
 	false, false, '$dst', '$src', '$protocol', '$dport', '$dport', '$sport',
 	'$icmp_type', '$icmp_code', '$flags', '$length', '$dscp', '$frag'
 );
 END_OF_QUERY
 
-		#TODO change '2' and '1' !!!
-
-		#print "$sql_query\n";
+		print "$sql_query\n";
 
 		#$sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
 		#$sth->execute($sql_query)			or logit("Failed to execute statement: $dbh->errstr");

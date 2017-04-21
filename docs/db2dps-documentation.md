@@ -183,12 +183,14 @@ to avoid processing incomplete files:
 The format is
 
 	Rule header: type;vesion;attack_info;
-	type: fnm | ...
-	version: 1 | ...
+	type: fnm 	| ...
+	version: 1	| ...
 	attack_info: icmp_flood | syn_flood | udp_flood | unknown | ...
-	Rules:    networkid,uuid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
-	networkid Customer id (int)
-	uuid      Mac address -- identify fastnetmon instance
+	Rules: customernetworkid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
+	customernetworkid:		Customer id (int)
+	uuid      				Mac address -- identify fastnetmon instance
+	fastnetmoninstanceid	Customers fastnetmon # (int)
+	administratorid			Administrator id (int)
 	blocktime Minutes
 	Type 1 - Destination Prefix
 	Type 2 - Source Prefix
@@ -205,10 +207,21 @@ The format is
 
 Example:
 
-	fnm;1;syn_flood;
-	0;00:25:90:47:2b:48;10;130.226.136.242;66.141.26.81;tcp;14372;80;14372;0;0;syn;60;63;0;0
-	0;00:25:90:47:2b:48;10;130.226.136.242;161.185.77.224;tcp;14374;80;14374;0;0;syn;60;63;0;0
+	head;fnm;1;syn_flood
+	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;66.141.26.81;tcp;14372;80;80;null;null;syn;60;63;null;0
+	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;161.185.77.224;tcp;14374;80;80;null;null;syn;60;63;null;0
 	last-line
+
+Some fields are read by ``fnm2db`` from its configuration file. The configuration file is written based
+on information from the database:
+
+  - **customernetworkid**: ``int`` describing the customer
+  - **fastnetmoninstanceid**: ``int`` describing the customers fastnetmon which triggered the rule
+  - **administratorid**: ``int`` describing the (pseudo) administrator which created the rule. The administrator
+    cannot log in, but the database requires all rule to be made by someone.
+
+The design opens up for other kind of rule creators, e.g. [Cisco Netflow](https://en.wikipedia.org/wiki/NetFlow)
+which is evaluated by CERT.
 
 ### Rule creation
 

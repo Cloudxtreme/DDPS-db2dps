@@ -1,64 +1,119 @@
-16:57:16 (20/04) Begin
-16:57:16 (20/04) called as: ./remote.sh -v make
-16:57:16 (20/04) Environment:
-16:57:16 (20/04) git_sha:        '672f0c5edcb329d924685a41511851f4b3927a5a'
-16:57:16 (20/04) build_date:     '2017-04-20 16:57'
-16:57:16 (20/04) TARGETHOST:     'rnd@ddps.deic.dk'
-16:57:16 (20/04) UPLOADDIR:      '/opt/db2dps/src/'
-16:57:16 (20/04) EXCLUDE_FILE:   'rsync_exclude.txt'
-16:57:16 (20/04) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-16:57:16 (20/04) RRSYNC:         '/usr/bin/rsync'
-16:57:16 (20/04) LRSYNC:         '/usr/bin/rsync'
-16:57:16 (20/04) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
-16:57:16 (20/04) SSH_ARGS:       '-Tq -o LogLevel=error'
-16:57:16 (20/04) SSH:            '/usr/bin/ssh'
-16:57:16 (20/04) SRCDIR:         '.'
-16:57:16 (20/04) PROJDIR:        '../../DDPS-db2dps'
-16:57:16 (20/04) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
-16:57:16 (20/04) rsync files to rnd@ddps.deic.dk ... 
-16:57:16 (20/04) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
-16:57:16 (20/04) building file list ... done
-16:57:16 (20/04) ./
-16:57:16 (20/04) .source_info
-16:57:16 (20/04) db2dps.pl
+16:38:11 (21/04) Begin
+16:38:11 (21/04) called as: ./remote.sh -v make
+16:38:11 (21/04) Environment:
+16:38:11 (21/04) git_sha:        'ecfe87db15d8d5f7aeff60c034893d75bd5ec3e6'
+16:38:11 (21/04) build_date:     '2017-04-21 16:38'
+16:38:11 (21/04) TARGETHOST:     'rnd@ddps.deic.dk'
+16:38:11 (21/04) UPLOADDIR:      '/opt/db2dps/src/'
+16:38:11 (21/04) EXCLUDE_FILE:   'rsync_exclude.txt'
+16:38:11 (21/04) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
+16:38:11 (21/04) RRSYNC:         '/usr/bin/rsync'
+16:38:11 (21/04) LRSYNC:         '/usr/bin/rsync'
+16:38:11 (21/04) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
+16:38:11 (21/04) SSH_ARGS:       '-Tq -o LogLevel=error'
+16:38:11 (21/04) SSH:            '/usr/bin/ssh'
+16:38:11 (21/04) SRCDIR:         '.'
+16:38:11 (21/04) PROJDIR:        '../../DDPS-db2dps'
+16:38:11 (21/04) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
+16:38:11 (21/04) rsync files to rnd@ddps.deic.dk ... 
+16:38:11 (21/04) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
+16:38:11 (21/04) building file list ... done
+16:38:11 (21/04) ./
+16:38:11 (21/04) .source_info
+16:38:11 (21/04) db2dps.pl
 
-16:57:16 (20/04) sent 6931 bytes  received 322 bytes  14506.00 bytes/sec
-16:57:16 (20/04) total size is 8011146  speedup is 1104.53
-16:57:16 (20/04) exec 'make  ' on rnd@ddps.deic.dk ... 
-16:57:16 (20/04) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-72-generic x86_64)
+16:38:11 (21/04) sent 6933 bytes  received 328 bytes  4840.67 bytes/sec
+16:38:11 (21/04) total size is 8018691  speedup is 1104.35
+16:38:12 (21/04) exec 'make  ' on rnd@ddps.deic.dk ... 
+16:38:12 (21/04) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-72-generic x86_64)
 
-16:57:16 (20/04) * Documentation:  https://help.ubuntu.com
-16:57:16 (20/04) * Management:     https://landscape.canonical.com
-16:57:16 (20/04) * Support:        https://ubuntu.com/advantage
+16:38:12 (21/04) * Documentation:  https://help.ubuntu.com
+16:38:12 (21/04) * Management:     https://landscape.canonical.com
+16:38:12 (21/04) * Support:        https://ubuntu.com/advantage
 
-16:57:16 (20/04) 0 packages can be updated.
-16:57:16 (20/04) 0 updates are security updates.
+16:38:12 (21/04) 1 package can be updated.
+16:38:12 (21/04) 0 updates are security updates.
 
 
-16:57:16 (20/04) /opt/db2dps/src
-16:57:16 (20/04) make: Warning: File 'db2dps.pl' has modification time 6.5 s in the future
-16:57:16 (20/04) version:       1.0-10
-16:57:16 (20/04) build date:    2017-04-07 10:14
-16:57:16 (20/04) build_git_sha: ba798953779c7ddd7c01d2d48320703b6fe005a2
-16:57:16 (20/04) inicfg:        /opt/db2dps/etc/db.ini
-16:57:16 (20/04) sleeptime:     10
-16:57:16 (20/04) This version only handles IPv4 by design
-16:57:16 (20/04) 16:57:07 (2017/04/20): verbose		= 1
-16:57:16 (20/04) 16:57:07 (2017/04/20): daemonize	= 0
-16:57:16 (20/04) 16:57:07 (2017/04/20): sleeptime	= 2
-16:57:16 (20/04) 16:57:07 (2017/04/20): database	= netflow
-16:57:16 (20/04) 16:57:07 (2017/04/20): dbadmin		= dbadmin
-16:57:16 (20/04) 16:57:07 (2017/04/20): database connected successfully
-16:57:16 (20/04) 16:57:07 (2017/04/20): All allowed destination networks:  95.128.24.0/21, 130.225.0.0/16, 130.226.0.0/16, 185.1.57.0/24, 192.38.0.0/17
-16:57:16 (20/04) 16:57:07 (2017/04/20): starting main loop
-16:57:16 (20/04) 16:57:07 (2017/04/20): check for new rules in '/home/sftpgroup/newrules/upload' ...
-16:57:16 (20/04) 16:57:07 (2017/04/20): found 3 files in '/home/sftpgroup/newrules/upload'
-16:57:16 (20/04) 16:57:07 (2017/04/20): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1492614992-u4qi3iea.dat ok type=fnm ver=1 attack_info=syn_flood lines=101
-16:57:16 (20/04) 16:57:07 (2017/04/20): insert into ... dest:130.226.136.242 proto:tcp port:80 length:60 frag:0
-16:57:16 (20/04) 16:57:08 (2017/04/20): /home/sftpgroup/newrules/upload/newrumake: warning:  Clock skew detected.  Your build may be incomplete.
-16:57:16 (20/04) les-00:25:90:47:2b:48-1492614997-htwfexon.dat ok type=fnm ver=1 attack_info=icmp_flood lines=100001
-16:57:16 (20/04) 16:57:08 (2017/04/20): insert into ... dest:130.226.136.242 proto:icmp port:0 length:60 frag:0
-16:57:16 (20/04) 16:57:08 (2017/04/20): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1492614989-8anlkki5.dat ok type=fnm ver=1 attack_info=udp_flood lines=62519
-16:57:16 (20/04) 16:57:08 (2017/04/20): insert into ... dest:130.226.136.242 proto:udp port:0 length:60 frag:0
-16:57:16 (20/04) 16:57:08 (2017/04/20): Exit in file ./db2dps , line: 868 . Done
-16:57:18 (20/04) done
+16:38:12 (21/04) /opt/db2dps/src
+16:38:12 (21/04) version:       1.0-10
+16:38:12 (21/04) build date:    2017-04-07 10:14
+16:38:12 (21/04) build_git_sha: ba798953779c7ddd7c01d2d48320703b6fe005a2
+16:38:12 (21/04) inicfg:        /opt/db2dps/etc/db.ini
+16:38:12 (21/04) sleeptime:     10
+16:38:12 (21/04) This version only handles IPv4 by design
+16:38:12 (21/04) 16:38:00 (2017/04/21): verbose		= 1
+16:38:12 (21/04) 16:38:00 (2017/04/21): daemonize	= 0
+16:38:12 (21/04) 16:38:00 (2017/04/21): sleeptime	= 2
+16:38:12 (21/04) 16:38:00 (2017/04/21): database	= netflow
+16:38:12 (21/04) 16:38:00 (2017/04/21): dbadmin		= dbadmin
+16:38:12 (21/04) 16:38:00 (2017/04/21): database connected successfully
+16:38:12 (21/04) 16:38:00 (2017/04/21): All allowed destination networks:  95.128.24.0/21, 130.225.0.0/16, 130.226.0.0/16, 185.1.57.0/24, 192.38.0.0/17
+16:38:12 (21/04) 16:38:00 (2017/04/21): starting main loop
+16:38:12 (21/04) 16:38:00 (2017/04/21): check for new rules in '/home/sftpgroup/newrules/upload' ...
+16:38:12 (21/04) 16:38:00 (2017/04/21): found 3 files in '/home/sftpgroup/newrules/upload'
+16:38:12 (21/04) 16:38:01 (2017/04/21): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1492784799-wluvfg9o.dat ok type=fnm ver=1 attack_info=icmp_flood lines=100001
+16:38:12 (21/04) 16:38:01 (2017/04/21): insert into ... 00:25:90:47:2b:48/1|42 dest:130.226.136.242 proto:icmp port:0 length:60 frag:0
+16:38:12 (21/04) insert into flow.flowspecrules
+16:38:12 (21/04) (
+16:38:12 (21/04) flowspecruleid, customernetworkid, rule_name,
+16:38:12 (21/04) administratorid,
+16:38:12 (21/04) direction, validfrom, validto,
+16:38:12 (21/04) fastnetmoninstanceid,
+16:38:12 (21/04) isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
+16:38:12 (21/04) icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding
+16:38:12 (21/04) )
+16:38:12 (21/04) values
+16:38:12 (21/04) (
+16:38:12 (21/04) (select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '0', '00:25:90:47:2b:48',
+16:38:12 (21/04) 42,
+16:38:12 (21/04) 'in', now(), now()+interval '10 minutes',
+16:38:12 (21/04) 1,
+16:38:12 (21/04) false, false, '130.226.136.242', '60.28.184.234', 'icmp', '0', '0', '0',
+16:38:12 (21/04) 'null', 'null', 'null', '60', 'null', '0'
+16:38:12 (21/04) );
+
+16:38:12 (21/04) 16:38:01 (2017/04/21): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1492784809-nz9rkbyn.dat ok type=fnm ver=1 attack_info=udp_flood lines=62519
+16:38:12 (21/04) 16:38:01 (2017/04/21): insert into ... 00:25:90:47:2b:48/1|42 dest:130.226.136.242 proto:udp port:0 length:60 frag:0
+16:38:12 (21/04) insert into flow.flowspecrules
+16:38:12 (21/04) (
+16:38:12 (21/04) flowspecruleid, customernetworkid, rule_name,
+16:38:12 (21/04) administratorid,
+16:38:12 (21/04) direction, validfrom, validto,
+16:38:12 (21/04) fastnetmoninstanceid,
+16:38:12 (21/04) isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
+16:38:12 (21/04) icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding
+16:38:12 (21/04) )
+16:38:12 (21/04) values
+16:38:12 (21/04) (
+16:38:12 (21/04) (select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '0', '00:25:90:47:2b:48',
+16:38:12 (21/04) 42,
+16:38:12 (21/04) 'in', now(), now()+interval '10 minutes',
+16:38:12 (21/04) 1,
+16:38:12 (21/04) false, false, '130.226.136.242', '216.199.145.111', 'udp', '0', '0', '60690',
+16:38:12 (21/04) 'null', 'null', 'null', '60', 'null', '0'
+16:38:12 (21/04) );
+
+16:38:12 (21/04) 16:38:01 (2017/04/21): /home/sftpgroup/newrules/upload/newrules-00:25:90:47:2b:48-1492784791-3vlbu5jw.dat ok type=fnm ver=1 attack_info=syn_flood lines=101
+16:38:12 (21/04) 16:38:01 (2017/04/21): insert into ... 00:25:90:47:2b:48/1|42 dest:130.226.136.242 proto:tcp port:80 length:60 frag:0
+16:38:12 (21/04) insert into flow.flowspecrules
+16:38:12 (21/04) (
+16:38:12 (21/04) flowspecruleid, customernetworkid, rule_name,
+16:38:12 (21/04) administratorid,
+16:38:12 (21/04) direction, validfrom, validto,
+16:38:12 (21/04) fastnetmoninstanceid,
+16:38:12 (21/04) isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
+16:38:12 (21/04) icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding
+16:38:12 (21/04) )
+16:38:12 (21/04) values
+16:38:12 (21/04) (
+16:38:12 (21/04) (select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '0', '00:25:90:47:2b:48',
+16:38:12 (21/04) 42,
+16:38:12 (21/04) 'in', now(), now()+interval '10 minutes',
+16:38:12 (21/04) 1,
+16:38:12 (21/04) false, false, '130.226.136.242', '66.141.26.81', 'tcp', '80', '80', '14372',
+16:38:12 (21/04) 'null', 'null', 'syn', '60', 'null', '0'
+16:38:12 (21/04) );
+
+16:38:12 (21/04) 16:38:01 (2017/04/21): Exit in file ./db2dps , line: 864 . Done
+16:38:14 (21/04) done
