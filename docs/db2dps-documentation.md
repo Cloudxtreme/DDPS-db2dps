@@ -217,7 +217,7 @@ on information from the database:
 
 
 | Var                       | Size    | Description             |
-| ------------------- ----- | ------- | ----------------------- |
+| ------------------------- | ------- | ----------------------- |
 |**customernetworkid**		| ``int`` | describing the customer |
 |**fastnetmoninstanceid**	| ``int`` | describing the customers fastnetmon which triggered the rule |
 |**administratorid**		| ``int`` | describing the (pseudo) administrator which created the rule. The administrator cannot log in, but the database requires all rule to be made by someone. |
