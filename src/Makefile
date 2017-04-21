@@ -74,7 +74,9 @@ target		= $(BINDIR)/db2dps
 initrc		= $(INITDIR)/$(RC)
 dbini		= $(ETCDIR)/$(PRODINI)
 
-#default:	$(prog)
+default:	$(prog)
+
+# default:	exabgpsyntax
 
 # perl-version - mimic c version: add version information, set mode and print version. Do not install
 $(prog):	hostcheck db2dps.pl version.pm
@@ -83,6 +85,9 @@ $(prog):	hostcheck db2dps.pl version.pm
 			@chmod 555 db2dps
 			./$(prog) -V
 			sudo ./$(prog) -s 2 -v
+
+exabgpsyntax:
+			perl ./test-bgp-rules.pl | ssh rnd@exabgp1 'cat > /var/run/exabgp/exabgp.cmd'
 
 install:	hostcheck $(target) $(initrc) $(dbini) $(sysinit)
 
@@ -224,4 +229,4 @@ md:
 
 .SUFFIXES:
 
-#.SILENT:
+.SILENT:

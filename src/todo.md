@@ -1,5 +1,12 @@
 
-I morgen :
+## Vigtigt
+
+  1. læs rules filer og insæt i database osv
+  2. tilvøj vaidfrom / validto i SQL udtryk og se det virker
+  3. tilføj test-bgp-rules.pl code til den mkrules funktion
+
+
+## Gammelt
 
 fnm2db skal ikke længere aflevere nye regler via et indlejret sql script, men
 i stedet for som et dokument (sftp) se f.eks.

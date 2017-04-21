@@ -5,7 +5,14 @@ This document describes the _installation process_ of _one host_, not the config
 nor the design of the system.
 
 Also, this document describes the installation for the DeiC DPS server: replace users
-and ssh public key's with your own.
+and ssh public key's with your own:
+
+    eport IPV4ADDR=a.b.c.d
+	eport HOSTNAME=ddbs
+
+Default password until changed by developers and administrators is ${PASSWORD} e.g.:
+
+	eport PASSWORD=abcd1234
 
 ## The database host
 
@@ -15,14 +22,7 @@ The system is build on Ubuntu 16.01, postgres, node.js and a number of internal
 developed applications. This procedure covers both the _production_ and _development_
 environment.
 
-Throughout the documentation the following addresses will be used:
-
-  - **hostname**: ddps
-  - **IPv4 address**: 172.16.201.113)
-
-### Document warning
-
-This document contain valid commands: you may copy and paste to your hards desire or
+This document contain valid commands: you may copy and paste to your hearts desire or
 grab all commands at once with (please mind the **tabs**):
 
 	sed '/^	/!d; s/^	//' ddps-database-server-installation.md
@@ -42,32 +42,24 @@ Create DNS for `bgpdb` and install Ubuntu Server 16.01, use all disk space, no
 LVM, static IPv4 address, install only the package `sshd` and do _not_ select
 automatic update.
 
-Create a user - we use `sysadm` - and generate ssh keys for `sysadm` and
-`root`:
+Create an admin user and generate ssh keys for the admin user and `root`:
 
      ssh-keygen -t ED25519
 
-Add required keys to allow for unattended access (backup, administration etc.):
-<!-- html fold -w 76 .... -->
+If you have e.g. automated internal backup, login etc. then add required keys
+to allow for unattended access (backup, administration etc.):
+
+	PUBLIC_KEY="ssh-ed25519 your-public-key-here ....."
 
 	cd /root/.ssh
-	cat << EOF | tr -d '\n' > authorized_keys
-	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFzg7XMQuCJ/nOs4eUN734PsPEbE82xYDS04qx
-	gaC0CotkUK+4hzGUeHawuuIDAtJL6LTS304mYj7MYaFTG/Qx0QK5xopzVriX3WmZtnuDq5d7ddzO
-	IcmpYDYG6lHnEZs/LZhOEultYlEKtzNozDFqUyfuzAFpgv1harC+2YPzxgw0CLZFWz10YOQDo9sp
-	NEQX684Zy4j/0IMa+e8ijPFiGhGItZkRkHDUkf15G9K9F2rnH....
-	....
-	...
-	..
-	.
-	EOF
+	echo ${PUBLIC_KEY} > authorized_keys
 
 Set mode for files and folder:
 
 	chmod 600 *
 	chmod 700 .
 
-Add the following local developed packages from `buh.ssi.i2.dk` will setup
+We have a number of internal developed packages which will setup
 our environment and enforce backup and patch installation:
 
      dpkg -i  cmod_1.1-2.deb              \
@@ -85,25 +77,26 @@ Generate locale if required:
 
 	locale-gen da_DK.UTF-8
 
+If you don't have such packages, you may patch the system with
+
+	apt-get update; apt-get -y upgrade; apt-get -y dist-upgrade; apt-get autoremove
+	reboot
+
 ### Developers
-Add developers / system users, same password (`1qazxsw2`) - please change
+Add developers / system users, same password (`${PASSWORD}`) - please change
 asap and upload ssh keys as password based access will be disabled later:
 
 	(
 	cat << EOF | awk -F';' '
 	{
 		printf( "useradd -m -u %s --group staff -c \"%s\" -d /home/%s/	\
-			-p \"`mkpasswd 1qazxsw2`\" -s /bin/bash %s\nusermod -a	\
+			-p \"`mkpasswd ${PASSWORD}`\" -s /bin/bash %s\nusermod -a	\
 			-G sudo %s\nsudo chage -d 0 %s\n\n", $3, $2,		\
 			tolower($1), tolower($1), tolower($1), tolower($1) );
 		}
 	'
-	nice;Nicolai Ernst;8282
-	uninth;Niels Thomas Haugaard;8281
-	adue;Anders Mundt Due;8227
-	asmo;Ashokaditya Mohanty;1921
-	tangui;Tangui Coulouarn;4217
-	kasm;Kasper Sort;8233
+	dev1;Joe Developer;8888
+	dev2;Jane Developer;9999
 	EOF
 	) | /bin/sh
 
@@ -262,7 +255,7 @@ In ``/etc/postgresql/9.6/main/pg_hba.conf`` add ``local all flowuser password``:
 You may now connect directly to PostgreSQL using port forwarding from 127.0.0.1
 with
 
-	ssh -v -L 5432:127.0.0.1:5432 sysadm@172.16.201.113
+	ssh -v -L 5432:127.0.0.1:5432 sysadm@${IPV4ADDR}
 
 #### Create database and add master data
 
