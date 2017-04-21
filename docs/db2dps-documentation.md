@@ -183,15 +183,15 @@ to avoid processing incomplete files:
 The format is
 
 	Rule header: type;vesion;attack_info;
-	type: fnm 	| ...
-	version: 1	| ...
+	type: fnm    | ...
+	version: 1   | ...
 	attack_info: icmp_flood | syn_flood | udp_flood | unknown | ...
 	Rules: customernetworkid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
-	customernetworkid:		Customer id (int)
-	uuid      				Mac address -- identify fastnetmon instance
-	fastnetmoninstanceid	Customers fastnetmon # (int)
-	administratorid			Administrator id (int)
-	blocktime Minutes
+	customernetworkid:      Customer id (int)
+	uuid:                   Mac address -- identify fastnetmon instance
+	fastnetmoninstanceid:   Customers fastnetmon # (int)
+	administratorid:        Administrator id (int)
+	blocktime:              Minutes
 	Type 1 - Destination Prefix
 	Type 2 - Source Prefix
 	Type 3 - IP Protocol
@@ -215,10 +215,12 @@ Example:
 Some fields are read by ``fnm2db`` from its configuration file. The configuration file is written based
 on information from the database:
 
-  - **customernetworkid**: ``int`` describing the customer
-  - **fastnetmoninstanceid**: ``int`` describing the customers fastnetmon which triggered the rule
-  - **administratorid**: ``int`` describing the (pseudo) administrator which created the rule. The administrator
-    cannot log in, but the database requires all rule to be made by someone.
+
+| Var                       | Size    | Description             |
+| ------------------- ----- | ------- | ----------------------- |
+|**customernetworkid**		| ``int`` | describing the customer |
+|**fastnetmoninstanceid**	| ``int`` | describing the customers fastnetmon which triggered the rule |
+|**administratorid**		| ``int`` | describing the (pseudo) administrator which created the rule. The administrator cannot log in, but the database requires all rule to be made by someone. |
 
 The design opens up for other kind of rule creators, e.g. [Cisco Netflow](https://en.wikipedia.org/wiki/NetFlow)
 which is evaluated by CERT.
