@@ -68,7 +68,7 @@ We have the following values for creating a filter:
 	Type 11 – DSCP
 	Type 12 - Fragment Encoding
 
-Suggestion for rule creation:
+Suggestion for rule creation in version 1.0:
 
 | Attack type            | Mitigation     | Match on    |
 | :--------------------- | :------------- | :---------- |
@@ -88,3 +88,6 @@ SNMP does to my best understanding not pass the boundaries of a company
 network, even not protocol version 3. And sacrificing monitoring data for
 the sake of the network is fine with me.
 
+For an improvement I'd like to filter on source port, destination port and size this way:
+
+  - if (israndomvalues(@size)) ....

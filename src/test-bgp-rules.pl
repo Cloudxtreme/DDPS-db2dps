@@ -48,11 +48,11 @@ foreach my $type (@types)
 	# or
 	# port - range
 
-	$destinationport	= "=22 =80 =443";	# ok
-	$destinationport	= "=0-19";			# ok but do not mix
-	$destinationport	= "<19";			# ok
-	$destinationport	= "<19 >1024";		# ok
-	$destinationport	= "<19 =22 >1024";	# ok
+	$destinationport	= "[ =22 =80 =443 ]";	# ok
+	$destinationport	= "[ =0-19 ]";			# ok but do not mix
+	$destinationport	= "[ <19 ]";			# ok
+	$destinationport	= "[ <19 >1024 ]";		# ok
+	$destinationport	= "[ <19 =22 >1024 ]";	# ok
 
 	$ipprotocol			= "tcp";
 	#$ipprotocol			= "udp";
@@ -116,3 +116,14 @@ foreach my $type (@types)
 	print "$rule\n";
 #	sleep(5);
 }
+
+
+__DATA__
+
+From https://github.com/Exa-Networks/exabgp/blob/master/qa/conf/api-flow.run
+
+announce_flow_1 = 'announce flow route { match { source 10.0.0.2/32; destination 10.0.0.3/32; destination-port =3128; protocol tcp; } then { rate-limit 9600; } }'
+withdraw_flow_1 = 'withdraw flow route { match { source 10.0.0.2/32; destination 10.0.0.3/32; destination-port =3128; protocol tcp; } }'
+announce_flow_2 = 'announce flow route { match { source 10.0.0.1/32; destination 192.168.0.1/32; port [ =80 =8080 ]; destination-port [ >8080&<8088 =3128 ]; source-port >1024; protocol [ udp tcp ]; } then { rate-limit 9600;}}'
+
+

@@ -1,0 +1,12 @@
+
+
+Rules seems to have *customernetworkid* as part of their properties; I think
+this must be an error and it should be replaced by customerid.
+
+When creating automatic rules it doesn't make sence to have one
+customernetworkid (which describes one network) as fastnetmon may protect
+multible networks.
+
+Would a change to the database schema for the rules table brake something else?
+
+

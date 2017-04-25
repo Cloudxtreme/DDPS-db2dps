@@ -9965,7 +9965,7 @@ SELECT pg_catalog.setval('services_id_seq', 9886, true);
 --
 
 ALTER TABLE ONLY services
-    ADD CONSTRAINT services_pkey PRIMARY KEY (id);
+     ADD CONSTRAINT services_pkey PRIMARY KEY (id);
 
 
 --

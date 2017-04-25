@@ -121,7 +121,7 @@ SELECT pg_catalog.setval('icmp_types_id_seq', 42, true);
 --
 
 ALTER TABLE ONLY icmp_types
-    ADD CONSTRAINT icmp_types_pkey PRIMARY KEY (id);
+     ADD CONSTRAINT icmp_types_pkey PRIMARY KEY (id);
 
 
 --
