@@ -3,7 +3,7 @@
 
   1. læs rules filer og insæt i database osv
   2. tilvøj vaidfrom / validto i SQL udtryk og se det virker
-  3. tilføj test-bgp-rules.pl code til den mkrules funktion
+  3. tilføj test-bgp-rules.pl code til mkrules funktionen
 
 
 ## Gammelt

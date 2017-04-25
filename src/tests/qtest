@@ -10,6 +10,36 @@ esac
 
 cat << EOF | su - postgres
 
+cat << YYY  | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
+
+insert into flow.flowspecrules
+(
+	flowspecruleid, customerid, rule_name,
+	administratorid,
+	direction, validfrom, validto,
+	fastnetmoninstanceid,
+	isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
+	icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding
+)
+values
+(
+	(select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '1', '00:25:90:47:2b:48',
+	'42',
+	'in', now(), now()+interval '10 minutes',
+	'1',
+	false, false, '130.226.136.242', '60.28.184.234', 'icmp', '0', '0', '0',
+	null, null, null, '60', null, '0'
+);
+
+
+YYY
+
+EOF
+
+exit 0
+
+cat << EOF | su - postgres
+
 echo 'update flow.flowspecrules set isexpired=true where validto>now();' | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
 echo 'update flow.flowspecrules set isactivated=false where validto<=now();' | psql -t -F' ' -A -U postgres -v ON_ERROR_STOP=1 -w -d netflow
 

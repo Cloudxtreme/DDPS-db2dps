@@ -228,7 +228,7 @@ SELECT pg_catalog.setval('protocols_id_seq', 149, true);
 --
 
 ALTER TABLE ONLY protocols
-    ADD CONSTRAINT protocols_pkey PRIMARY KEY (id);
+     ADD CONSTRAINT protocols_pkey PRIMARY KEY (id);
 
 
 --

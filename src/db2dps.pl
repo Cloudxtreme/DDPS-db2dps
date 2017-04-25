@@ -612,11 +612,11 @@ sub mkrulebase($$)
 			$icmpcode			= $row[9];
 			$tcpflags			= $row[10];
 			$packetlength		= $row[11];
-			$dscp				= $row[13];
-			$fragmentencoding	= $row[14];
+			$dscp				= $row[12];
+			$fragmentencoding	= $row[13];
 			#TODO doesn't work they are empty -- see db.ini for why
-			$validfrom			= $row[15];				# 2017-02-19 23:04:30.682073+01
-			$validto			= $row[16];				# 2017-02-19 23:04:30.682073+01
+			$validfrom			= $row[14];				# 2017-02-19 23:04:30.682073+01
+			$validto			= $row[15];				# 2017-02-19 23:04:30.682073+01
 														# Time::HiRes only have this 
 														# xxxx-xx-xx-xx:xx:xx.xxx
 														# so valid* must be truncated
@@ -807,55 +807,85 @@ sub processnewrules()
 		chomp($attack_info);
 
 		# TODO
-		# Use attack fileld -- see db.ini
+		# Use attack field from ini file
+		# Implementation of mitigation rules (see DDPS-db2dps/docs/best-practise-volumetric-ddos-mitigation.md) below
 
 		my @lines = $file->lines_utf8;
-		my ($customernetworkid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
+		my ($action,$customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
 
 		if ($head !~ /head/)						{ logit("$file NOT ok: missing head");						next;}
 		if ($tail !~ /$file_finished_ok_string/)	{ logit("$file NOT ok: missing $file_finished_ok_string");	next;}
 		if ($#lines < 2)							{ logit("$file NOT ok: lines $#lines < 2");					next;}
 
-		logit("$file ok type=$type ver=$version attack_info=$attack_info lines=$#lines");
-		# process rules and add to database
-		# remove file
+		$action = "discard";	# default action
 
+		logit("$file ok type=$type ver=$version attack_info=$attack_info lines=$#lines");
+
+		# process rules and add to database
 		if ($attack_info =~ /_flood/)
 		{
 			chomp($lines[1]);
-			($customernetworkid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
-			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag");
+			($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
+			$src = "null";
+			if ($attack_info =~ /icmp_flood/)
+			{
+				$action	= "discard";
+				$dport	= "null";
+				$sport	= "null";
+			}
+			if ($attack_info =~ /syn_flood/)
+			{
+				$action	= "rate-limit 9600";
+				$sport	= "null";
+			}
+			if ($attack_info =~ /udp_flood/)
+			{
+				$action	= "rate-limit 9600";
+				$dport	= "null";
+				$sport	= "null";
+			}
+			# if ($attack_info =~ /ip_fragmentation_flood/)
+			# if ($attack_info =~ /DNS amplification/)
+			# if ($attack_info =~ /NTP amplification/)
+			# if ($attack_info =~ /SSDP amplification/)
+			# if ($attack_info =~ /SNMP amplification/)
+			# logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag");
+			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dscp: $dscp port:$dport length:$length frag:$frag action:$action");
 		}
 		else
 		{
 			# loop all lines bla bla bla
 		}
 
+		# quote everything except null and false
 		$sql_query = << "END_OF_QUERY"; 
 insert into flow.flowspecrules
 (
-	flowspecruleid, customernetworkid, rule_name,
+	flowspecruleid, customerid, rule_name,
 	administratorid,
 	direction, validfrom, validto,
 	fastnetmoninstanceid,
 	isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
-	icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding
+	icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding, action
 )
 values
 (
-	(select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '$customernetworkid', '$uuid',
-	$administratorid,
+	(select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '$customerid', '$uuid',
+	'$administratorid',
 	'in', now(), now()+interval '$blocktime minutes',
-	$fastnetmoninstanceid,
-	false, false, '$dst', '$src', '$protocol', '$dport', '$dport', '$sport',
-	'$icmp_type', '$icmp_code', '$flags', '$length', '$dscp', '$frag'
+	'$fastnetmoninstanceid',
+	'false', 'false', '$dst', '$src', '$protocol', '$dport', '$dport', '$sport',
+	'$icmp_type', '$icmp_code', '$flags', '$length', '$dscp', '$frag', '$action'
 );
 END_OF_QUERY
 
-		print "$sql_query\n";
+		$sql_query =~ s/'false'/false/g;
+		$sql_query =~ s/'null'/null/g;
 
-		#$sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
-		#$sth->execute($sql_query)			or logit("Failed to execute statement: $dbh->errstr");
+		#print "$sql_query\n";
+
+		my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
+		$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
 
 	}
 	# remove all files in @rulefiles

@@ -48,9 +48,10 @@ sysinit		= /etc/init.d/db2dps
 
 INSTALL		= $(PREFIX)/src/install-sh
 SRCTOMAN	= $(PREFIX)/src/srctoman
+#
+# required perl modules will be installed by default target (see install_perl_modules)
+pkgs		= libnet-openssh-compat-perl liblist-moreutils-perl libnet-openssh-compat-perl libnet-ssh2-perl libproc-daemon-perl libnetaddr-ip-perl libdbi-perl libdbd-pg-perl libtypes-path-tiny-perl libnetaddr-ip-perl libtypes-path-tiny-perl libnet-sftp-foreign-perl
 
-#GID			= sysadm
-#UID			= sysadm
 GID			= rnd
 UID			= rnd
 
@@ -79,7 +80,7 @@ default:	$(prog)
 # default:	exabgpsyntax
 
 # perl-version - mimic c version: add version information, set mode and print version. Do not install
-$(prog):	hostcheck db2dps.pl version.pm
+$(prog):	hostcheck db2dps.pl version.pm install_perl_modules
 			$(RM) $(prog)
 			@sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  db2dps.pl > db2dps
 			@chmod 555 db2dps
@@ -130,15 +131,18 @@ $(dbini):	$(PRODINI)
 			$(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(PRODINI) $(ETCDIR)
 
 
-#
-# Dependencies
-#
-install-modules:
-	sudo apt-get -y install libnet-openssh-compat-perl liblist-moreutils-perl				\
-					libnet-openssh-compat-perl libnet-ssh2-perl								\
-					libproc-daemon-perl libnetaddr-ip-perl									\
-					libdbi-perl libdbd-pg-perl libtypes-path-tiny-perl						\
-					libnetaddr-ip-perl libtypes-path-tiny-perl	libnet-sftp-foreign-perl
+# Install required perl modules from $(pkgs)
+install_perl_modules:
+	for P in $(pkgs);							\
+	do											\
+		dpkg -s "$$P" >/dev/null 2>&1;			\
+		case $$? in								\
+			0) : 								\
+			;;									\
+			1) sudo apt-get -y install $$P		\
+			;;									\
+		esac									\
+	done
 
 #
 # below are only targets relevant for the c-version

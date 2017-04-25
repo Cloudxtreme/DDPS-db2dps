@@ -13,7 +13,7 @@ VS Code provides two different scopes for settings:
 	"file:///Users/uninth/ownsky/Documents/assets/CSS/i2-Book.css"
 ]
 	"theme": "vs gerane-Theme-Xcodedefault-themes-Xcode_default-tmTheme",
-	"editor.wrappingColumn": 0
+	"editor.wordWrap": 0
 	"files.exclude": {
 		"**/.vscode":   true
 		"**/.obsolite":   true

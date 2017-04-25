@@ -1,6 +1,9 @@
--- Dumped from database version 9.5.5
--- Dumped by pg_dump version 9.5.5
--- Date: Tir  7 Feb 2017 16:13:58 CET
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.5.6
+-- Dumped by pg_dump version 9.5.6
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -328,7 +331,7 @@ ALTER SEQUENCE fastnetmoninstances_fastnetmoninstanceid_seq OWNED BY fastnetmoni
 
 CREATE TABLE flowspecrules (
     flowspecruleid bigint NOT NULL,
-    customernetworkid integer NOT NULL,
+    -- customernetworkid integer NOT NULL,
     rule_name character varying(128),
     administratorid integer NOT NULL,
     direction character varying(3) NOT NULL,
@@ -351,6 +354,7 @@ CREATE TABLE flowspecrules (
     fragmentencoding integer,
     description character varying(256),
     customerid integer DEFAULT 3 NOT NULL,
+    action character varying(255),
     CONSTRAINT flowspecrules_check CHECK ((validto > validfrom)),
     CONSTRAINT flowspecrules_direction_check CHECK (((direction)::text = ANY ((ARRAY['in'::character varying, 'out'::character varying])::text[])))
 );
@@ -946,7 +950,7 @@ ALTER TABLE ONLY flowspecrules
 --
 
 ALTER TABLE ONLY flowspecrules
-    ADD CONSTRAINT flowspecrules_customernetworkid_fkey FOREIGN KEY (customernetworkid) REFERENCES customernetworks(customernetworkid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT customernid_fkey FOREIGN KEY (customerid) REFERENCES customers(customerid) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
