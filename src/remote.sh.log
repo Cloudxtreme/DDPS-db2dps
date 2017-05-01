@@ -1,31 +1,4 @@
-21:15:05 (01/05) Begin
-21:15:05 (01/05) called as: ./remote.sh -d -g -v push
-21:15:05 (01/05) making developer version files ... 
-21:15:05 (01/05) exec git commands in /Users/uninth/ownsky/src/github/DDPS-db2dps:
-21:15:11 (01/05) Environment:
-21:15:11 (01/05) git_sha:        '3c6b7efce6f1f2a8ec08d1e13ae7c65423f3ffa3'
-21:15:11 (01/05) build_date:     '2017-05-01 21:15'
-21:15:11 (01/05) TARGETHOST:     'rnd@ddps.deic.dk'
-21:15:11 (01/05) UPLOADDIR:      '/opt/db2dps/src/'
-21:15:11 (01/05) EXCLUDE_FILE:   'rsync_exclude.txt'
-21:15:11 (01/05) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-21:15:11 (01/05) RRSYNC:         '/usr/bin/rsync'
-21:15:11 (01/05) LRSYNC:         '/usr/bin/rsync'
-21:15:11 (01/05) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
-21:15:11 (01/05) SSH_ARGS:       '-Tq -o LogLevel=error'
-21:15:11 (01/05) SSH:            '/usr/bin/ssh'
-21:15:11 (01/05) SRCDIR:         '.'
-21:15:11 (01/05) PROJDIR:        '../../DDPS-db2dps'
-21:15:11 (01/05) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
-21:15:11 (01/05) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
-21:15:11 (01/05) building file list ... done
-21:15:11 (01/05) ./
-21:15:11 (01/05) .source_info
-21:15:11 (01/05) .version
-21:15:11 (01/05) version.c
-21:15:11 (01/05) version.h
-21:15:11 (01/05) version.pm
-
-21:15:11 (01/05) sent 7387 bytes  received 166 bytes  5035.33 bytes/sec
-21:15:11 (01/05) total size is 8025431  speedup is 1062.55
-21:15:12 (01/05) done
+21:26:35 (01/05) Begin
+21:26:35 (01/05) called as: ./remote.sh -d -g -v push
+21:26:35 (01/05) making developer version files ... 
+21:26:35 (01/05) exec git commands in /Users/uninth/ownsky/src/github/DDPS-db2dps:
