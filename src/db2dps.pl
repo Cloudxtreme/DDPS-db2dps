@@ -533,9 +533,9 @@ sub logit(@)
 	my $now = strftime "%H:%M:%S (%Y/%m/%d)", localtime(time);
 	print STDOUT "$now: $msg\n" if ($verbose);
 
-	open(LOGFILE, ">>$logfile");
-	print LOGFILE "$now: $msg\n";
-	close(LOGFILE);
+	#open(LOGFILE, ">>$logfile");
+	#print LOGFILE "$now: $msg\n";
+	#close(LOGFILE);
 }
 
 sub mydie(@)
@@ -822,6 +822,9 @@ sub mkrulebase($$)
 		# send $rulebase to $host:exabgp_pipe if we have any rules
 		# This implementation may block everything if the scp transfer hangs
 		# Fix - in C - with https://www.libssh2.org/examples/sftp_write_sliding.html
+		# have AMD fix exabgp so we can scp to the pipe again or see
+		# https://gist.github.com/melo/2829330
+		# to do an scp (r, tmpfile) ; exec(sudo cat tmpfile > ....)
 
 		my @unique_implemented_flowspecruleid = uniq @implemented_flowspecruleid;
 		if ($#unique_implemented_flowspecruleid >= 0)
