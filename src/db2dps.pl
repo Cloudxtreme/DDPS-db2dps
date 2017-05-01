@@ -199,7 +199,7 @@ my $rulebase					= "";
 my $dbuser						= "";
 my $dbpass						= "";
 
-my @allmyneworks				= ();
+my $allmynetworks				= "";
 my $newrules					= "";
 my $newrulesdir					= "";
 my $remove_expired_rules		= "";
@@ -214,8 +214,9 @@ my $blackhole					= "";
 my $ratelimit					= "";
 my $update_rules_when_announced	= "";
 my $update_rules_when_expired	= "";
-my $validfrom	= "";
-my $validto	= "";
+my $action						= "";
+my $validfrom					= "";
+my $validto						= "";
 
 my $dbh;
 my @unique_implemented_flowspecruleid;
@@ -358,8 +359,8 @@ EOF
 	# the db.ini instead
 	#
 	# fetch list of all my neworks
-	#$sql_query = $data{'general'}{'allmyneworks'};
-	# logit("query general::allmyneworks ... ");
+	#$sql_query = $data{'general'}{'allmynetworks'};
+	# logit("query general::allmynetworks ... ");
 	# my $sth = $dbh->prepare($sql_query);
 	# $sth->execute();
 	# {
@@ -372,14 +373,14 @@ EOF
 	# 		#my $kind				= $row[3] ? $row[3] : '';
 	# 		#my $net_cidr			= $row[4] ? $row[4] : '';
 	# 		#my $description		= $row[5] ? $row[5] : '';
-	# 		push (@allmyneworks, $row[4]);
+	# 		push ($allmynetworks, $row[4]);
 	# 	}
 	# 	$sth->finish();
-	# 	#$allmyneworks = join(', ', @allmyneworks);
+	# 	#$allmynetworks = join(', ', $allmynetworks);
 	# }
 
-	@allmyneworks = $data{'general'}{'ournetworks'};
-	logit("All allowed destination networks: ", join(' ', @allmyneworks), "");
+	my $allmynetworks = $data{'general'}{'ournetworks'};
+	logit("All allowed destination networks: $allmynetworks");
 
 	my $first_loop = 1;
 
@@ -532,9 +533,9 @@ sub logit(@)
 	my $now = strftime "%H:%M:%S (%Y/%m/%d)", localtime(time);
 	print STDOUT "$now: $msg\n" if ($verbose);
 
-	#open(LOGFILE, ">>$logfile");
-	#print LOGFILE "$now: $msg\n";
-	#close(LOGFILE);
+	open(LOGFILE, ">>$logfile");
+	print LOGFILE "$now: $msg\n";
+	close(LOGFILE);
 }
 
 sub mydie(@)
@@ -598,44 +599,111 @@ sub mkrulebase($$)
 		# print rules to rulebase
 		open (my $fh, '>', $rulebase) || mydie "open write '$rulebase' failed: $!";
 
+		logit("start reading rows from db ... ");
+		# http://www.perlmonks.org/?node_id=312625
+		# $sth->execute();
+		# my $count = 0;
+		# while (my $row = $sth->fetchrow_arrayref()) {
+   		#	process_row($row);
+   		#	$count++;
+		# }
+		# unless ($count) {
+   		#	do_something_else();
+		# }
+		#
+
 		while (my @row = $sth->fetchrow_array)
-		{	# retrieve one row
-			$flowspecruleid		= $row[0];
-			$direction			= $row[1];
-			$destinationprefix	= $row[2];
-			$sourceprefix		= $row[3];
-			$ipprotocol			= $row[4];
-			$srcordestport		= $row[5];
-			$destinationport	= $row[6];
-			$sourceport			= $row[7];
-			$icmptype			= $row[8];
-			$icmpcode			= $row[9];
-			$tcpflags			= $row[10];
-			$packetlength		= $row[11];
-			$dscp				= $row[12];
-			$fragmentencoding	= $row[13];
-			#TODO doesn't work they are empty -- see db.ini for why
-			$validfrom			= $row[14];				# 2017-02-19 23:04:30.682073+01
-			$validto			= $row[15];				# 2017-02-19 23:04:30.682073+01
-														# Time::HiRes only have this 
-														# xxxx-xx-xx-xx:xx:xx.xxx
-														# so valid* must be truncated
+		{	
+			#  gsed '/#/d; /newrulesdir/d; /newrules/!d; s/.*=.*select//; s/ from.*$//;s/,/\n/g; s/^[\t ]*//' db.ini  | nl -v 0
+
+			logit("read: ",  join(",", map {$_ ? $_ : "''"} @row) );
+
+			# initialize
+			$flowspecruleid = $direction = $destinationprefix = $sourceport = $ipprotocol = $srcordestport = $destinationport = $sourceport = $sourceport = $icmptype = $icmpcode = $tcpflags = $packetlength = $dscp = $fragmentencoding = $action = $validfrom = $validto = "";
+
+			# required as some db fields are null
+			$flowspecruleid     = $row[0] ? $row[0] : '';
+            $direction          = $row[1] ? $row[1] : '';
+            $destinationprefix  = $row[2] ? $row[2] : '';
+            $sourceprefix       = $row[3] ? $row[3] : '';
+            $ipprotocol         = $row[4] ? $row[4] : '';
+            $srcordestport      = $row[5] ? $row[5] : '';
+            $destinationport    = $row[6] ? $row[6] : '';
+            $sourceport         = $row[7] ? $row[7] : '';
+            $icmptype           = $row[8] ? $row[8] : '';
+            $icmpcode           = $row[9] ? $row[9] : '';
+            $tcpflags           = $row[10] ? $row[10] : '';
+            $packetlength       = $row[11] ? $row[11] : '';
+            $dscp               = $row[12] ? $row[12] : '';
+            $fragmentencoding   = $row[13] ? $row[13] : '';
+            $action             = $row[14] ? $row[14] : '';
+            $validfrom          = $row[15] ? $row[15] : '';		# 2017-02-19 23:04:30.682073+01
+            $validto            = $row[16] ? $row[16] : '';		# 2017-02-19 23:04:30.682073+01
+																# Time::HiRes only have this 
+																# xxxx-xx-xx-xx:xx:xx.xxx
+																# so valid* must be truncated
 
 			# Prevent incomplete rules from entering the flow: if an required field fails
 			# set $ipprotocol to unknown ('')
-			$ipprotocol			= $ipprotocol			? $ipprotocol			: "";
-			$flowspecruleid		= $flowspecruleid		? $flowspecruleid		: "";
-			$destinationprefix	= $destinationprefix	? $destinationprefix	: "";
-			$sourceprefix		= $sourceprefix			? $sourceprefix			: "";
+			$flowspecruleid			= $flowspecruleid		? $flowspecruleid		: "";
+			$direction				= $direction			? $direction			: "";
+			$destinationprefix		= $destinationprefix	? $destinationprefix	: "";
+			$sourceprefix			= $sourceprefix			? $sourceprefix			: "";
+			$ipprotocol				= $ipprotocol			? $ipprotocol			: "";
+			$srcordestport			= $srcordestport		? $srcordestport		: "";
+			$destinationport		= $destinationport		? $destinationport		: "";
+			$sourceport				= $sourceport			? $sourceport			: "";
+			$icmptype				= $icmptype				? $icmptype				: "";
+			$icmpcode				= $icmpcode				? $icmpcode				: "";
+			$tcpflags				= $tcpflags				? $tcpflags				: "";
+			$packetlength			= $packetlength			? $packetlength			: "";
+			$dscp					= $dscp					? $dscp					: "";
+			$fragmentencoding		= $fragmentencoding		? $fragmentencoding		: "";
+			$action					= $action				? $action				: "discard";
+			$validfrom				= $validfrom			? $validfrom			: "";
+			$validto				= $validto				? $validto				: "";
+
+			logit("debug:");
+			logit("number of collums in \@row:$#row");
+			logit("flowspecruleid: $flowspecruleid");
+			logit("direction: $direction");
+			logit("destinationprefix: $destinationprefix");
+			logit("sourceprefix: $sourceprefix");
+			logit("ipprotocol: $ipprotocol");
+			logit("srcordestport: $srcordestport");
+			logit("destinationport: $destinationport");
+			logit("sourceport: $sourceport");
+			logit("icmptype: $icmptype");
+			logit("icmpcode: $icmpcode");
+			logit("tcpflags: $tcpflags");
+			logit("packetlength: $packetlength");
+			logit("dscp: $dscp");
+			logit("fragmentencoding: $fragmentencoding");
+			logit("action: $action");
+			logit("validfrom: $validfrom");
+			logit("validto: $validto");
+
+			#
+			#  2554, in, 130.226.136.242, , udp, , , , , , , , 60, , , 2017-04-26 17:05:38.492843+02, 2017-04-26 17:15:38.492843+02,   -- no validto
+			#  If no 'action' then $action = $validfrom and  $validto = "" ??????
+			#
+			logit("read from db: $flowspecruleid, $direction, $destinationprefix, $sourceport, $ipprotocol, $srcordestport, $destinationport, $sourceport, $sourceport, $icmptype, $icmpcode, $tcpflags, $packetlength, $dscp, $fragmentencoding, $action, $validfrom, $validto");
 
 			# append /32 to prefix if not cidr and assume just an IP address
-			if ($destinationprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
+			if ($destinationprefix ne "")
 			{
-				$destinationprefix = $destinationprefix . "/32";
+				if ($destinationprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
+				{
+					$destinationprefix = $destinationprefix . "/32";
+				}
 			}
-			if ($sourceprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
+
+			if ($sourceprefix ne "")
 			{
-				$sourceprefix = $sourceprefix . "/32";
+				if ($sourceprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
+				{
+					$sourceprefix = $sourceprefix . "/32";
+				}
 			}
 
 			################################################################################
@@ -656,23 +724,26 @@ sub mkrulebase($$)
 			# BGP flow types should go in an external config file and I should use fprintf(fmt, ...)
 			################################################################################	
 
+
 			# Last line of defence to prevent wron announcements: Do not
 			# announce / withdraw networks outside our constituency
 			{
 				my $dst_subnet = new NetAddr::IP $destinationprefix;
 
 				my $destinationprefix_is_within_my_network = 0;
-				foreach my $mynetwork (@allmyneworks)
+
+				foreach my $mynetwork (split ' ', $allmynetworks)
 				{
 					my $subnet = new NetAddr::IP $mynetwork;
 					if ($dst_subnet->within($subnet))
 					{
+							logit("dst $dst_subnet is within $subnet");
 							$destinationprefix_is_within_my_network = 1;
 					}
 				}
-				if ($destinationprefix_is_within_my_network ne 1)
+				if ($destinationprefix_is_within_my_network == 1)
 				{
-					logit("program error: rule ignored, dst outside our constituency: $flowspecruleid, $direction, $destinationprefix, $sourceprefix, $ipprotocol, $srcordestport, $destinationport, $sourceport, $icmptype, $icmpcode, $tcpflags, $packetlength, $dscp, $fragmentencoding, $validfrom, $validto");
+					logit("program error: rule ignored, outside our constituency destinationprefix=$destinationprefix sourceprefix=$sourceprefix ipprotocol=$ipprotocol validfrom=$validfrom validto=$validto");
 				}
 			}
 
@@ -695,36 +766,46 @@ sub mkrulebase($$)
 				# this has to be extented later with fragments, ttl, size etc
 				# and e.g. rate-limit 9600 instead of discard by readming from
 				# 'action' field
-				# So, insert from test-bgp-rules.pl here
 
 				my $rule = "";
 
-				logit("validfrom/to: $validfrom - $validto");
-				if ($ipprotocol eq lc 'tcp')
+				# tcp‐flags [ fin | syn | rst | push | ack | urgent ];
+				#fragment [ not‐a‐fragment | dont‐fragment | is‐fragment | first‐fragment | last‐fragment ];
+
+				if (length $sourceprefix)		{ $sourceprefix			= "source "				. $sourceprefix			. ";" }
+				if (length $destinationprefix)	{ $destinationprefix	= "destination "		. $destinationprefix	. ";" }
+				if (length $destinationport)	{ $destinationport		= "destination-port "	. $destinationport		. ";" }
+				if (length $ipprotocol)			{ $ipprotocol			= "protocol "			. $ipprotocol			. ";" }
+				if (length $tcpflags)			{ $tcpflags				= "tcp-flags "			. $tcpflags				. ";" }
+				if (length $packetlength)		{ $packetlength			= "packet-length "		. $packetlength			. ";" }
+
+				if ($ipprotocol  !~ /(icmp|tcp|udp|1|6|17)/)			# remove any tcp/udp/icmp specific things, if any
 				{
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; } } }";
-					print $fh "$rule\n";
-					logit("$rule");
+					$tcpflags			= "";
+					$icmptype			= "";
+					$srcordestport		= "";
+					$sourceport			= "";
+					$destinationport	= "";
 				}
-				elsif ($ipprotocol eq lc 'udp')
+
+
+				if ($ipprotocol =~ /icmp/)								# remove any tcp/udp specific things, if any
 				{
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; destination-port $destinationport; protocol $ipprotocol; } then { rate-limit 9600; } } }";
-					print $fh "$rule\n";
-					logit("$rule");
-				 }
-				 elsif ($ipprotocol eq lc 'icmp')
-				 {
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; protocol icmp; } then { rate-limit 9600; } } }\n";
-					print $fh "$rule\n";
-					logit("$rule");
-				 }
-				 else
-				 {
-					# $rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; } then { rate-limit 9600; } } }\n";
-					$rule = "$type flow route $flowspecruleid { match { source $sourceprefix; destination $destinationprefix; } then { discard; } } }\n";
-					print $fh "$rule\n";
-					logit("$rule");
+					$destinationport	= "";
+					$sourceport			= "";
+					$tcpflags			= "";
 				}
+
+				if ($ipprotocol =~ /udp/)								# remove any tcp/icmp specific things, if any
+				{
+					$tcpflags			= "";
+					$icmptype			= "";
+					$tcpflags = "";
+				}
+
+				# final rule
+				$rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $destinationport $ipprotocol $tcpflags $packetlength } then { $action } } }";
+				logit("rule: $rule");
 			}
 			elsif ($filtertype eq lc 'blackhole')
 			{
@@ -759,10 +840,14 @@ sub mkrulebase($$)
 
 			if (! $ssh2->scp_put($rulebase, $exabgp_pipe))
 			{
+				logit("failed transfer $type $rulebase to $host:$exabgp_pipe");
 				$ssh2->disconnect();
 			}
-			logit("succesfully transfered $type $rulebase to $host:$exabgp_pipe");
-			$ssh2->disconnect();
+			else
+			{
+				logit("succesfully transfered $type $rulebase to $host:$exabgp_pipe");
+				$ssh2->disconnect();
+			}
 		}
 		else
 		{
@@ -806,10 +891,6 @@ sub processnewrules()
 		($tmp, $type, $version, $attack_info) = split(';', $head);
 		chomp($attack_info);
 
-		# TODO
-		# Use attack field from ini file
-		# Implementation of mitigation rules (see DDPS-db2dps/docs/best-practise-volumetric-ddos-mitigation.md) below
-
 		my @lines = $file->lines_utf8;
 		my ($action,$customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
 
@@ -844,21 +925,19 @@ sub processnewrules()
 				$dport	= "null";
 				$sport	= "null";
 			}
+			#
+			# TODO
+			# Implementation of mitigation rules (see DDPS-db2dps/docs/best-practise-volumetric-ddos-mitigation.md) below
+
 			# if ($attack_info =~ /ip_fragmentation_flood/)
 			# if ($attack_info =~ /DNS amplification/)
 			# if ($attack_info =~ /NTP amplification/)
 			# if ($attack_info =~ /SSDP amplification/)
 			# if ($attack_info =~ /SNMP amplification/)
-			# logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag");
-			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dscp: $dscp port:$dport length:$length frag:$frag action:$action");
-		}
-		else
-		{
-			# loop all lines bla bla bla
-		}
-
-		# quote everything except null and false
-		$sql_query = << "END_OF_QUERY"; 
+			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action");
+			
+			# quote everything except null and false
+			$sql_query = << "END_OF_QUERY"; 
 insert into flow.flowspecrules
 (
 	flowspecruleid, customerid, rule_name,
@@ -879,20 +958,39 @@ values
 );
 END_OF_QUERY
 
-		$sql_query =~ s/'false'/false/g;
-		$sql_query =~ s/'null'/null/g;
+			$sql_query =~ s/'false'/false/g;
+			$sql_query =~ s/'null'/null/g;
 
-		#print "$sql_query\n";
+			#print "$sql_query\n";
 
-		my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
-		$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
+			my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
+			$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
+
+			unlink $file or logit("Could not unlink $file $!");
+		}
+		else
+		{
+			# TODO
+			# loop all lines 
+			# {
+			# 	$sql_query = " .... ";
+
+			# $sql_query =~ s/'false'/false/g;
+			# $sql_query =~ s/'null'/null/g;
+
+			# my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
+			# $sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
+
+			# # remove all files in @rulefiles
+			# # unlink $file or logit("Could not unlink $file $!");
+			# }
+			#
+		}
 
 	}
-	# remove all files in @rulefiles
-	logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done");
-	exit 0;	# exit on debug
+	#logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done");
+	#exit 0;	# exit on debug
 }
-
 
 
 __DATA__
