@@ -5,7 +5,9 @@
 # This should have be written in some other language
 #
 
-MYDIR=`pwd`
+# determine the directory where $0 is located. Realpath is not part of OSX
+MYDIR=`dirname $0`
+MYDIR=`realpath ${MYDIR}`
 
 MYNAME=`basename $0`
 MY_LOGFILE=$MYDIR/${MYNAME}.log

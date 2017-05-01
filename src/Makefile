@@ -76,6 +76,8 @@ initrc		= $(INITDIR)/$(RC)
 dbini		= $(ETCDIR)/$(PRODINI)
 
 default:	$(prog)
+			./$(prog) -V
+			sudo ./$(prog) -v -s 4
 
 # default:	exabgpsyntax
 
@@ -84,8 +86,15 @@ $(prog):	hostcheck db2dps.pl version.pm install_perl_modules
 			$(RM) $(prog)
 			@sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  db2dps.pl > db2dps
 			@chmod 555 db2dps
-			./$(prog) -V
-			sudo ./$(prog) -s 2 -v
+
+binfiles	= kill_switch_restart_all_exabgp
+bin:
+	for exec in $(binfiles);																			\
+	do																									\
+			sudo $(RM) $$exec;																			\
+			sudo sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  $$exec.pl > $$exec;	\
+			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
+	done
 
 exabgpsyntax:
 			perl ./test-bgp-rules.pl | ssh rnd@exabgp1 'cat > /var/run/exabgp/exabgp.cmd'
@@ -98,7 +107,8 @@ run:		$(target) $(initrc) $(dbini)
 test:		$(prog) $(TESTINI)
 			$(SRCDIR)/$(prog) -V
 			( sleep 10; touch `sed '/shutdown/!d; s/.*=[\t ]*//' test.ini` ) &
-			$(SRCDIR)/$(prog) -v -s 2 -f $(TESTINI)
+			sudo $(SRCDIR)/$(prog) -v -s 2
+			#$(SRCDIR)/$(prog) -v -s 2 -f $(TESTINI)
 
 hostcheck:
 	@if [ "`hostname -f`" != "`echo $(TARGETHOST) | sed 's/.*@//'`" ]; then					\

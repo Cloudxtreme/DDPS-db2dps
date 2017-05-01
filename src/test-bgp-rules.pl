@@ -48,11 +48,11 @@ foreach my $type (@types)
 	# or
 	# port - range
 
-	$destinationport	= "[ =22 =80 =443 ]";	# ok
-	$destinationport	= "[ =0-19 ]";			# ok but do not mix
-	$destinationport	= "[ <19 ]";			# ok
-	$destinationport	= "[ <19 >1024 ]";		# ok
-	$destinationport	= "[ <19 =22 >1024 ]";	# ok
+	$destinationport	= "=22 =80 =443";	# ok
+	$destinationport	= "=0-19";			# ok but do not mix
+	$destinationport	= "<19";			# ok
+	$destinationport	= "<19 >1024";		# ok
+	$destinationport	= "<19 =22 >1024";	# ok
 
 	$ipprotocol			= "tcp";
 	#$ipprotocol			= "udp";
@@ -82,7 +82,7 @@ foreach my $type (@types)
 	if (length $tcpflags)			{ $tcpflags				= "tcp-flags "			. $tcpflags				. ";" }
 	if (length $packetlength)		{ $packetlength			= "packet-length "		. $packetlength			. ";" }
 
-	if ($ipprotocol  !~ /(icmp|tcp|udp|1|6|17)/)			# remove any tcp/udp/icmp specific things, if any
+	if ($ipprotocol  !~ /(icmp|tcp|udp|1|6|17)/)	# remove any tcp/udp/icmp specific things, if any
 	{
 		$tcpflags			= "";
 		$icmptype			= "";
@@ -91,30 +91,28 @@ foreach my $type (@types)
 		$destinationport	= "";
 	}
 
-
-	if ($ipprotocol =~ /icmp/)								# remove any tcp/udp specific things, if any
+	if ($ipprotocol =~ /icmp/)						# remove any tcp/udp specific things, if any
 	{
 		$destinationport	= "";
 		$sourceport			= "";
 		$tcpflags			= "";
 	}
 
-	if ($ipprotocol =~ /udp/)								# remove any tcp/icmp specific things, if any
+	if ($ipprotocol =~ /udp/)						# remove any tcp/icmp specific things, if any
 	{
 		$tcpflags			= "";
 		$icmptype			= "";
-		$tcpflags = "";
+		$tcpflags 			= "";
 	}
 
-	if ($src_spoofed)										# source is spoofed
+	if ($src_spoofed)								# source is spoofed
 	{
-		$sourceprefix = "";
+		$sourceprefix		= "";
 	}
 
 	# final rule
 	$rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $destinationport $ipprotocol $tcpflags $packetlength } then { $action } } }";
 	print "$rule\n";
-#	sleep(5);
 }
 
 
