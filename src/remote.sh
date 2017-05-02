@@ -130,7 +130,7 @@ else
 	git_sha=`git rev-parse HEAD`
 	build_date=`date +"%Y-%m-%d %H:%M"`
 
-	VERSION=`git tag 2>/dev/null | tail -1`
+	VERSION=`git tag 2>/dev/null | sort -n -t'-' -k2,2 | tail -1`
 	MAJOR="1"
 	MINOR="0"
 	PATCH="1"
