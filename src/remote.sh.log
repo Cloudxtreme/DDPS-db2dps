@@ -1,4 +1,4 @@
-21:26:35 (01/05) Begin
-21:26:35 (01/05) called as: ./remote.sh -d -g -v push
-21:26:35 (01/05) making developer version files ... 
-21:26:35 (01/05) exec git commands in /Users/uninth/ownsky/src/github/DDPS-db2dps:
+15:51:22 (02/05) Begin
+15:51:22 (02/05) called as: ./remote.sh -d -g -v push
+15:51:22 (02/05) making developer version files ... 
+15:51:22 (02/05) exec git commands in /Users/uninth/ownsky/src/github/DDPS-db2dps:
