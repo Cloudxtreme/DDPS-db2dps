@@ -125,6 +125,7 @@
 #
 use strict;
 use warnings;
+use 5.14.0;				# say, switch etc.
 use sigtrap qw(die normal-signals);
 use DBI;				# database
 
@@ -137,6 +138,8 @@ use Proc::Daemon;
 use Socket qw( inet_aton );
 use NetAddr::IP;
 use Path::Tiny;
+use File::stat;
+use File::Temp qw(tempfile);
 
 #
 # prototypes
@@ -384,7 +387,6 @@ EOF
 
 	my $first_loop = 1;
 
-	logit ("starting main loop");
 	loop: while ($continue)
 	{
 		if (-e $shutdown)
@@ -549,12 +551,10 @@ sub mkrulebase($$)
 	my $type = shift;
 	my $hostlist = shift;
 
-	logit("TYPE: $type");
-	logit("hostlist: $hostlist");
+	logit("TYPE: $type, hostlist: $hostlist");
 
 	# announce new or all rules
 	# For each bgp-host do
-	logit("host list: $hostlist");
 	my @hostlist = split(' ', $hostlist);
 	foreach my $host (@hostlist)
 	{
@@ -563,8 +563,6 @@ sub mkrulebase($$)
 		my $public_key		= $data{$host}{'public_key'};		$public_key =~ tr/\"//d;
 		my $filtertype		= $data{$host}{'filtertype'};		$filtertype =~ tr/\"//d;
 		my $exabgp_pipe		= $data{$host}{'exabgp_pipe'};		$exabgp_pipe =~ tr/\"//d;
-
-		logit("preparing $type rules for $host");
 
 		if ($type eq lc "announce")
 		{
@@ -599,7 +597,6 @@ sub mkrulebase($$)
 		# print rules to rulebase
 		open (my $fh, '>', $rulebase) || mydie "open write '$rulebase' failed: $!";
 
-		logit("start reading rows from db ... ");
 		# http://www.perlmonks.org/?node_id=312625
 		# $sth->execute();
 		# my $count = 0;
@@ -800,12 +797,68 @@ sub mkrulebase($$)
 				{
 					$tcpflags			= "";
 					$icmptype			= "";
-					$tcpflags = "";
+					$tcpflags			= "";
 				}
+
+				# The syntax for $sourceport and $destinationport is one of
+				#	$destinationport	= "=22 =80 =443";	# ok
+				#	$destinationport	= "=0-19";			# ok but do not mix
+				#	$destinationport	= "<19";			# ok
+				#	$destinationport	= "<19 >1024";		# ok
+				#	$destinationport	= "<19 =22 >1024";	# ok
+				# 1) number between 0,65535		=> =$destinationport
+				# 2) list of numbers 0,65535	=> =$d =$d =$d ...
+				# 3) [ -<>=][0-9]+				=> trust the gui and dont change anything
+				if ($destinationport	=~ /^\d+$/)			# single port number
+				{
+					$destinationport	=~ s/^/=/;
+				}
+				elsif ($destinationport	=~ /^[\d\s]+$/)		# list of port number
+				{
+					$destinationport	=~ s/^/=/;
+					$destinationport	=~ s/\s+/ =/g;
+				}
+
+				if ($sourceport			=~ /^\d+$/)			# single port number
+				{
+					$sourceport			=~ s/^/=/;
+					$sourceport			=~ s/\s+/ =/g;
+				}
+				elsif ($sourceport		=~ /^[\d\s]+$/)		# list of port numbers
+				{
+					$sourceport			=~ s/^/=/;
+					$sourceport			=~ s/\s+/ =/g;
+				}
+
+				if ($srcordestport		=~ /^\d+$/)			# single port number
+				{
+					$srcordestport		=~ s/^/=/;
+					$srcordestport		=~ s/\s+/ =/g;
+				}
+				elsif ($srcordestport	=~ /^[\d\s]+$/)		# list of port numbers
+				{
+					$srcordestport		=~ s/^/=/;
+					$srcordestport		=~ s/\s+/ =/g;
+				}
+
+				# packet size(s): number, list of numbers
+				# or prepositioned <, > or range - -- in that case do nothing and trust the GUI
+				if ($packetlength		=~ /^\d+$/)			# single size
+				{
+					$packetlength		=~ s/^/=/;
+					$packetlength		=~ s/\s+/ =/g;
+				}
+				elsif ($packetlength	=~ /^[\d\s]+$/)		# list of sizes
+				{
+					$packetlength		=~ s/^/=/;
+					$packetlength		=~ s/\s+/ =/g;
+				}
+
 
 				# final rule
 				$rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $destinationport $ipprotocol $tcpflags $packetlength } then { $action } } }";
 				logit("rule: $rule");
+				print $fh "$rule\n";
 			}
 			elsif ($filtertype eq lc 'blackhole')
 			{
@@ -817,6 +870,12 @@ sub mkrulebase($$)
 			}
 		}
 		close $fh;		# rulebase
+
+		logit("rulebase: $rulebase, size: ",  stat($rulebase)->size);
+
+		#my $tmp_fh = new File::Temp( UNLINK => 0, TEMPLATE => 'newrules_XXXXXXXX', DIR => '/tmp', SUFFIX => '.dat');
+		#rename $rulebase, $tmp_fh;
+
 		$sth->finish();
 
 		# send $rulebase to $host:exabgp_pipe if we have any rules
@@ -869,7 +928,6 @@ sub processnewrules()
 	my @rulefiles = ();
 	my $file_finished_ok_string = "last-line";
 	my $document;
-	logit("check for new rules in '$newrulesdir' ... ");
 	opendir (DIR, $newrulesdir) or die $!;
 	while ( my $node = readdir(DIR) )
 	{
