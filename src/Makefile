@@ -77,7 +77,7 @@ dbini		= $(ETCDIR)/$(PRODINI)
 
 default:	$(prog)
 			./$(prog) -V
-			sudo ./$(prog) -v -s 4
+			#sudo ./$(prog) -v -s 4
 
 # default:	exabgpsyntax
 

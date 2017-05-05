@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 #
+# TODO: The kill switch must write information back to the database
+#
 # $Header$
 #
 #++
@@ -13,8 +15,9 @@
 # 
 #### Description
 #
-# ``kill_switch_restart_all_exabgp`` reads the list ob BGP hosts from the same configuration / ini file 
-# as ``db2dps`` and for each host stop and start the exabgp service, thereby resetting the announcements.
+# ``kill_switch_restart_all_exabgp`` reads the list ob BGP hosts from the same
+# configuration / ini file as ``db2dps`` and for each host stop and start the
+# exabgp service, thereby resetting the announcements.
 #
 #### Options
 #
