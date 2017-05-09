@@ -170,7 +170,7 @@ Usage and pseudo code below:
 
 ### Rulefiles
 
-Rulefiles has the following format, with a _header_ describing the _rule type_
+Rule files has the following format, with a _header_ describing the _rule type_
 where only `fnm` for fastnetmon is in use, rule format if we should ever change it
 and the _attack type_ for later optimisation. The last line is literally _last-line_
 to avoid processing incomplete files:
@@ -182,10 +182,11 @@ to avoid processing incomplete files:
 
 The format is
 
-	Rule header: type;vesion;attack_info;
+	Rule header: type;vesion;attack_info
 	type: fnm    | ...
 	version: 1   | ...
 	attack_info: icmp_flood | syn_flood | udp_flood | unknown | ...
+
 	Rules: customernetworkid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
 	customernetworkid:      Customer id (int)
 	uuid:                   Mac address -- identify fastnetmon instance
@@ -205,7 +206,15 @@ The format is
 	Type 11 – DSCP
 	Type 12 - Fragment Encoding
 
+	last-line
+
 Example:
+
+	head;fnm;1;udp_flood
+	1;00:25:90:47:2b:48;1;42;10;130.226.136.242;216.199.145.111;udp;60690;0;0;null;null;null;60;63;null;null
+	1;00:25:90:47:2b:48;1;42;10;130.226.136.242;43.51.166.76;udp;60693;0;0;null;null;null;60;63;null;null
+	1;00:25:90:47:2b:48;1;42;10;130.226.136.242;60.214.227.111;udp;60692;0;0;null;null;null;60;63;null;null
+	last-line
 
 	head;fnm;1;syn_flood
 	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;66.141.26.81;tcp;14372;80;80;null;null;syn;60;63;null;0

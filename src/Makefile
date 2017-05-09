@@ -44,7 +44,7 @@ SRCDIR		= $(PREFIX)/src
 iniparser 	= iniparser
 libini		= $(iniparser)/src
 
-sysinit		= /etc/init.d/db2dps
+#sysinit		= /etc/init.d/db2dps
 
 INSTALL		= $(PREFIX)/src/install-sh
 SRCTOMAN	= $(PREFIX)/src/srctoman
@@ -64,6 +64,7 @@ CFLAGS  += -g -O0 -I/usr/include/postgresql -I$(libini) -L$(iniparser) -L$(libin
 LDFLAGS  = -lpq -liniparser
 
 RC			= db2dpsrc
+SERVICEFILE	= db2dps.service
 CFILES		= db2dps.c concat.c strsplit.c daemonize.c version.c
 HFILES		= db2dps.h version.h license.h
 PRODINI		= db.ini
@@ -73,6 +74,7 @@ prog		= db2dps
 target		= $(BINDIR)/db2dps
 
 initrc		= $(INITDIR)/$(RC)
+service		= $(INITDIR)/$(SERVICEFILE)
 dbini		= $(ETCDIR)/$(PRODINI)
 
 default:	$(prog)
@@ -99,7 +101,19 @@ bin:
 exabgpsyntax:
 			perl ./test-bgp-rules.pl | ssh rnd@exabgp1 'cat > /var/run/exabgp/exabgp.cmd'
 
-install:	hostcheck $(target) $(initrc) $(dbini) $(sysinit)
+install:	hostcheck $(target) $(initrc) $(dbini) $(service)
+			sudo cp $(SERVICEFILE) /etc/systemd/system/
+			sudo systemctl enable db2dps.service
+			sudo systemctl start db2dps.service
+
+uninstall:
+			# stop the service, disable start 
+			sudo systemctl stop db2dps.service
+			sudo systemctl disable db2dps.service
+			sudo rm -f /etc/systemd/system/multi-user.target.wants/db2dps.service /etc/systemd/system/db2dps.service
+			sudo systemctl daemon-reload
+			sudo systemctl reset-failed
+			echo now remove everything below $(PREFIX) and the database netflow from postgres
 
 run:		$(target) $(initrc) $(dbini)
 			$(target) -v -s 2
@@ -120,25 +134,28 @@ hostcheck:
 
 # Unused article on how to Write Linux Init Scripts Based on LSB Init Standard:
 # http://www.thegeekstuff.com/2012/03/lsbinit-script/
-$(sysinit): $(RC)
-			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(RC) /etc/init.d
-			sudo update-rc.d db2dpsrc defaults
-			sudo systemctl enable db2dpsrc
-			sudo systemctl start db2dpsrc
-			sudo systemctl status db2dpsrc
+#$(sysinit): $(RC)
+#			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(RC) /etc/init.d
+#			sudo update-rc.d db2dpsrc defaults
+#			sudo systemctl enable db2dpsrc
+#			sudo systemctl start db2dpsrc
+#			sudo systemctl status db2dpsrc
 
 dirs:
 			sudo mkdir -p $(PREFIX)/bin $(PREFIX)/tmp $(PREFIX)/log $(PREFIX)/src $(PREFIX)/etc/init.d
 			sudo chown -R $(UID):$(GID) $(PREFIX)
 
+$(service):	$(SERVICEFILE)
+			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(SERVICEFILE) $(ETCDIR)
+
 $(initrc):	$(RC)
-			$(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(RC) $(INITDIR)
+			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(RC) $(INITDIR)
 
 $(target):	$(prog)
-			$(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(prog) $(BINDIR)
+			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(prog) $(BINDIR)
 
 $(dbini):	$(PRODINI)
-			$(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(PRODINI) $(ETCDIR)
+			sudo $(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(PRODINI) $(ETCDIR)
 
 
 # Install required perl modules from $(pkgs)

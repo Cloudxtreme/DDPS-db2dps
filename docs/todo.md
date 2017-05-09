@@ -29,8 +29,8 @@ This is the status as of Thu May  4 22:11:42 CEST 2017.
 
 ## Order of priority for the next step
 
-  1. Fix problem where `db2dps` seems to sleep the initial _sleep time_ and not
-	 recognizing first round.
+  1. ~~Fix problem where `db2dps` seems to sleep the initial _sleep time_ and not
+	 recognizing first round.~~
   1. Find annoying error with sending flowspec rules to exabgp2; it works for
 	 exabgp1. It is not due to ssh configuration errors ...
   1. Attacks based on `ip_fragmentation_flood`, ` DNS amplification`, ` NTP
