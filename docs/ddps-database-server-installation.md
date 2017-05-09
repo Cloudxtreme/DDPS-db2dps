@@ -4,7 +4,7 @@
 This document describes the _installation process_ of _one host_, not the configuration
 nor the design of the system.
 
-Also, this document describes the installation for the DeiC DPS server: replace users
+This document also describes the installation for the DeiC DPS server: replace users
 and ssh public key's with your own:
 
     eport IPV4ADDR=a.b.c.d
@@ -18,17 +18,16 @@ Default password until changed by developers and administrators is ${PASSWORD} e
 
 This is the description of the installation procedure for version 1.0 of the database
 host used in _DeIC Distributed Denial of Service Protection System_.        
-The system is build on Ubuntu 16.01, postgres, node.js and a number of internal
-developed applications. This procedure covers both the _production_ and _development_
+The system is built using Ubuntu 16.01, postgres, node.js and a number of applications that were developped by DeIC. This procedure covers both the _production_ and the _development_
 environment.
 
-This document contain valid commands: you may copy and paste to your hearts desire or
+This document contain valid commands: you may copy and paste as you wish or
 grab all commands at once with (please mind the **tabs**):
 
 	sed '/^	/!d; s/^	//' ddps-database-server-installation.md
 
-Commands with long lines normally doesn't print well and folding such lines may
-brake with functionality. An example is printing an [ssh rsa
+Commands with long lines normally don't print well and folding such lines may
+brake functionality. An example is printing an [ssh rsa
 key](http://security.stackexchange.com/questions/23383/ssh-key-type-rsa-dsa-ecdsa-are-there-easy-answers-for-which-to-choose-when)
 as [here text](https://en.wikipedia.org/wiki/Here_document). This is not the
 case in this text: all commands may be executed without editing first.
@@ -292,7 +291,7 @@ Backup and restore are based on the in-house developed package ``dailybuandupdat
 The system specific configuration file for ``daily_backup.sh`` should be placed in 
 [``/usr/local/etc/daily_backup.cfg``](daily_backup.cfg).
 
-A copy of the README from the daily restore procedure is shown below. Notice, that
+A copy of the README from the daily restore procedure is shown below. Notice that
 we store the backup archive and restore procedure on an internal backup hub,
 not just kept on the host itself. You should to the same.
 
@@ -302,21 +301,21 @@ not just kept on the host itself. You should to the same.
 
                            Thursday 09 February 2017 at 18:28 CET
 
-This documentation is compiled  as part of the  backup procedure.
+This documentation is compiled  as part of the backup procedure.
 The latest version of this text is stored in
 	/var/CPbackup//RESTORE_INFORMATION
 on the machine ddps.
 
 If you are reading this file chances are that this machine has to
-be restored after a major crash. Well, such is life.
+be restored after a major crash. Well, this is life.
 
-First,  A word of WARNING:  The next check list does not claim to
+First a word of WARNING:  the following checklist does not claim to
 be exhaustive,  error free, user friendly, or complete.  There is
-most probably something that I forgot to put in it or things that 
+most probably something that we forgot to include or things that 
 have been modified on the system since this list was made.  
-So please make use of discretion while using it.
+So please make use of discernment while using it.
 
-The README is accompanied with theese documents:
+The README is accompanied with these documents:
  1  ../<hostname>.<uname>.<date>.<time>.tgz ...
     The OS backup archive(s). Use the latest.
  3  lshw.txt
@@ -331,11 +330,11 @@ The README is accompanied with theese documents:
  7  status
     Status of the latest backup (good or bad).
  8  pkg_info
-    List of all installed packages, usefull for restore.
+    List of all installed packages, useful for restore.
  9  pkgs_manual.lst
-    Manual installed packages, usefull for restore.
+    Manual installed packages, useful for restore.
 10  pkgs_auto.lst
-    Automatic installed packages, usefull for restore.
+    Automatic installed packages, useful for restore.
 11  The directory /var/CPbackup//RESTORE_INFORMATION/apt with everything
     required for restoring all packages installed with apt-get ... 
     on the failed system, including a ready made restore script.
