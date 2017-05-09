@@ -1,0 +1,13 @@
+[Unit]
+Description=Regular background program processing daemon
+After=syslog.target network.target postgres.service
+
+[Service]
+Type=forking
+ExecStart=/opt/db2dps/etc/init.d/db2dpsrc start
+ExecStop=/opt/db2dps/etc/init.d/db2dpsrc stop
+
+ExecReload=/opt/db2dps/etc/init.d/db2dpsrc reload
+
+[Install]
+WantedBy=multi-user.target
