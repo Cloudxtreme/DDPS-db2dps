@@ -2,3 +2,50 @@
 16:23:38 (09/05) called as: ./remote.sh -d -v -g make
 16:23:38 (09/05) making developer version files ... 
 16:23:38 (09/05) exec git commands in /Users/uninth/ownsky/src/github/DDPS-db2dps:
+16:23:44 (09/05) Environment:
+16:23:44 (09/05) git_sha:        '60cb5346a1263cb587d9f05f3cfa13197d443c8e'
+16:23:44 (09/05) build_date:     '2017-05-09 16:23'
+16:23:44 (09/05) TARGETHOST:     'rnd@ddps.deic.dk'
+16:23:44 (09/05) UPLOADDIR:      '/opt/db2dps/src/'
+16:23:44 (09/05) EXCLUDE_FILE:   'rsync_exclude.txt'
+16:23:44 (09/05) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
+16:23:44 (09/05) RRSYNC:         '/usr/bin/rsync'
+16:23:44 (09/05) LRSYNC:         '/usr/bin/rsync'
+16:23:44 (09/05) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
+16:23:44 (09/05) SSH_ARGS:       '-Tq -o LogLevel=error'
+16:23:44 (09/05) SSH:            '/usr/bin/ssh'
+16:23:44 (09/05) SRCDIR:         '.'
+16:23:44 (09/05) PROJDIR:        '../../DDPS-db2dps'
+16:23:44 (09/05) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
+16:23:44 (09/05) rsync files to rnd@ddps.deic.dk ... 
+16:23:44 (09/05) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
+16:23:44 (09/05) building file list ... done
+16:23:44 (09/05) ./
+16:23:44 (09/05) .source_info
+16:23:44 (09/05) .version
+16:23:44 (09/05) db2dps.pl
+16:23:44 (09/05) version.c
+16:23:44 (09/05) version.h
+16:23:44 (09/05) version.pm
+
+16:23:44 (09/05) sent 7708 bytes  received 482 bytes  16380.00 bytes/sec
+16:23:44 (09/05) total size is 8029309  speedup is 980.38
+16:23:44 (09/05) exec 'make  ' on rnd@ddps.deic.dk ... 
+16:23:44 (09/05) Welcome to Ubuntu 16.04.2 LTS (GNU/Linux 4.4.0-77-generic x86_64)
+
+16:23:44 (09/05) * Documentation:  https://help.ubuntu.com
+16:23:44 (09/05) * Management:     https://landscape.canonical.com
+16:23:44 (09/05) * Support:        https://ubuntu.com/advantage
+
+16:23:44 (09/05) 0 packages can be updated.
+16:23:44 (09/05) 0 updates are security updates.
+
+
+16:23:44 (09/05) /opt/db2dps/src
+16:23:44 (09/05) version:       1.0-17
+16:23:44 (09/05) build date:    2017-05-09 16:23
+16:23:44 (09/05) build_git_sha: 60cb5346a1263cb587d9f05f3cfa13197d443c8e
+16:23:44 (09/05) inicfg:        /opt/db2dps/etc/db.ini
+16:23:44 (09/05) sleeptime:     10
+16:23:44 (09/05) This version only handles IPv4 by design
+16:23:45 (09/05) done
