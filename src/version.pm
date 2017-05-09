@@ -1,3 +1,3 @@
-my $version = "1.0-16";
-my $build_date = "2017-05-02 15:52";
-my $build_git_sha = "3abcc37bfa47f768304bb431b5468bd3032cd4b5";
+my $version = "1.0-17";
+my $build_date = "2017-05-09 16:23";
+my $build_git_sha = "60cb5346a1263cb587d9f05f3cfa13197d443c8e";

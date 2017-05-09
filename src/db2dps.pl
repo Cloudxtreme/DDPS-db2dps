@@ -854,7 +854,6 @@ sub mkrulebase($$)
 					$packetlength		=~ s/\s+/ =/g;
 				}
 
-
 				# final rule
 				$rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $destinationport $ipprotocol $tcpflags $packetlength } then { $action } } }";
 				logit("rule: $rule");
@@ -1031,6 +1030,8 @@ END_OF_QUERY
 		}
 		else
 		{
+			# 'UNKNOWN' is also some kind of flooding: we'll flood everything with ridiculous and noisy rules
+			# FIXME
 			# TODO
 			# loop all lines 
 			# {
