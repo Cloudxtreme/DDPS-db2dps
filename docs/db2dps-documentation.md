@@ -183,9 +183,10 @@ to avoid processing incomplete files:
 The format is
 
 	Rule header: type;vesion;attack_info
-	type: fnm    | ...
-	version: 1   | ...
-	attack_info: icmp_flood | syn_flood | udp_flood | unknown | ...
+	type:        | fnm ...
+	optimization | doop | noop | opop
+	version:     | 1 ...
+	attack_info: | icmp_flood | syn_flood | udp_flood | unknown | ...
 
 	Rules: customernetworkid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
 	customernetworkid:      Customer id (int)
@@ -208,15 +209,22 @@ The format is
 
 	last-line
 
+| Option       | Description                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------- |
+| type         | rule file type, e.g. `fnm`                                                                  |
+| optimization | **doop**: do optimization<br> **noop**: do not optimize<br> **opop**: optional optimization |
+| version      | rule file version                                                                           |
+| attack\_info | attack information from fastnetmon, e.g. `icmp_flood`, `syn_flood` and `udp_flood`          |
+
 Example:
 
-	head;fnm;1;udp_flood
+	head;fnm;doop;1;udp_flood
 	1;00:25:90:47:2b:48;1;42;10;130.226.136.242;216.199.145.111;udp;60690;0;0;null;null;null;60;63;null;null
 	1;00:25:90:47:2b:48;1;42;10;130.226.136.242;43.51.166.76;udp;60693;0;0;null;null;null;60;63;null;null
 	1;00:25:90:47:2b:48;1;42;10;130.226.136.242;60.214.227.111;udp;60692;0;0;null;null;null;60;63;null;null
 	last-line
 
-	head;fnm;1;syn_flood
+	head;fnm;doop;1;syn_flood
 	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;66.141.26.81;tcp;14372;80;80;null;null;syn;60;63;null;0
 	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;161.185.77.224;tcp;14374;80;80;null;null;syn;60;63;null;0
 	last-line
@@ -321,39 +329,31 @@ SNMP does to my best understanding not pass the boundaries of a company
 network, even not protocol version 3. And sacrificing monitoring data for
 the sake of the network is fine with me.
 
+The objective is to reduce the rule files to a bare minimum of rules the
+following is done for _type 10 - Packet length_ and _type 4 port_ assuming it
+is the source port (and type 5 the destination port should fastnetmon detect a
+change). So for both port and length the algorithm is sort-of:
 
+	if (the value is string "null")
+	then
+		dont filter on value and use "null"
+	else
+		calculate min and max for value
+		calculate the top 10 values
+		if (min == max for value)
+		then
+			filter explicit on value, they are all identical
+		else
+			if (the top 10 values covers more than 10 %)
+			then
+				filter explicit on the top 10 values
+			else
+				dont filter on value and use "null"
+			fi
+		fi
+	fi
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	
 ## Other versions
 A version of ``i2dps`` written in C is also available, but
 _currently with unresolved memory / heap errors_. It also lacks code for
