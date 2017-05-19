@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Status</title>
+	<meta name="subtitle" content="Status"/>
+	<meta name="author" content="Niels Thomas Haugård"/>
+	<meta name="date" content="Ons 17 Maj 2017 11:11:03 CEST"/>
+	<meta name="version" content="1.0-18-1-g29f3df7-dirty 1.0-18"/>
+	<meta name="shorttitle" content="D"/>
+	<meta name="series" content="SSI"/>
+	<meta name="seriesindex" content=""/>
+	<meta name="tags" content="SSI"/>
+	<meta name="cover" content="coverpage.pdf"/>
+	<link type="text/css" rel="stylesheet" href="assets/CSS/i2-Book.css"/>
+<link rel="stylesheet" href="assets/CSS/googlecode.css"> <script src="assets/CSS/highlight.min.js"></script> <script>hljs.initHighlightingOnLoad();</script>
+	<meta name="files" content=""/>
+</head>
+<body>
+
+<h1 id="i2dpsdaemon">i2dps daemon</h1>
+
+<p><code>db2dps</code> is a small daemon running on the database server which convert
+rules to BGP announcements. The daemon is controlled by <code>systemd</code>. The
+installation is done with <code>make</code>.</p>
+
+<p>The current version of <code>i2dps</code> is written in Perl. It requires the following
+Perl modules to be installed:</p>
+
+<pre><code>sudo apt-get -y install libnet-openssh-compat-perl liblist-moreutils-perl \
+                        libnet-openssh-compat-perl libnet-ssh2-perl       \
+                        libproc-daemon-perl libnetaddr-ip-perl            \
+                        libdbi-perl libdbd-pg-perl libtypes-path-tiny-perl
+</code></pre>
+
+<h3 id="installation">Installation</h3>
+
+<p>On the database host, execute</p>
+
+<pre><code>mkdir -p /opt/db2dps &amp;&amp; chown sysadm:sysadm /opt/db2dps
+</code></pre>
+
+<p>Edit <code>Makefile</code> and copy the source for <code>db2dps</code> to <code>/opt/db2dps</code>. You only
+need to change the lines to whatever your heart desire:</p>
+
+<pre><code>TARGETHOST      = sysadm@ddps.deic.dk
+GID             = sysadm
+UID             = sysadm
+</code></pre>
+
+<p>Change <code>TARGETHOST</code> and set up <code>ssh</code> credentials first. Either (depending
+on your local environment) do</p>
+
+<pre><code>./remote.sh -v make dirs
+</code></pre>
+
+<p>or copy the source to <code>/opt/db2dps/src</code> and execute:</p>
+
+<pre><code>cd /opt/db2dps/src &amp;&amp; make dirs
+</code></pre>
+
+<p>If that goes well then execute</p>
+
+<pre><code>./remote.sh -v make all
+</code></pre>
+
+<p>or</p>
+
+<pre><code>cd /opt/db2dps/src &amp;&amp; make all
+</code></pre>
+
+<p>For the C version, the target will</p>
+
+<ul>
+<li>fetch, extract and compile required libraries from github</li>
+<li>compile db2dps and place binaries etc. below <code>/opt/db2dps</code></li>
+<li>install db2dps as a <a href="https://en.wikipedia.org/wiki/Systemd">systemd</a> service which
+will start as part of the boot process</li>
+</ul>
+
+<p>For the Perl version the target will</p>
+
+<ul>
+<li>add version information to <code>db2dps</code></li>
+<li>install db2dps as a <a href="https://en.wikipedia.org/wiki/Systemd">systemd</a> service which
+will start as part of the boot process</li>
+</ul>
+
+<p>Usage and pseudo code below:</p>
+
+<!-- make md begin cd ../src/; make md -->
+
+<h4 id="namedb2dps">Name db2dps</h4>
+
+<p>Database / rule manipulation for DDPS</p>
+
+<h4 id="synopsis">Synopsis</h4>
+
+<p><code>db2dps [-V] [-v] [-d] [-s seconds]</code></p>
+
+<h3 id="description">Description</h3>
+
+<p><code>db2dps</code> process new <em>rulefiles</em>, and maintain rules in the database wile
+ sending BGP flowspec updates to a number of BGP hosts. <code>db2dps</code> runs as
+ a daemon controlled by systemd.</p>
+
+<h3 id="options">Options</h3>
+
+<ul>
+<li><strong>-V</strong>: print version information and exit</li>
+<li><strong>-v</strong>: verbose and run in foreground</li>
+<li><strong>-d</strong>: demonise</li>
+<li><strong>-s</strong> <em>seconds</em>: sleep time between database scan. Default is 20 seconds</li>
+</ul>
+
+<h4 id="pseudocode">Pseudo code</h4>
+
+<pre><code>read configuration || fail
+check args: print version and exit | demonise | run in foreground
+
+connect to database || exit fail
+
+query(all my networks)
+
+while true; do
+{
+  if [ exit required ]
+  {
+    break loop
+    close database connection
+    exit normal
+  }
+  else
+  {
+    sleep except seconds on first loop
+  }
+
+   if [ exist (new files with rules from fastnetmon) ]
+     if (query(insert rules in database) == OK)
+        delete(rulefile) or warn
+
+  foreach bgphost do
+  {
+    mkrulebase(&quot;announce&quot;, bgphost)
+    {
+       if (bgphost requires all rules)
+          query(all rules)
+       else
+          query(NOT isactivated and NOT expired records)
+       continue if (query empty)
+       {
+         if (destination is within all my networks)
+         {
+           build rules suitable for bgphost
+           send rulebase to bgp host || warn
+           /* notice: this may block */
+         }
+         else
+         {
+           warn about attempt to filter for external network
+         }
+      }
+    }
+  }
+  query(set isactivated for all announced rules in database)
+
+  foreach bgphost do
+  {
+    mkrulebase(&quot;withdraw&quot;, bgphost)
+    {
+       query(all isactivated rules)
+       select rules which are expired AND does not match a non-expired rule
+       foreach (bgphosts)
+       {
+         if (destination is within all my networks)
+         {
+           build rules suitable for bgphost
+           send rulebase to bgp host || warn
+           /* notice: this may block */
+         }
+         else
+         {
+           warn about attempt to filter for external network
+         }
+      }
+    }
+  }
+  query(set isexpired for withdrawn rules in database)
+}
+
+close database connection and exit normal
+</code></pre>
+
+<h3 id="author">Author</h3>
+
+<p>Niels Thomas Haugård, niels.thomas.haugaard@i2.dk</p>
+
+<h3 id="bugs">Bugs</h3>
+
+<p>Probably. Please report them to the the author or the DDPS group. Please
+ notice this is early work.</p>
+
+<!-- make md end   -->
+
+<h3 id="rulefiles">Rulefiles</h3>
+
+<p>Rule files has the following format, with a <em>header</em> describing the <em>rule type</em>
+where only <code>fnm</code> for fastnetmon is in use, rule format if we should ever change it
+and the <em>attack type</em> for later optimisation. The last line is literally <em>last-line</em>
+to avoid processing incomplete files:</p>
+
+<pre><code>ruleheader
+rule
+rule
+last-line
+</code></pre>
+
+<p>The format is</p>
+
+<pre><code>Rule header: type;vesion;attack_info
+type:        | fnm ...
+optimization | doop | noop | opop
+version:     | 1 ...
+attack_info: | icmp_flood | syn_flood | udp_flood | unknown | ...
+
+Rules: customernetworkid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
+customernetworkid:      Customer id (int)
+uuid:                   Mac address -- identify fastnetmon instance
+fastnetmoninstanceid:   Customers fastnetmon # (int)
+administratorid:        Administrator id (int)
+blocktime:              Minutes
+Type 1 - Destination Prefix
+Type 2 - Source Prefix
+Type 3 - IP Protocol
+Type 4 – Source or Destination Port
+Type 5 – Destination Port
+Type 6 - Source Port
+Type 7 – ICMP Type
+Type 8 – ICMP Code
+Type 9 - TCP flags
+Type 10 - Packet length
+Type 11 – DSCP
+Type 12 - Fragment Encoding
+
+last-line
+</code></pre>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Option</th>
+	<th style="text-align:left;">Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">type</td>
+	<td style="text-align:left;">rule file type, e.g. <code>fnm</code></td>
+</tr>
+<tr>
+	<td style="text-align:left;">optimization</td>
+	<td style="text-align:left;"><strong>doop</strong>: do optimization<br> <strong>noop</strong>: do not optimize<br> <strong>opop</strong>: optional optimization</td>
+</tr>
+<tr>
+	<td style="text-align:left;">version</td>
+	<td style="text-align:left;">rule file version</td>
+</tr>
+<tr>
+	<td style="text-align:left;">attack_info</td>
+	<td style="text-align:left;">attack information from fastnetmon, e.g. <code>icmp_flood</code>, <code>syn_flood</code> and <code>udp_flood</code>  </td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+
+<pre><code>head;fnm;doop;1;udp_flood
+1;00:25:90:47:2b:48;1;42;10;130.226.136.242;216.199.145.111;udp;60690;0;0;null;null;null;60;63;null;null
+1;00:25:90:47:2b:48;1;42;10;130.226.136.242;43.51.166.76;udp;60693;0;0;null;null;null;60;63;null;null
+1;00:25:90:47:2b:48;1;42;10;130.226.136.242;60.214.227.111;udp;60692;0;0;null;null;null;60;63;null;null
+last-line
+
+head;fnm;doop;1;syn_flood
+0;00:25:90:47:2b:48;1;42;10;130.226.136.242;66.141.26.81;tcp;14372;80;80;null;null;syn;60;63;null;0
+0;00:25:90:47:2b:48;1;42;10;130.226.136.242;161.185.77.224;tcp;14374;80;80;null;null;syn;60;63;null;0
+last-line
+</code></pre>
+
+<p>Some fields are read by <code>fnm2db</code> from its configuration file. The configuration file is written based
+on information from the database:</p>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Var</th>
+	<th style="text-align:left;">Size</th>
+	<th style="text-align:left;">Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;"><strong>customernetworkid</strong></td>
+	<td style="text-align:left;"><code>int</code></td>
+	<td style="text-align:left;">describing the customer</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><strong>fastnetmoninstanceid</strong></td>
+	<td style="text-align:left;"><code>int</code></td>
+	<td style="text-align:left;">describing the customers fastnetmon which triggered the rule</td>
+</tr>
+<tr>
+	<td style="text-align:left;"><strong>administratorid</strong></td>
+	<td style="text-align:left;"><code>int</code></td>
+	<td style="text-align:left;">describing the (pseudo) administrator which created the rule. The administrator cannot log in, but the database requires all rule to be made by someone.</td>
+</tr>
+</tbody>
+</table>
+<p>The design opens up for other kind of rule creators, e.g. <a href="https://en.wikipedia.org/wiki/NetFlow">Cisco Netflow</a>
+which is evaluated by CERT.</p>
+
+<h3 id="rulecreation">Rule creation</h3>
+
+<p>Just my random thoughts, but having to implement something I wonder what is the
+<em>best practice for creating rules to mitigate volumetric attacks based on flowspec</em>?</p>
+
+<p>According to
+<a href="https://d0.awsstatic.com/whitepapers/DDoS_White_Paper_June2015.pdf">awsstatic.com</a>
+DDoS attacks are most common at layers 3, 4, 6, and 7 of the Open Systems
+Interconnection (OSI) model.</p>
+
+<p>Layer 3 and 4 attacks correspond to the Network and Transport layers of the OSI
+model: these are volumetric infrastructure layer attacks.</p>
+
+<p>Layer 6 and 7 attacks correspond to the Presentation and Application layers of
+the OSI model, these are as application layer attacks and only the volumetric
+attacks can be detected by fastnetmon.</p>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">#</th>
+	<th style="text-align:left;">Layer</th>
+	<th style="text-align:left;">Unit</th>
+	<th style="text-align:left;">Description</th>
+	<th style="text-align:left;">Vector Examples</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">7</td>
+	<td style="text-align:left;">Application</td>
+	<td style="text-align:left;">Data</td>
+	<td style="text-align:left;">Network process to application</td>
+	<td style="text-align:left;">HTTP floods, DNS query floods</td>
+</tr>
+<tr>
+	<td style="text-align:left;">6</td>
+	<td style="text-align:left;">Presentation</td>
+	<td style="text-align:left;">Data</td>
+	<td style="text-align:left;">Data representation and encryption</td>
+	<td style="text-align:left;">SSL abuse</td>
+</tr>
+<tr>
+	<td style="text-align:left;">5</td>
+	<td style="text-align:left;">Session</td>
+	<td style="text-align:left;">Data</td>
+	<td style="text-align:left;">Interhost communication</td>
+	<td style="text-align:left;">N/A</td>
+</tr>
+<tr>
+	<td style="text-align:left;">4</td>
+	<td style="text-align:left;">Transport</td>
+	<td style="text-align:left;">Segments</td>
+	<td style="text-align:left;">End-to-end connections and reliability</td>
+	<td style="text-align:left;">SYN floods</td>
+</tr>
+<tr>
+	<td style="text-align:left;">3</td>
+	<td style="text-align:left;">Network</td>
+	<td style="text-align:left;">Packets</td>
+	<td style="text-align:left;">Path determination and logical addressing</td>
+	<td style="text-align:left;">UDP reflection attacks</td>
+</tr>
+<tr>
+	<td style="text-align:left;">2</td>
+	<td style="text-align:left;">Data Link</td>
+	<td style="text-align:left;">Frames</td>
+	<td style="text-align:left;">Physical addressing</td>
+	<td style="text-align:left;">N/A</td>
+</tr>
+<tr>
+	<td style="text-align:left;">1</td>
+	<td style="text-align:left;">Physical</td>
+	<td style="text-align:left;">Bits</td>
+	<td style="text-align:left;">Media, signal, and binary transmission</td>
+	<td style="text-align:left;">N/A</td>
+</tr>
+</tbody>
+</table>
+<p><em>From <a href="https://d0.awsstatic.com/whitepapers/DDoS_White_Paper_June2015.pdf">awsstatic.com</a></em></p>
+
+<p>Fastnetmon detects the following type of attacks:</p>
+
+<ol>
+<li><em>syn_flood</em>: TCP packets with enabled SYN flag</li>
+<li><em>udp_flood</em>: flood with UDP packets (so recently in result of amplification)</li>
+<li><em>icmp flood</em>: flood with ICMP packets</li>
+<li><em>ip_fragmentation_flood</em>: IP packets with MF flag set or with non zero fragment offset</li>
+<li><em>DNS amplification</em>:</li>
+<li><em>NTP amplification</em>:</li>
+<li><em>SSDP amplification</em>:</li>
+<li><em>SNMP amplification</em>:</li>
+</ol>
+
+<p>First: it is sometimes possible to distinguish between legitimate and illegitimate packets, as
+<a href="https://danielmiessler.com/study/synpackets/">Not All SYNs Are Created Equal</a>.
+And empty UDP and TCP packet might be rare:</p>
+
+<p>For ethernet is the <em>minimum payload</em> 42 octets when an 802.1Q tag is present and
+46 octets when absent according to <a href="https://en.wikipedia.org/wiki/Ethernet_frame">wikipedia on ethernet
+frames</a>. The minimum Layer 2
+Ethernet frame size is 64 bytes for an <em>empty tcp or udp packet</em>.</p>
+
+<figure>
+<img src="https://nmap.org/book/images/hdr/MJB-TCP-Header-800x564.png" alt="" /></figure>
+
+
+
+<p>We have the following values for creating a filter:</p>
+
+<pre><code>Type 1 - Destination Prefix
+Type 2 - Source Prefix
+Type 3 - IP Protocol
+Type 4 – Source or Destination Port
+Type 5 – Destination Port
+Type 6 - Source Port
+Type 7 – ICMP Type
+Type 8 – ICMP Code
+Type 9 - TCP flags
+Type 10 - Packet length
+Type 11 – DSCP
+Type 12 - Fragment Encoding
+</code></pre>
+
+<p>Suggestion for rule creation:</p>
+
+<table>
+<colgroup>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+<col style="text-align:left;"/>
+</colgroup>
+
+<thead>
+<tr>
+	<th style="text-align:left;">Attack type</th>
+	<th style="text-align:left;">Mitigation</th>
+	<th style="text-align:left;">Match on</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+	<td style="text-align:left;">syn_flood</td>
+	<td style="text-align:left;">rate-limit</td>
+	<td style="text-align:left;">tcp option (syn) protocol, destination port, tcp flags, size, (ttl would be nice but <a href="https://tools.ietf.org/id/draft-ietf-idr-bgp-flowspec-label-00.txt">is still in draft</a>), and source any</td>
+</tr>
+<tr>
+	<td style="text-align:left;">udp_flood</td>
+	<td style="text-align:left;">rate-limit</td>
+	<td style="text-align:left;">protocol and destination host and port</td>
+</tr>
+<tr>
+	<td style="text-align:left;">icmp flood</td>
+	<td style="text-align:left;">discard</td>
+	<td style="text-align:left;">protocol and destination</td>
+</tr>
+<tr>
+	<td style="text-align:left;">ip_fragmentation_flood</td>
+	<td style="text-align:left;">rate-limit</td>
+	<td style="text-align:left;">protocol and destination</td>
+</tr>
+<tr>
+	<td style="text-align:left;">DNS amplification</td>
+	<td style="text-align:left;">rate-limit</td>
+	<td style="text-align:left;">protocol, port and destination</td>
+</tr>
+<tr>
+	<td style="text-align:left;">NTP amplification</td>
+	<td style="text-align:left;">rate-limit</td>
+	<td style="text-align:left;">protocol, port and destination</td>
+</tr>
+<tr>
+	<td style="text-align:left;">SSDP amplification</td>
+	<td style="text-align:left;">discard</td>
+	<td style="text-align:left;">protocol, port 1900, source any</td>
+</tr>
+<tr>
+	<td style="text-align:left;">SNMP amplification</td>
+	<td style="text-align:left;">discard</td>
+	<td style="text-align:left;">protocol, port, destination</td>
+</tr>
+</tbody>
+</table>
+<p>Note: SSDP - <em>Simple Service Discovery Protocol</em> (see <a href="http://quimby.gnus.org/internet-drafts/draft-cai-ssdp-v1-03.txt">draft-cai-ssdp-v1&#8211;03</a> does not belong on a WAN an anyway? It&#8217;s used
+for UPnP discovery. The same goes for TCP / UDP port 1 - 19.</p>
+
+<p>SNMP does to my best understanding not pass the boundaries of a company
+network, even not protocol version 3. And sacrificing monitoring data for
+the sake of the network is fine with me.</p>
+
+<p>The objective is to reduce the rule files to a bare minimum of rules the
+following is done for <em>type 10 - Packet length</em> and <em>type 4 port</em> assuming it
+is the source port (and type 5 the destination port should fastnetmon detect a
+change). So for both port and length the algorithm is sort-of:</p>
+
+<pre><code>if (the value is string &quot;null&quot;)
+then
+    dont filter on value and use &quot;null&quot;
+else
+    calculate min and max for value
+    calculate the top 10 values
+    if (min == max for value)
+    then
+        filter explicit on value, they are all identical
+    else
+        if (the top 10 values covers more than 10 %)
+        then
+            filter explicit on the top 10 values
+        else
+            dont filter on value and use &quot;null&quot;
+        fi
+    fi
+fi
+</code></pre>
+
+<h2 id="otherversions">Other versions</h2>
+
+<p>A version of <code>i2dps</code> written in C is also available, but
+<em>currently with unresolved memory / heap errors</em>. It also lacks code for
+<em>white listing</em> and <em>solving the problem with overlapping rules</em>.</p>
+
+<p>The C development environment including memory leak test with
+<a href="http://valgrind.org">valgrind</a> may be installed this way:</p>
+
+<pre><code>sudo apt-get -y update
+sudo apt-get -y upgrade
+sudo apt-get -y install build-essential
+sudo apt-get -y install valgrind
+</code></pre>
+
+<p>Installation of the C version is documented in the <code>Makefile</code>.</p>
+
+</body>
+</html>
