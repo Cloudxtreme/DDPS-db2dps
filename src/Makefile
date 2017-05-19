@@ -74,7 +74,6 @@ prog		= db2dps
 target		= $(BINDIR)/db2dps
 
 initrc		= $(INITDIR)/$(RC)
-service		= $(INITDIR)/$(SERVICEFILE)
 dbini		= $(ETCDIR)/$(PRODINI)
 
 default:	$(prog)
@@ -101,16 +100,16 @@ bin:
 exabgpsyntax:
 			perl ./test-bgp-rules.pl | ssh rnd@exabgp1 'cat > /var/run/exabgp/exabgp.cmd'
 
-install:	hostcheck $(target) $(initrc) $(dbini) $(service)
+install:	hostcheck $(target) $(initrc) $(dbini)
 			sudo cp $(SERVICEFILE) /etc/systemd/system/
-			sudo systemctl enable db2dps.service
-			sudo systemctl start db2dps.service
+			sudo systemctl enable $(SERVICEFILE)
+			sudo systemctl start $(SERVICEFILE)
 
 uninstall:
 			# stop the service, disable start 
-			sudo systemctl stop db2dps.service
-			sudo systemctl disable db2dps.service
-			sudo rm -f /etc/systemd/system/multi-user.target.wants/db2dps.service /etc/systemd/system/db2dps.service
+			sudo systemctl stop $(SERVICEFILE)
+			sudo systemctl disable $(SERVICEFILE)
+			sudo rm -f /etc/systemd/system/multi-user.target.wants/$(SERVICEFILE) /etc/systemd/system/$(SERVICEFILE)
 			sudo systemctl daemon-reload
 			sudo systemctl reset-failed
 			echo now remove everything below $(PREFIX) and the database netflow from postgres

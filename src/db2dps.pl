@@ -511,7 +511,8 @@ sub parse_ip($) {
 	$str =~ s/^\s*//;
 	$str =~ s/\s*$//;
 
-	if ($str =~ s/^((?:\d+\.)+\d+)(?::(\d+))?$//) {
+	if ($str =~ s/^((?:\d+\.)+\d+)(?::(\d+))?$//)
+	{
 		return 'v4', parse_v4($1, $2);
 	}
 
@@ -519,7 +520,9 @@ sub parse_ip($) {
 	if ($str =~ /^\[(.*?)\]:(\d+)$/) {
 		$port = $2;
 		$ip = parse_v6($1);
-	} else {
+	}
+	else
+	{
 		$port = -1;
 		$ip = parse_v6($str);
 	}
@@ -942,17 +945,25 @@ sub processnewrules()
 		my $file_finished_ok_string = "last-line";
 
 		my $file	= path($newrulesdir . "/" . $r);
-		my $head; my $tail; my $type; my $version; my $attack_info;
+		my $head; my $tail; my $type; my $optimize, my $version; my $attack_info;
 
 		my $tmp;
 		($head) = $file->lines( {count =>  1}); chomp($head);
 		($tail)	= $file->lines( {count => -1}); chomp($tail);
 
-		($tmp, $type, $version, $attack_info) = split(';', $head);
+		($tmp, $type, $optimize, $version, $attack_info) = split(';', $head);
 		chomp($attack_info);
 
 		my @lines = $file->lines_utf8;
 		my ($action,$customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
+		my $length_min  = 90000;	# jumbo package: count down
+		my $length_max  = 0;		# max = 0: increment
+
+		my $sport_min   = 65536;	# minimum port number is max value (2^16) - decrement
+		my $sport_max   = 0;
+		my $dport_min   = 65536;    # initialize to max value - decrement real min value
+		my $dport_max   = 0;        # initialize to min value - increment real max value
+
 
 		if ($head !~ /head/)						{ logit("$file NOT ok: missing head");						next;}
 		if ($tail !~ /$file_finished_ok_string/)	{ logit("$file NOT ok: missing $file_finished_ok_string");	next;}
@@ -960,13 +971,16 @@ sub processnewrules()
 
 		$action = "discard";	# default action
 
-		logit("$file ok type=$type ver=$version attack_info=$attack_info lines=$#lines");
+		logit("$file ok type=$type optimize=$optimize ver=$version attack_info=$attack_info lines=$#lines");
 
 		# process rules and add to database
-		if ($attack_info =~ /_flood/)
+		# TODO: build better optimization
+		if ($optimize eq lc "doop" || $optimize eq lc "opop")
 		{
 			chomp($lines[1]);
 			($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
+
+			# assume it is flooding
 			$src = "null";
 			if ($attack_info =~ /icmp_flood/)
 			{
@@ -1021,8 +1035,6 @@ END_OF_QUERY
 			$sql_query =~ s/'false'/false/g;
 			$sql_query =~ s/'null'/null/g;
 
-			#print "$sql_query\n";
-
 			my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
 			$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
 
@@ -1030,7 +1042,7 @@ END_OF_QUERY
 		}
 		else
 		{
-			# 'UNKNOWN' is also some kind of flooding: we'll flood everything with ridiculous and noisy rules
+			# Do not optimize but read everything literally
 			# FIXME
 			# TODO
 			# loop all lines 
@@ -1054,6 +1066,8 @@ END_OF_QUERY
 	#exit 0;	# exit on debug
 }
 
+sub max ($$) { $_[$_[0] < $_[1]] }
+sub min ($$) { $_[$_[0] > $_[1]] }
 
 __DATA__
 
