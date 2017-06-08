@@ -17,21 +17,26 @@ behind NAT. This makes connecting from the development environment more
 consistent while still allowing internet access for software installation and
 update.
 
-The installation process should be straight forward:
+**Please install your public ssh keys on a user before executing the script - the sshd configuration is changed to no prevent password based login.**
 
-  1. rsync the content of cfg, db, deb and the script install.sh to the host:
-	 `rsync -avzH . username@ddps-dev:/var/tmp/install/` 
-  1. Execute `./install.sh` as `root`
+Copy the content of `cfg`, `db`, `deb` and the script `install.sh` to the host
+after the basic installation. Then execute `install.sh` as `root`.
 
-The following should happen - but see the script for details:
+	 rsync -avzH cfg db deb dev.lst install.sh username@ddps-dev:/var/tmp/install/ 
+	 ssh username@ddps-dev
+	 cd /var/tmp/install
+	 sudo ./install.sh -v
 
-  1. 3 internal developed packages are being installed. Only one is required
-	 outside our  test environment `dailybuandupdate_1.6-1.deb` which is used
-	 for patching and backup. You may decide not to install the other packages.
+You may run the script as many times as you like; you can install but not
+uninstall. The script is supposed to do the following:
+
+  1. Install 3 internal developed packages. Only `dailybuandupdate` is required
+	 outside our  test environment; it  is used for patching and backup. You
+	 may decide not to install the other packages.
   2. The system is patched and may reboot if required. If so, login once more
 	 and execute `./install.sh` as `root`.
   3. If you have a list of developers, place username, full name and userid in
-	 the file `dev.lst` separated by ';'. It is ignored if it doesn't exist.
+	 the file `dev.lst` separated by ';'. The file is ignored if it doesn't exist.
   4. No users should have password login with ssh, so the ssh config file is
 	 modified accordingly. Also, see the `adduser` and `usermod` commands; they
 	 are required for password less login when users doesn't have a password.
@@ -56,4 +61,5 @@ The following should happen - but see the script for details:
 
 <yellownote>TODO:</yellownote>
 
+Where to go next: See the [installation of the daemon db2dps](doc/db2dps-documentation.md)
 
