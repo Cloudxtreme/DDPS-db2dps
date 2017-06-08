@@ -127,17 +127,30 @@ function main()
 		logit "installing packages ... "
 		for PKG in ./deb/*
 		do
-			dpkg -i $PKG | logit
+			P=`echo ${PKG} |sed 's/_.*//'`
+			P=`basename $P`
+			dpkg -s "$P" >/dev/null 2>&1
+			case $? in
+				0)	logit "$P is already installed"
+				;;
+				*)	dpkg -i $PKG | logit
+				;;
+			esac
 		done
 	else
 		logit "no packages in deb, installing scripts instead"
-		cp cfg/bin/* /usr/local/bin
-		cp cfg/cron.d/* /etc/cron.d/
+		/bin/cp cfg/bin/* /usr/local/bin
+		/bin/cp cfg/cron.d/* /etc/cron.d/
 		chmod 0644 /etc/cron.d/*
 		chmod 555 /usr/local/bin*
 		chown root:root /etc/cron.d/* /usr/local/bin*
 		service cron restart
 	fi
+
+	# for postgres backup to work:
+	/bin/cp cfg/bin/autopgsqlbackup /usr/local/bin/autopgsqlbackup
+	chmod 555 /usr/local/bin/autopgsqlbackup
+	chown root:root /usr/local/bin/autopgsqlbackup
 
 	logit "installing configuration files ... "
 	for FILE in cfg/etc/daily_backup.cfg cfg/etc/daily_backup.files
