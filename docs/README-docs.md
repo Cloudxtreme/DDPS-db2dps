@@ -13,14 +13,14 @@ described here:
 
 The configuration file is `/opt/i2dps/etc/db.ini`, change the following as needed:
 
-Under _[general]_ set / change _dbpassword_ and edit _ournetworks_ to match all your networks.
+Under `[general]` set / change `dbpassword` and edit`_ournetworks` to match all your networks.
 The daemon will not issue announce / withdraw commands for addresses outside these net.
 
-The _sleep_time_ is default 10 seconds and the database is polled this interval for changes.
-Please check _rolconnlimit_ in [pg_roles](https://www.postgresql.org/docs/current/static/view-pg-roles.html)
+The `sleep_time` is default 10 seconds and the database is polled this interval for changes.
+Please check `rolconnlimit` in [pg_roles](https://www.postgresql.org/docs/current/static/view-pg-roles.html)
 before you lower the value.
 
 While the configuration file mention black hole communities it is not yet supported.
 
-Last change _hostlist_ to match your exabgp hosts, and for each host specify how to connect.
+Last change `hostlist` to match your exabgp hosts, and for each host specify how to connect.
 
