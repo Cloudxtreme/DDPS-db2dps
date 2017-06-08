@@ -10,10 +10,12 @@ queries the database for new and expired rules.
 
 ## Direct link to main source code below:
 
-  - [Makefile](src/Makefile): Makefile for everything
-  - [README](src/README.md): Readme
-  - [db.ini](src/db.ini): ini file for daemon
-  - [db2dps.pl](src/db2dps.pl): daemon (perl version)
+  - Start here: [README](src/README.md)
+  - Read / change [Makefile](src/Makefile)
+  - Daemon configuration file [db.ini](src/db.ini)
+  - Daemon source: [db2dps.pl](src/db2dps.pl)
+  - [SQL strings](src/sqlstr.pm)
+  - [Kill switch source](src/kill_switch_restart_all_exabgp.pl)
 
 ## License
 
