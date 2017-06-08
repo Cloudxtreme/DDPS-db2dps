@@ -13,7 +13,7 @@ described here:
 
 The configuration file is `/opt/i2dps/etc/db.ini`, change the following as needed:
 
-Under `[general]` set / change `dbpassword` and edit`_ournetworks` to match all your networks.
+Under `[general]` set / change `dbpassword` and edit`ournetworks` to match all your networks.
 The daemon will not issue announce / withdraw commands for addresses outside these net.
 
 The `sleep_time` is default 10 seconds and the database is polled this interval for changes.

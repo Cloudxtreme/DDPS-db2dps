@@ -4,21 +4,16 @@
 The following describes the _database host_ and the daemon which adds and
 queries the database for new and expired rules.
 
-## Documentation and installation procedure:
+## Documentation and installation procedure and a short configuration guide:
 
   - [DDPS database host installation](docs/README-docs.md)
-
-
 
 ## Direct link to main source code below:
 
   - [Makefile](src/Makefile): Makefile for everything
-  - [README.md](src/README.md): Readme
+  - [README](src/README.md): Readme
   - [db.ini](src/db.ini): ini file for daemon
   - [db2dps.pl](src/db2dps.pl): daemon (perl version)
-  - [md.doc](src/md.doc): some notes
-  - [note.md](src/note.md): some notes
-  - [todo.md](src/todo.md): a todo list
 
 ## License
 
