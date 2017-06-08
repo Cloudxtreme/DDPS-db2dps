@@ -61,5 +61,5 @@ uninstall. The script is supposed to do the following:
 
 <yellownote>TODO:</yellownote>
 
-Where to go next: See the [installation of the daemon db2dps](doc/db2dps-documentation.md)
+Where to go next: See the [installation of the daemon db2dps](db2dps-documentation.md)
 
