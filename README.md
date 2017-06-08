@@ -4,12 +4,11 @@
 The following describes the _database host_ and the daemon which adds and
 queries the database for new and expired rules.
 
-## The documentation is described here:
+## Documentation and installation procedure:
 
-  - [Short design overview](docs/ddps-design-short.md)
-  - [Installation and configuration of the database host](docs/ddps-database-server-installation.md)
-  - [Documentation for the database daemon, db2dps](docs/db2dps-documentation.md)
-  - [Makefile](docs/Makefile) for creating pdf and html documentation in ``docs``
+  - [DDPS database host installation](docs/README-docs.md)
+
+
 
 ## Direct link to main source code below:
 
