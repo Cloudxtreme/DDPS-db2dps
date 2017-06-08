@@ -50,7 +50,7 @@ uninstall. The script is supposed to do the following:
 	 warnings etc. as the different dumps contain redundant information. The
 	 warnings can safely be ignored.
   8. Backup and restore: See `/var/CPbackup/RESTORE_INFORMATION/README`, the
-	 directory may be collected on a daily basis with e.t. `rsync`
+	 directory may be collected on a daily basis with e.g. `rsync`
 
 
 ### Apache / NGINX configuration
