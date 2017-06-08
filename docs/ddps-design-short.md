@@ -8,10 +8,10 @@ This document describes the finished version 1.0 system.
 ## Workflow
 
 DDoS mitigation based on BGP flowspec requires some rules to _enter_ the
-system, and other rules to be _sent to and enforced by peering partners and
-upstream provider_. The following drawing illustrates the different components: on the
-left we can see a customer site where a detection engine (here FastNetMon) monitors traffic to a group of networks
-and logs traffic statistics in a local influx database.       
+system, and other rules to be _sent to and enforced by peering partners and upstream provider_.
+The following drawing illustrates the different components: on the left we can
+see a customer site where a detection engine (here FastNetMon) monitors traffic
+to a group of networks and logs traffic statistics in a local influx database.       
 
 ![](assets/img/workflow.png)
 
@@ -22,9 +22,7 @@ edge on the routers thereby mitigating the attack. Rules are later withdrawn.
 
 ![](assets/img/workflow2.png)
 
-<!--
-the image is made in Draw.io (chrome app), the src is in media/docs/workflow.xml
--->
+<!-- the image is made in Draw.io (chrome app), the src is in media/docs/workflow.xml -->
 
 The rules have to match the BGP community we are responsible for: they have to match
 our network only. The system has been designed in this way from the entrance point
@@ -49,6 +47,10 @@ for new and expired rules. The daemon converts the rules to BGP flowspec
 announces and withdraw rules and inserts them in two
 [exabgp](https://github.com/Exa-Networks/exabgp) instances from where they are
 sent to our edge routeres, peers and upstream provider.
+
+The database schema is shown on this drawing.
+
+![](assets/img/db.png)
 
 ## Design
 

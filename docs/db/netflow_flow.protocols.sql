@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.5
--- Dumped by pg_dump version 9.5.5
+-- Dumped from database version 9.5.7
+-- Dumped by pg_dump version 9.5.7
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -228,7 +228,7 @@ SELECT pg_catalog.setval('protocols_id_seq', 149, true);
 --
 
 ALTER TABLE ONLY protocols
-     ADD CONSTRAINT protocols_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT protocols_pkey PRIMARY KEY (id);
 
 
 --

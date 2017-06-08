@@ -1,0 +1,869 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.8.2" last-position="0,0" last-zoom="0.8"
+	 default-schema="public" default-owner="postgres">
+<role name="admin"
+      superuser="true"
+      replication="true"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<role name="flowuser"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<role name="dbadmin"
+      superuser="true"
+      createdb="true"
+      createrole="true"
+      inherit="true"
+      login="true"
+      encrypted="true"
+      password="********">
+</role>
+
+<database name="netflow" encoding="UTF8" lc-collate="en_US" lc-ctype="en_US">
+	<role name="admin"/>
+	<tablespace name="pg_default"/>
+</database>
+
+<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<extension name="pgcrypto" cur-version="1.2">
+	<schema name="public"/>
+	<comment><![CDATA[cryptographic functions]]></comment>
+</extension>
+
+<schema name="flow" rect-visible="true" fill-color="#e8d9a6">
+	<role name="flowuser"/>
+</schema>
+
+<sequence name="globalserviceobjects_globalserviceobjectid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="globalserviceobjects">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="60" y="59"/>
+	<column name="globalserviceobjectid" not-null="true" sequence="flow.globalserviceobjects_globalserviceobjectid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="ipprotocolname" not-null="true">
+		<type name="character varying" length="16"/>
+	</column>
+	<column name="ipprotocolnumber" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="servicename" not-null="true">
+		<type name="character varying" length="16"/>
+	</column>
+	<column name="portnumber">
+		<type name="integer"/>
+	</column>
+	<column name="description" not-null="true">
+		<type name="character varying" length="256"/>
+	</column>
+	<constraint name="globalserviceobjects_portnumber_check" type="ck-constr" table="flow.globalserviceobjects">
+			<expression><![CDATA[((portnumber >= 0) AND (portnumber <= 65535))]]></expression>
+	</constraint>
+	<constraint name="globalserviceobjects_pkey" type="pk-constr" table="flow.globalserviceobjects">
+		<columns names="globalserviceobjectid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="globalnetworkobjects_globalnetworkobjectid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="globalnetworkobjects">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="360" y="59"/>
+	<column name="globalnetworkobjectid" not-null="true" sequence="flow.globalnetworkobjects_globalnetworkobjectid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="32"/>
+	</column>
+	<column name="sti" not-null="true">
+		<type name="character varying" length="128"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<constraint name="globalnetworkobjects_pkey" type="pk-constr" table="flow.globalnetworkobjects">
+		<columns names="globalnetworkobjectid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="globalnetworkobjectcidrs_globalnetworkobjectcidrid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="globalnetworkobjectcidrs">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="660" y="59"/>
+	<column name="globalnetworkobjectcidrid" not-null="true" sequence="flow.globalnetworkobjectcidrs_globalnetworkobjectcidrid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="globalnetworkobjectid">
+		<type name="integer"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="32"/>
+	</column>
+	<column name="net" not-null="true">
+		<type name="cidr"/>
+	</column>
+	<column name="kind" not-null="true">
+		<type name="character" length="4"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<constraint name="globalnetworkobjectcidrs_kind_check" type="ck-constr" table="flow.globalnetworkobjectcidrs">
+			<expression><![CDATA[(kind = ANY (ARRAY['IPv4'::bpchar, 'IPv6'::bpchar]))]]></expression>
+	</constraint>
+	<constraint name="globalnetworkobjectcidrs_pkey" type="pk-constr" table="flow.globalnetworkobjectcidrs">
+		<columns names="globalnetworkobjectcidrid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="customers_customerid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="customers">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="880" y="240"/>
+	<column name="customerid" not-null="true" sequence="flow.customers_customerid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="companyname" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="companyadr1" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="companyadr2" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="companyadr3" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="companyadr4" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="accountantname" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="accountantemail" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="accountantphone" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="hourlyrate" not-null="true">
+		<type name="numeric" length="10" precision="2"/>
+	</column>
+	<column name="subscriptionfee" not-null="true">
+		<type name="numeric" length="10" precision="2"/>
+	</column>
+	<column name="deductionpct" not-null="true">
+		<type name="numeric" length="10" precision="2"/>
+	</column>
+	<column name="mainmail">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="mainphone">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="mainurl">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="cvr">
+		<type name="character" length="8"/>
+	</column>
+	<column name="ean">
+		<type name="character" length="13"/>
+	</column>
+	<column name="valid" not-null="true">
+		<type name="boolean"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<constraint name="customers_pkey" type="pk-constr" table="flow.customers">
+		<columns names="customerid" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="customers_cvr_key" type="uq-constr" table="flow.customers">
+		<columns names="cvr" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="customers_ean_key" type="uq-constr" table="flow.customers">
+		<columns names="ean" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="customernetworks_customernetworkid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="customernetworks">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="1280" y="60"/>
+	<column name="customernetworkid" not-null="true" sequence="flow.customernetworks_customernetworkid_seq">
+		<type name="bigint"/>
+	</column>
+	<column name="customerid" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="32"/>
+	</column>
+	<column name="kind" not-null="true">
+		<type name="character" length="4"/>
+	</column>
+	<column name="net" not-null="true">
+		<type name="cidr"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<constraint name="customernetworks_kind_check" type="ck-constr" table="flow.customernetworks">
+			<expression><![CDATA[(kind = ANY (ARRAY['ipv4'::bpchar, 'ipv6'::bpchar]))]]></expression>
+	</constraint>
+	<constraint name="customernetworks_pkey" type="pk-constr" table="flow.customernetworks">
+		<columns names="customernetworkid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="administrators_administratorid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="administrators">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="60" y="319"/>
+	<column name="administratorid" not-null="true" sequence="flow.administrators_administratorid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="customerid" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="kind" not-null="true">
+		<type name="character varying" length="12"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="phone">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="username" not-null="true">
+		<type name="character varying" length="32"/>
+	</column>
+	<column name="password" not-null="true">
+		<type name="character varying" length="64"/>
+	</column>
+	<column name="valid" not-null="true">
+		<type name="boolean"/>
+	</column>
+	<column name="lastlogin">
+		<type name="timestamp with time zone" with-timezone="true"/>
+	</column>
+	<column name="lastpasswordchange">
+		<type name="timestamp with time zone" with-timezone="true"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="edupersonprincipalname">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="email">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="edupersonprimaryaffiliation">
+		<type name="character varying" length="64"/>
+	</column>
+	<column name="organizationname">
+		<type name="character varying" length="255"/>
+	</column>
+	<column name="edupersontargetedid">
+		<type name="character varying" length="128"/>
+	</column>
+	<column name="schachomeorganization">
+		<type name="character varying" length="64"/>
+	</column>
+	<constraint name="administrators_password_check" type="ck-constr" table="flow.administrators">
+			<expression><![CDATA[(length((password)::text) >= 12)]]></expression>
+	</constraint>
+	<constraint name="administrators_pkey" type="pk-constr" table="flow.administrators">
+		<columns names="administratorid" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="administrators_username_key" type="uq-constr" table="flow.administrators">
+		<columns names="username" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="administrators_kind_check" type="ck-constr" table="flow.administrators">
+			<expression><![CDATA[((kind)::text = ANY (ARRAY[('globaladmin'::character varying)::text, ('dbadmin'::character varying)::text, ('netadmin'::character varying)::text]))]]></expression>
+	</constraint>
+</table>
+
+<sequence name="networkrights_networkrightid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="networkrights">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="560" y="200"/>
+	<column name="networkrightid" not-null="true" sequence="flow.networkrights_networkrightid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="customernetworkid" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="administratorid" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="maxblockmins">
+		<type name="integer"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<constraint name="networkrights_maxblockmins_check" type="ck-constr" table="flow.networkrights">
+			<expression><![CDATA[(maxblockmins > 0)]]></expression>
+	</constraint>
+	<constraint name="networkrights_pkey" type="pk-constr" table="flow.networkrights">
+		<columns names="networkrightid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="fastnetmoninstances_fastnetmoninstanceid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="fastnetmoninstances">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="860" y="740"/>
+	<column name="fastnetmoninstanceid" not-null="true" sequence="flow.fastnetmoninstances_fastnetmoninstanceid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="customerid">
+		<type name="integer"/>
+	</column>
+	<column name="mode">
+		<type name="character varying" length="7"/>
+	</column>
+	<constraint name="fastnetmoninstances_mode_check" type="ck-constr" table="flow.fastnetmoninstances">
+			<expression><![CDATA[((mode)::text = ANY ((ARRAY['detect'::character varying, 'enforce'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmoninstances_pkey" type="pk-constr" table="flow.fastnetmoninstances">
+		<columns names="fastnetmoninstanceid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="customernetworkobjects_customernetworkobjectid_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="customernetworkobjects">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="1260" y="480"/>
+	<column name="customernetworkobjectid" not-null="true" sequence="flow.customernetworkobjects_customernetworkobjectid_seq">
+		<type name="integer"/>
+	</column>
+	<column name="customernetworkid">
+		<type name="integer"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="character varying" length="32"/>
+	</column>
+	<column name="kind" not-null="true">
+		<type name="character" length="4"/>
+	</column>
+	<column name="net" not-null="true">
+		<type name="inet"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<constraint name="customernetworkobjects_kind_check" type="ck-constr" table="flow.customernetworkobjects">
+			<expression><![CDATA[(kind = ANY (ARRAY['IPv4'::bpchar, 'IPv6'::bpchar]))]]></expression>
+	</constraint>
+	<constraint name="customernetworkobjects_pkey" type="pk-constr" table="flow.customernetworkobjects">
+		<columns names="customernetworkobjectid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="flowspecrules_flowspecruleid_seq"
+	 start="30" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="flowspecrules">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="1300" y="619"/>
+	<column name="flowspecruleid" not-null="true" sequence="flow.flowspecrules_flowspecruleid_seq">
+		<type name="bigint"/>
+	</column>
+	<column name="rule_name">
+		<type name="character varying" length="128"/>
+	</column>
+	<column name="administratorid" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="direction" not-null="true">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="validfrom" not-null="true">
+		<type name="timestamp with time zone" with-timezone="true"/>
+	</column>
+	<column name="validto" not-null="true">
+		<type name="timestamp with time zone" with-timezone="true"/>
+	</column>
+	<column name="fastnetmoninstanceid">
+		<type name="integer"/>
+	</column>
+	<column name="isactivated" not-null="true">
+		<type name="boolean"/>
+	</column>
+	<column name="isexpired" not-null="true">
+		<type name="boolean"/>
+	</column>
+	<column name="destinationprefix">
+		<type name="inet"/>
+	</column>
+	<column name="sourceprefix">
+		<type name="inet"/>
+	</column>
+	<column name="ipprotocol">
+		<type name="character varying" length="8"/>
+	</column>
+	<column name="srcordestport">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="destinationport">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="sourceport">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="icmptype">
+		<type name="integer"/>
+	</column>
+	<column name="icmpcode">
+		<type name="integer"/>
+	</column>
+	<column name="tcpflags">
+		<type name="character varying" length="32"/>
+	</column>
+	<column name="packetlength">
+		<type name="integer"/>
+	</column>
+	<column name="dscp">
+		<type name="character varying" length="80"/>
+	</column>
+	<column name="fragmentencoding">
+		<type name="integer"/>
+	</column>
+	<column name="description">
+		<type name="character varying" length="256"/>
+	</column>
+	<column name="customerid" not-null="true" default-value="0">
+		<type name="integer"/>
+	</column>
+	<column name="action">
+		<type name="character varying" length="255"/>
+	</column>
+	<constraint name="flowspecrules_direction_check" type="ck-constr" table="flow.flowspecrules">
+			<expression><![CDATA[((direction)::text = ANY ((ARRAY['in'::character varying, 'out'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="flowspecrules_check" type="ck-constr" table="flow.flowspecrules">
+			<expression><![CDATA[(validto > validfrom)]]></expression>
+	</constraint>
+	<constraint name="flowspecrules_pkey" type="pk-constr" table="flow.flowspecrules">
+		<columns names="flowspecruleid" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="protocols_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="protocols">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="80" y="639"/>
+	<column name="id" not-null="true" sequence="flow.protocols_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="protocol" not-null="true">
+		<type name="json"/>
+	</column>
+	<constraint name="protocols_pkey" type="pk-constr" table="flow.protocols">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="services_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="services">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="80" y="699"/>
+	<column name="id" not-null="true" sequence="flow.services_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="service" not-null="true">
+		<type name="json"/>
+	</column>
+	<constraint name="services_pkey" type="pk-constr" table="flow.services">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="icmp_types_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="icmp_types">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="80" y="759"/>
+	<column name="id" not-null="true" sequence="flow.icmp_types_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="icmp" not-null="true">
+		<type name="json"/>
+	</column>
+	<constraint name="icmp_types_pkey" type="pk-constr" table="flow.icmp_types">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<sequence name="icmp_codes_id_seq"
+	 start="1" increment="1"
+	 min-value="1" max-value="9223372036854775807"
+	 cache="1" cycle="false">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+</sequence>
+
+<table name="icmp_codes">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="80" y="819"/>
+	<column name="id" not-null="true" sequence="flow.icmp_codes_id_seq">
+		<type name="integer"/>
+	</column>
+	<column name="code" not-null="true">
+		<type name="json"/>
+	</column>
+	<constraint name="icmp_codes_pkey" type="pk-constr" table="flow.icmp_codes">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="fastnetmon_conf">
+	<schema name="flow"/>
+	<role name="flowuser"/>
+	<position x="440" y="640"/>
+	<column name="id">
+		<type name="integer"/>
+	</column>
+	<column name="fastnetmoninstanceid">
+		<type name="integer"/>
+	</column>
+	<column name="ban_for_pps" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ban_for_bandwidth" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ban_for_flows" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="threshold_pps" default-value="200">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_mbps" default-value="200">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_flows" default-value="2000">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_tcp_mbps" default-value="100">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_udp_mbps" default-value="100">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_icmp_mbps" default-value="100">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_tcp_pps" default-value="1000">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_udp_pps" default-value="1000">
+		<type name="bigint"/>
+	</column>
+	<column name="threshold_icmp_pps" default-value="500">
+		<type name="bigint"/>
+	</column>
+	<column name="ban_for_tcp_bandwidth" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ban_for_udp_bandwidth" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ban_for_icmp_bandwidth" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ban_for_tcp_pps" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ban_for_udp_pps" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<column name="ban_for_icmp_pps" default-value="'on'::character varying">
+		<type name="character varying" length="3"/>
+	</column>
+	<constraint name="fastnetmon_conf_ban_for_pps_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_bandwidth_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_flows_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_flows)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_tcp_bandwidth_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_tcp_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_udp_bandwidth_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_udp_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_icmp_bandwidth_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_icmp_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_tcp_pps_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_tcp_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_udp_pps_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_udp_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+	<constraint name="fastnetmon_conf_ban_for_icmp_pps_check" type="ck-constr" table="flow.fastnetmon_conf">
+			<expression><![CDATA[((ban_for_icmp_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))]]></expression>
+	</constraint>
+</table>
+
+<constraint name="globalnetworkobjectcidrs_globalnetworkobjectid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.globalnetworkobjects" table="flow.globalnetworkobjectcidrs">
+	<columns names="globalnetworkobjectid" ref-type="src-columns"/>
+	<columns names="globalnetworkobjectid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="customernetworks_customerid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.customers" table="flow.customernetworks">
+	<columns names="customerid" ref-type="src-columns"/>
+	<columns names="customerid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="administrators_customerid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.customers" table="flow.administrators">
+	<columns names="customerid" ref-type="src-columns"/>
+	<columns names="customerid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="networkrights_customernetworkid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.customernetworks" table="flow.networkrights">
+	<columns names="customernetworkid" ref-type="src-columns"/>
+	<columns names="customernetworkid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="networkrights_administratorid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.administrators" table="flow.networkrights">
+	<columns names="administratorid" ref-type="src-columns"/>
+	<columns names="administratorid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fastnetmoninstances_customerid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="flow.customers" table="flow.fastnetmoninstances">
+	<columns names="customerid" ref-type="src-columns"/>
+	<columns names="customerid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="customernetworkobjects_customernetworkid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.customernetworks" table="flow.customernetworkobjects">
+	<columns names="customernetworkid" ref-type="src-columns"/>
+	<columns names="customernetworkid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="flowspecrules_administratorid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.administrators" table="flow.flowspecrules">
+	<columns names="administratorid" ref-type="src-columns"/>
+	<columns names="administratorid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="flowspecrules_fastnetmoninstanceid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="flow.fastnetmoninstances" table="flow.flowspecrules">
+	<columns names="fastnetmoninstanceid" ref-type="src-columns"/>
+	<columns names="fastnetmoninstanceid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="flowspecrules_customerid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.customers" table="flow.flowspecrules">
+	<columns names="customerid" ref-type="src-columns"/>
+	<columns names="customerid" ref-type="dst-columns"/>
+</constraint>
+
+<constraint name="fastnetmon_conf_fastnetmoninstanceid_fkey" type="fk-constr" comparison-type="MATCH SIMPLE"
+	 upd-action="RESTRICT" del-action="RESTRICT" ref-table="flow.fastnetmoninstances" table="flow.fastnetmon_conf">
+	<columns names="fastnetmoninstanceid" ref-type="src-columns"/>
+	<columns names="fastnetmoninstanceid" ref-type="dst-columns"/>
+</constraint>
+
+<relationship name="rel_globalnetworkobjectcidrs_globalnetworkobjects" type="relfk"
+	 custom-color="#d27868"
+	 src-table="flow.globalnetworkobjectcidrs"
+	 dst-table="flow.globalnetworkobjects"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_customernetworks_customers" type="relfk"
+	 custom-color="#6f5333"
+	 src-table="flow.customernetworks"
+	 dst-table="flow.customers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_administrators_customers" type="relfk"
+	 custom-color="#b4c7f7"
+	 src-table="flow.administrators"
+	 dst-table="flow.customers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_networkrights_customernetworks" type="relfk"
+	 custom-color="#f2359a"
+	 src-table="flow.networkrights"
+	 dst-table="flow.customernetworks"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_networkrights_administrators" type="relfk"
+	 custom-color="#13d442"
+	 src-table="flow.networkrights"
+	 dst-table="flow.administrators"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fastnetmoninstances_customers" type="relfk"
+	 custom-color="#afdce3"
+	 src-table="flow.fastnetmoninstances"
+	 dst-table="flow.customers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_customernetworkobjects_customernetworks" type="relfk"
+	 custom-color="#32418d"
+	 src-table="flow.customernetworkobjects"
+	 dst-table="flow.customernetworks"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_flowspecrules_administrators" type="relfk"
+	 custom-color="#aaad13"
+	 src-table="flow.flowspecrules"
+	 dst-table="flow.administrators"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_flowspecrules_fastnetmoninstances" type="relfk"
+	 custom-color="#810ed0"
+	 src-table="flow.flowspecrules"
+	 dst-table="flow.fastnetmoninstances"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_flowspecrules_customers" type="relfk"
+	 custom-color="#579660"
+	 src-table="flow.flowspecrules"
+	 dst-table="flow.customers"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="rel_fastnetmon_conf_fastnetmoninstances" type="relfk"
+	 custom-color="#9b818a"
+	 src-table="flow.fastnetmon_conf"
+	 dst-table="flow.fastnetmoninstances"
+	 src-required="false" dst-required="false">
+	<label ref-type="src-label">
+		<position x="-129.373" y="-88.2"/>
+	</label>
+</relationship>
+
+</dbmodel>

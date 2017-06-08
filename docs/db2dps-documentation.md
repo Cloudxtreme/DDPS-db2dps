@@ -1,11 +1,11 @@
 
 # i2dps daemon
 
-``db2dps`` is a small daemon running on the database server which convert
+`db2dps` is a small daemon running on the database server which convert
 rules to BGP announcements. The daemon is controlled by `systemd`.  The
-installation is done with ``make``.
+installation is done with `make`.
 
-The current version of ``i2dps`` is written in Perl. It requires the following
+The current version of `i2dps` is written in Perl. It requires the following
 Perl modules to be installed:
 
     sudo apt-get -y	install libnet-openssh-compat-perl liblist-moreutils-perl \
@@ -19,19 +19,19 @@ On the database host, execute
 
 	mkdir -p /opt/db2dps && chown sysadm:sysadm /opt/db2dps
 
-Edit ``Makefile`` and copy the source for ``db2dps`` to ``/opt/db2dps``. You only
+Edit `Makefile` and copy the source for `db2dps` to `/opt/db2dps`. You only
 need to change the lines to whatever your heart desire:
 
 	TARGETHOST      = sysadm@ddps.deic.dk
 	GID             = sysadm
 	UID             = sysadm
 
-Change ``TARGETHOST`` and set up ``ssh`` credentials first. Either (depending
+Change `TARGETHOST` and set up `ssh` credentials first. Either (depending
 on your local environment) do
 
 	./remote.sh -v make dirs
 
-or copy the source to ``/opt/db2dps/src`` and execute:
+or copy the source to `/opt/db2dps/src` and execute:
 
 	cd /opt/db2dps/src && make dirs
 
@@ -46,13 +46,13 @@ or
 For the C version, the target will
 
   - fetch, extract and compile required libraries from github
-  - compile db2dps and place binaries etc. below ``/opt/db2dps``
+  - compile db2dps and place binaries etc. below `/opt/db2dps`
   - install db2dps as a [systemd](https://en.wikipedia.org/wiki/Systemd) service which
     will start as part of the boot process
 
 For the Perl version the target will
 
-  - add version information to ``db2dps``
+  - add version information to `db2dps`
   - install db2dps as a [systemd](https://en.wikipedia.org/wiki/Systemd) service which
     will start as part of the boot process
 
@@ -65,12 +65,12 @@ Usage and pseudo code below:
 
 #### Synopsis
  
-  ``db2dps [-V] [-v] [-d] [-s seconds]``
+  `db2dps [-V] [-v] [-d] [-s seconds]`
  
 ### Description
 
- ``db2dps`` process new _rulefiles_, and maintain rules in the database wile
- sending BGP flowspec updates to a number of BGP hosts. ``db2dps`` runs as
+ `db2dps` process new _rulefiles_, and maintain rules in the database wile
+ sending BGP flowspec updates to a number of BGP hosts. `db2dps` runs as
  a daemon controlled by systemd.
 
 ### Options
@@ -229,15 +229,15 @@ Example:
 	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;161.185.77.224;tcp;14374;80;80;null;null;syn;60;63;null;0
 	last-line
 
-Some fields are read by ``fnm2db`` from its configuration file. The configuration file is written based
+Some fields are read by `fnm2db` from its configuration file. The configuration file is written based
 on information from the database:
 
 
-| Var                       | Size    | Description             |
-| ------------------------- | ------- | ----------------------- |
-|**customernetworkid**		| ``int`` | describing the customer |
-|**fastnetmoninstanceid**	| ``int`` | describing the customers fastnetmon which triggered the rule |
-|**administratorid**		| ``int`` | describing the (pseudo) administrator which created the rule. The administrator cannot log in, but the database requires all rule to be made by someone. |
+| Var                       | Size  | Description             |
+| ------------------------- | ----- | ----------------------- |
+|**customernetworkid**		| `int` | describing the customer |
+|**fastnetmoninstanceid**	| `int` | describing the customers fastnetmon which triggered the rule |
+|**administratorid**		| `int` | describing the (pseudo) administrator which created the rule. The administrator cannot log in, but the database requires all rule to be made by someone. |
 
 The design opens up for other kind of rule creators, e.g. [Cisco Netflow](https://en.wikipedia.org/wiki/NetFlow)
 which is evaluated by CERT.
@@ -355,7 +355,7 @@ change). So for both port and length the algorithm is sort-of:
 
 	
 ## Other versions
-A version of ``i2dps`` written in C is also available, but
+A version of `i2dps` written in C is also available, but
 _currently with unresolved memory / heap errors_. It also lacks code for
 _white listing_ and _solving the problem with overlapping rules_.
 
@@ -367,5 +367,5 @@ The C development environment including memory leak test with
     sudo apt-get -y install build-essential
     sudo apt-get -y install valgrind
 
-Installation of the C version is documented in the ``Makefile``.
+Installation of the C version is documented in the `Makefile`.
 

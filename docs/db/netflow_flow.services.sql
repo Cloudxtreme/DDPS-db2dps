@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.5
--- Dumped by pg_dump version 9.5.5
+-- Dumped from database version 9.5.7
+-- Dumped by pg_dump version 9.5.7
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -9965,7 +9965,7 @@ SELECT pg_catalog.setval('services_id_seq', 9886, true);
 --
 
 ALTER TABLE ONLY services
-     ADD CONSTRAINT services_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT services_pkey PRIMARY KEY (id);
 
 
 --
