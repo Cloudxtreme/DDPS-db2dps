@@ -1,0 +1,162 @@
+#
+# THIS FILE IS BEEING SOURCED BY /bin/sh AND IS NOT GENERIC BUT
+# SPECIFIC TO ONE HOST.
+#
+# Additional files to be put on backup - this host only
+EXTRA=""
+
+TAR=gtar
+#
+# Keep this number of old backup files locally in /var/CPbackup
+BACKLOG=10
+
+#
+# On errors, send mail to RCPT
+RCPT="fwsupport@uni-c.dk"
+
+# Things to do before backup, i.e stopping ace-database
+pre_backup() {
+	do_common; do_pre_backup
+}
+
+# Things to do after backup, i.e starting ace-database
+post_backup() {
+	do_common; do_post_backup
+}
+
+#
+# On 'rt' much has to be done, to backup 'rt' (mysql, files etc).
+# So the configuration file has been extented with some vars and
+# functions below.
+#
+##################################################################
+#
+# Vars -- carefull ! may clubber vars in script !
+#
+# HOME may/may not be set to something else than default. Find the
+# top
+HOME=`awk -F: '$1 == "root" { print $6 }' /etc/passwd`
+
+# Place generic restore info here
+RESTORE_INFO_DIR=${BACKUP_HOME}/RESTORE_INFORMATION
+
+##################################################################
+#
+# Functions
+#
+
+print_today() {
+	printf "%65s\n" "`date`"
+}
+
+function mk_readme_files() {
+
+	logit "Creating restore information file README ... "
+
+	/usr/sbin/pkg_info	>	${RESTORE_INFO_DIR}/pkg_info
+	/sbin/sysctl -a 	>	${RESTORE_INFO_DIR}/sysctl-a
+	cp /etc/motd			${RESTORE_INFO_DIR}/motd
+
+cat << EOF > ${RESTORE_INFO_DIR}/README
+`print_today`
+
+This  documentation  is  beeing made as part of the backup proce­
+dure. The latest version of this text is stored in
+	${RESTORE_INFO_DIR}
+
+on the machine `hostname`.
+
+If  you are reading this file, chances are that you have just re­
+stored or re-installed the host after a major crash.  Well,  such
+is  life.  Let see what you might still want to do before you can
+consider this system to be ready for normal operations.
+
+First, A word of WARNING The next check list does not claim to be
+exhaustive, error free, user friendly, or complete. There is most
+probably something that I forgot to put in it or things that have
+been modified inthe system since I wrote  this  list.  So  please
+make use of discretion whileusing it.
+
+If  you  are  on a virtual host, things may be much easyer, and a
+restore is done on the fileserver. Continue if that is not an op-
+tion.
+
+Restore requeres hardware identical - or better than this:
+-----------------------------------------------------------------
+hardware:  (uname -m)
+	`uname -m`
+fqdn:      (uname -n)
+	`uname -n`
+processor: (uname -p)
+	`uname -p`
+release:   (uname -r)
+	`uname -r`
+version:   (uname -v)
+	`uname -v`
+-----------------------------------------------------------------
+
+With a disk layout similar or better than this:
+-----------------------------------------------------------------
+df -hi:
+
+`df -hi`
+-----------------------------------------------------------------
+fdisk /dev/rsd0c:
+
+`fdisk /dev/rsd0c`
+-----------------------------------------------------------------
+
+The purpose of the machine is - usually - placed in /etc/motd, so
+a copy is kept here:
+	${RESTORE_INFO_DIR}/motd
+
+A list of installed packages (pkg) is available here:
+	${RESTORE_INFO_DIR}/pkg_info.
+
+System configuration is described in the document:
+	${RESTORE_INFO_DIR}/sysctl-a.
+
+Follow theese steps for a complete restore of `hostname`:
+
+1  Install the same same version of the OS, with all patches. (Or
+   a newer version to make things more exciting). Check the wiki
+   for a general installation procedure for the OS.
+
+   OpenBSD:        Patching can be automated using the script
+                   /usr/local/src/update-openbsd.sh, and con-
+				   figuration done with the script
+				   /usr/local/src/mk.base
+
+2  Get  the latest backup for this host, and extract the contents
+   in e.g. /var/tmp
+
+   Notice, that the backup is selective, you may miss something.
+
+3  Move  configuration files back in place. Take care and don't
+   move the full /etc; devicenames may have changed.
+
+4  Re-enable services and start them. Check for changes in syntax
+   etc.
+
+5  Reboot - and hope for the best.
+
+EOF
+}
+
+function do_common() {
+	if [ ! -d "${RESTORE_INFO_DIR}" ]; then
+		mkdir "${RESTORE_INFO_DIR}"
+	fi
+}
+
+function do_pre_backup() {
+
+	mk_readme_files
+
+	# return $ERRORS
+}
+
+function do_post_backup() {
+	:
+	return $ERRORS
+}

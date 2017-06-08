@@ -9,5 +9,7 @@ ExecStop=/opt/db2dps/etc/init.d/db2dpsrc stop
 
 ExecReload=/opt/db2dps/etc/init.d/db2dpsrc reload
 
+Restart=always
+
 [Install]
 WantedBy=multi-user.target

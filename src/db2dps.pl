@@ -141,6 +141,8 @@ use Path::Tiny;
 use File::stat;
 use File::Temp qw(tempfile);
 
+require '/opt/db2dps/lib/sqlstr.pm';
+
 #
 # prototypes
 #
@@ -195,6 +197,13 @@ my ($flowspecruleid, $direction, $destinationprefix, $sourceprefix,
 
 my $sql_query = "";
 
+our $addrule;
+our $all_rules;
+our $newrules;
+our $remove_expired_rules;
+our $update_rules_when_announced;
+our $update_rules_when_expired;
+
 my $section;
 my %data;
 my $db							= "";
@@ -203,20 +212,15 @@ my $dbuser						= "";
 my $dbpass						= "";
 
 my $allmynetworks				= "";
-my $newrules					= "";
 my $newrulesdir					= "";
-my $remove_expired_rules		= "";
 my $hostlist					= "";
 my $datadir						= "";
-my $all_rules					= "";
 my $shutdown					= "";
 my $tcpudpdrop					= "";
 my $icmpdrop					= "";
 my $ipdrop						= "";
 my $blackhole					= "";
 my $ratelimit					= "";
-my $update_rules_when_announced	= "";
-my $update_rules_when_expired	= "";
 my $action						= "";
 my $validfrom					= "";
 my $validto						= "";
@@ -319,19 +323,14 @@ EOF
 
 	$newrulesdir					= $data{'general'}{'newrulesdir'};		# dir where new rules are uploaded. P.t. only one dir
 
-	$newrules						= $data{'general'}{'newrules'};
-	$remove_expired_rules			= $data{'general'}{'remove_expired_rules'};
 	$hostlist						= $data{'general'}{'hostlist'};
 	$datadir						= $data{'general'}{'datadir'};
-	$all_rules						= $data{'general'}{'all_rules'};
 	$shutdown						= $data{'general'}{'shutdown'};
 	$tcpudpdrop						= $data{'general'}{'tcpudpdrop'};
 	$icmpdrop						= $data{'general'}{'icmpdrop'};
 	$ipdrop							= $data{'general'}{'ipdrop'};
 	$blackhole						= $data{'general'}{'blackhole'};
 	$ratelimit						= $data{'general'}{'ratelimit'};
-	$update_rules_when_announced	= $data{'general'}{'update_rules_when_announced'};
-	$update_rules_when_expired		= $data{'general'}{'update_rules_when_expired'};
 
 	# my $uuid	= $data{'globals'}{'uuid'} . "-" . $data{'globals'}{'customer'};
 
@@ -578,16 +577,16 @@ sub mkrulebase($$)
 				unlink $filepath;
 				# query all records || continue
 				logit("querying for all rules");
-				$sql_query = $data{'general'}{'all_rules'};
+				$sql_query = $all_rules;
 			}
 			else	# continue
 			{
-				$sql_query = $data{'general'}{'newrules'};
+				$sql_query = $newrules;
 			}
 		}
 		elsif($type eq lc "withdraw")
 		{
-			$sql_query = $data{'general'}{'remove_expired_rules'}
+			$sql_query = $remove_expired_rules;
 		}
 		else
 		{
@@ -708,22 +707,11 @@ sub mkrulebase($$)
 
 			################################################################################
 			# TODO
-			# only announce / withdraw rules within walidfrom / validto.
-			# A special check is also needed to prevent rules with long expire time to be
-			# withdrawn by identical rules with shorter ones.
-			# Keep a copy of the prev. rule
-			# - select and sort validto DESC, (see solving-overlapping-rule-problem.sh)
-			#   ie. chage 'withdraw' so order by is validto DESC, select all activated rules
-			#	and match those which has validto < now and doesn't have a matching rule
-			#	shadowing for it
-			# - if validto > now() then discard rule
-			# - if (all fields except validto == prev. rule fields) then discard
+			# Once all expired rules has been withdrawn re-announce all still valid rules
+			# which are not made by FastNetMon as the withdraw may have removed functionality
+			# added by the GUI
 			#
-			# Later it will also be here a whitelist check has to be done
-			#
-			# BGP flow types should go in an external config file and I should use fprintf(fmt, ...)
 			################################################################################	
-
 
 			# Last line of defence to prevent wron announcements: Do not
 			# announce / withdraw networks outside our constituency
@@ -930,7 +918,7 @@ sub processnewrules()
 	my @rulefiles = ();
 	my $file_finished_ok_string = "last-line";
 	my $document;
-	opendir (DIR, $newrulesdir) or die $!;
+	opendir (DIR, $newrulesdir) or myddie "Could not open '$newrulesdir' $!";
 	while ( my $node = readdir(DIR) )
 	{
 		next if ($node =~ /^\./);
@@ -1002,6 +990,8 @@ sub processnewrules()
 			#
 			# TODO
 			# Implementation of mitigation rules (see DDPS-db2dps/docs/best-practise-volumetric-ddos-mitigation.md) below
+			# check fields are valid (addresses, numbers etc)
+ 			# check fields comply with database field-length etc
 
 			# if ($attack_info =~ /ip_fragmentation_flood/)
 			# if ($attack_info =~ /DNS amplification/)
@@ -1011,29 +1001,29 @@ sub processnewrules()
 			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action");
 			
 			# quote everything except null and false
-			$sql_query = << "END_OF_QUERY"; 
-insert into flow.flowspecrules
-(
-	flowspecruleid, customerid, rule_name,
-	administratorid,
-	direction, validfrom, validto,
-	fastnetmoninstanceid,
-	isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
-	icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding, action
-)
-values
-(
-	(select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '$customerid', '$uuid',
-	'$administratorid',
-	'in', now(), now()+interval '$blocktime minutes',
-	'$fastnetmoninstanceid',
-	'false', 'false', '$dst', '$src', '$protocol', '$dport', '$dport', '$sport',
-	'$icmp_type', '$icmp_code', '$flags', '$length', '$dscp', '$frag', '$action'
-);
-END_OF_QUERY
+			$sql_query = $addrule;
 
-			$sql_query =~ s/'false'/false/g;
-			$sql_query =~ s/'null'/null/g;
+			for ($sql_query) {
+				s/__customerid/$customerid/g;
+				s/__uuid/$uuid/g;
+				s/__administratorid/$administratorid/g;
+				s/__blocktime/$blocktime/g;
+				s/__fastnetmoninstanceid/$fastnetmoninstanceid/g;
+				s/__dst/$dst/g;
+				s/__src/$src/g;
+				s/__protocol/$protocol/g;
+				s/__dport/$dport/g;
+				s/__sport/$sport/g;
+				s/__icmp_type/$icmp_type/g;
+				s/__icmp_code/$icmp_code/g;
+				s/__flags/$flags/g;
+				s/__length/$length/g;
+				s/__dscp/$dscp/g;
+				s/__frag/$frag/g;
+				s/__action/$action/g;
+				s/'false'/false/g;
+				s/'null'/null/g;
+   			}
 
 			my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
 			$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");

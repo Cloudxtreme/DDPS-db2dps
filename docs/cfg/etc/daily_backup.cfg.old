@@ -3,7 +3,8 @@
 # SPECIFIC TO ONE HOST.
 #
 # Additional files to be put on backup - this host only
-EXTRA="./var/CPbackup/postgres-backup/ ./usr/local/ ./var/backups/postgres ./opt/ ./home/"
+EXTRA="./root ./etc ./home/sysadm ./var/spool/cron/crontabs"
+# Carefull with ubuntu and /var/lib/lxcfs - not files!
 
 #
 # Keep this number of old backup files locally in /var/CPbackups
@@ -62,9 +63,7 @@ function mk_readme_files() {
 		echo "" > ${RESTORE_INFO_DIR}/motd
 	fi
 
-	if [ ! -d ${RESTORE_INFO_DIR}/apt ]; then
-		mkdir ${RESTORE_INFO_DIR}/apt
-	fi
+	mkdir ${RESTORE_INFO_DIR}/apt
 	dpkg --get-selections > ${RESTORE_INFO_DIR}/apt/package.list
 	cp -R /etc/apt/sources.list* ${RESTORE_INFO_DIR}/apt/
 	apt-key exportall > ${RESTORE_INFO_DIR}/apt/repo.keys
@@ -173,13 +172,6 @@ Restore system information
 
  2  Package re-installation:
 
-	2.1 Easy
-	The script apt-restore.sh in ${RESTORE_INFO_DIR}/apt will
-	restore all apt-get intalled packages to their original
-	version. Either edit it (it is less than 20 lines) or run
-	it from ${RESTORE_INFO_DIR}/apt
-
-	2.2 Alternative 1
     The file pkg_info can be used to re-install all packages this
     way:
 
@@ -188,11 +180,12 @@ Restore system information
 	    apt-get dselect-upgrade
         apt-get autoremove
 
-	2.3 Altarnative 2
-    The packages can be retored with the commands
+    Alternatively, the packages can be retored with the commands
 
         apt-mark auto \$(cat pkgs_auto.lst)
         apt-mark manual \$(cat pkgs_manual.lst)
+
+    It doesn't make any difference.
 
 3	Copy the latest (good) OS backup  to the new host and extract
     the files in /var/tmp.
@@ -210,121 +203,25 @@ Restore system information
 	    udevadm trigger
 		/etc/init.d/networking restart
 
-Restore postgres database
--------------------------
-It is important that you have followed the above procedure before
-restoring the database
-
-First make sure that /etc/postgresql/9.x/main/pg_hba.conf has
-the line
-
-	local   all             postgres                                peer
-
-and not
-
-	local   all             postgres                                password
-
-in order to do a postgres backup without passwords.
-
-Also make sure /usr/local/bin/autopgsqlbackup is installed (is on the backup).
-
-Now for the postgress restore:
-
-You can restore from ${RESTORE_INFO_DIR}/postgres-backup/ 
-or /var/backups/postgres.
-
-The official description is at http://www.postgresql.org/docs/9.1/static/backup.html
-
-Notice that ${RESTORE_INFO_DIR}/postgres-backup
-are backups without OID's (pg_dump -Fc) and the same is true for 
-/var/backups/postgres/{daily,monthly,weekly}
-
-Retore is done as the user postgres with the command:
-
-	pg_restore -d dbname filename
-
-e.g.:
-
-	pg_restore -d libreplan /var/CPbackup/postgres-backup/libreplan_12-04-2016
-
-Two full backups are made with and without OIDs. They are placed
-in /var/backups/postgres and is on the backup.
-
-Restore a full backup is done this way as the user postgres:
-
-	psql -f infile postgres
-
-e.g.
-
-	gunzip -c dumpall-with-oids.gz
-	psql -f dumpall-with-oids postgres
-
-It is yet not known if libreplan uses UIDs or not.
-
 EOF
 }
 
 function do_common() {
-	if [ ! -d "${RESTORE_INFO_DIR}" ]; then
-		mkdir "${RESTORE_INFO_DIR}"
-	fi
+	:
 }
 
 function do_pre_backup() {
 
-	# backup libreplan postgres databases *without shuting down tomcat first*
-
-	# Location to place backups.
-	backup_dir="/var/CPbackup/postgres-backup/"
-
-	test -d /var/backups/postgres || {
-		mkdir /var/backups/postgres
-		chown -R postgres /var/backups/postgres/
-	}
-
-	test -d $backup_dir || {
-		mkdir $backup_dir
-	}
-
-	# Following is based on http://www.defitek.com/blog/2010/01/06/a-simple-yet-effective-postgresql-backup-script/
-
-	#String to append to the name of the backup files
-	backup_date=`date +%d-%m-%Y`
-	#Numbers of days you want to keep copie of your databases
-	number_of_days=30
-	/bin/rm -f ${RESTORE_INFO_DIR}/.backupstatus
-	databases=`echo 'psql -l -t' | su - postgres | cut -d'|' -f1 | sed -e 's/ //g' -e '/^$/d'`
-	for i in $databases; do
-		# not sure why template0 and template1 are excluded
-		if [ "$i" != "template0" ] && [ "$i" != "template1" ]; then
-			logit Dumping $i to $backup_dir$i\_$backup_date
-			echo "pg_dump -Fc $i" | su - postgres > $backup_dir$i\_$backup_date
-			STATUS=$?
-			echo $STATUS >> ${RESTORE_INFO_DIR}/.backupstatus
-			logit exit status: $STATUS
-		fi
-	done
-	grep -q -v 0 ${RESTORE_INFO_DIR}/.backupstatus
-	case $? in
-		1)	logit all postgres backups done ok
-			find $backup_dir -type f -prune -mtime +$number_of_days -exec rm -f {} \;
-		;;
-		*)	logit one or more postgres backups failed
-		;;
-	esac
-	/bin/rm -f ${RESTORE_INFO_DIR}/.backupstatus
-
-	logit "doing backup of postgres with /usr/local/bin/autopgsqlbackup as user postgres ... "
-	logit "backup saved in /var/backups/postgres which is not on backup"
-	echo /usr/local/bin/autopgsqlbackup |su - postgres | logit
-
-	# finally this
-	logit "creating dumpall-without-oids.gz and dumpall-with-oids.gz in /var/backups/postgres"
-	echo 'pg_dumpall    | gzip -v9 > /var/backups/postgres/dumpall-without-oids.gz' | su - postgres
-	echo 'pg_dumpall -o | gzip -v9 > /var/backups/postgres/dumpall-with-oids.gz' | su - postgres
-
-	mk_readme_files
+	local TMPFILE=/tmp/putput.$$
+	/bin/rm -fr	"${RESTORE_INFO_DIR}"
+	mkdir		"${RESTORE_INFO_DIR}"
 
 	# return $ERRORS
+	# THE_ONLY_PATHNAME_HERE is used when creating the README file
+	mk_readme_files
 }
 
+function do_post_backup() {
+	:
+	return $ERRORS
+}

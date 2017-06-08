@@ -37,6 +37,7 @@ BINDIR		= $(PREFIX)/bin
 TMPDIR		= $(PREFIX)/tmp
 LOGDIR		= $(PREFIX)/log
 ETCDIR		= $(PREFIX)/etc
+LIBDIR		= $(PREFIX)/lib
 INITDIR		= $(PREFIX)/etc/init.d
 
 SRCDIR		= $(PREFIX)/src
@@ -70,11 +71,14 @@ HFILES		= db2dps.h version.h license.h
 PRODINI		= db.ini
 TESTINI		= test.ini
 
+SQLSTR		= sqlstr.pm
+
 prog		= db2dps
 target		= $(BINDIR)/db2dps
 
 initrc		= $(INITDIR)/$(RC)
 dbini		= $(ETCDIR)/$(PRODINI)
+sqlstr		= $(LIBDIR)/$(SQLSTR)
 
 default:	$(prog)
 			./$(prog) -V
@@ -89,6 +93,7 @@ $(prog):	hostcheck db2dps.pl version.pm install_perl_modules
 			@chmod 555 db2dps
 
 binfiles	= kill_switch_restart_all_exabgp
+
 bin:
 	for exec in $(binfiles);																			\
 	do																									\
@@ -131,21 +136,9 @@ hostcheck:
 	fi
 	chmod 555 $(INSTALL) $(SRCTOMAN)
 
-# Unused article on how to Write Linux Init Scripts Based on LSB Init Standard:
-# http://www.thegeekstuff.com/2012/03/lsbinit-script/
-#$(sysinit): $(RC)
-#			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(RC) /etc/init.d
-#			sudo update-rc.d db2dpsrc defaults
-#			sudo systemctl enable db2dpsrc
-#			sudo systemctl start db2dpsrc
-#			sudo systemctl status db2dpsrc
-
 dirs:
-			sudo mkdir -p $(PREFIX)/bin $(PREFIX)/tmp $(PREFIX)/log $(PREFIX)/src $(PREFIX)/etc/init.d
+			sudo mkdir -p $(BINDIR) $(TMPDIR) $(LOGDIR) $(SRCDIR) $(ETCDIR)/init.d $(LIBDIR)
 			sudo chown -R $(UID):$(GID) $(PREFIX)
-
-$(service):	$(SERVICEFILE)
-			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(SERVICEFILE) $(ETCDIR)
 
 $(initrc):	$(RC)
 			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(RC) $(INITDIR)
@@ -156,6 +149,8 @@ $(target):	$(prog)
 $(dbini):	$(PRODINI)
 			sudo $(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(PRODINI) $(ETCDIR)
 
+$(sqlstr):	$(SQLSTR)
+			sudo $(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(SQLSTR) $(LIBDIR)
 
 # Install required perl modules from $(pkgs)
 install_perl_modules:
@@ -241,8 +236,10 @@ TEST_OBJS	  = $(TEST_APPS:.c=.o)
 TEST_EXEC	  = $(TEST_OBJS:.o=)
 
 print:
+		# pstopdf uses $TMPDIR which is also set in Makefie
 		if [ `uname` != "Darwin" ]; then echo requires Darwin with a2ps and pstopdf, sorry; exit 1; fi
-		a2ps --no-header --borders=no --highlight-level=heavy --pretty-print=c --tabsize=4 --columns=1 --font-size=7 --landscape --line-numbers=1 db2dps.c -o - | pstopdf -i -o /tmp/print.pdf
+		a2ps --no-header --borders=no --highlight-level=heavy --pretty-print=c --tabsize=4 --columns=1 --font-size=7 --landscape --line-numbers=1 $(prog).pl -o /tmp/$(prog).ps
+		TMPDIR=/tmp pstopdf /tmp/$(prog).ps -o /tmp/$(prog).pdf
 
 #carefull: below be dragons! You cannot use the same $ in _shell_ and in Makefile ...
 #@sed '/[\t ]*\*++/,/[\t ]*\*--/!d; s/.*++$$//; s/\*//; s/^[\t ]//; s/.*--$$//; s/^[\t ]#/#/' < db2dps.c

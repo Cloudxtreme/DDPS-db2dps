@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.5
--- Dumped by pg_dump version 9.5.5
+-- Dumped from database version 9.5.7
+-- Dumped by pg_dump version 9.5.7
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -121,7 +121,7 @@ SELECT pg_catalog.setval('icmp_types_id_seq', 42, true);
 --
 
 ALTER TABLE ONLY icmp_types
-     ADD CONSTRAINT icmp_types_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT icmp_types_pkey PRIMARY KEY (id);
 
 
 --
