@@ -1,0 +1,68 @@
+#
+# INI style configuration file for db2dps
+# Quote strings which contain ';'
+
+[general]
+
+# access to postgress database on localhost
+dbuser 				= dbadmin
+dbpassword			= hopsasa
+dbname				= netflow
+
+# all our networks
+ournetworks			= 95.128.24.0/21 130.225.0.0/16 130.226.0.0/16 185.1.57.0/24 192.38.0.0/17
+
+# name of exabgp instances requiring a full bgp flow will show up here
+datadir				= /opt/db2dps/data
+
+# new rules will be uploaded from fastnetmon with sftp to here
+newrulesdir			= /home/sftpgroup/newrules/upload
+
+# exit nicely if this file exist
+shutdown			= /tmp/.shutdown_now
+
+# seconds between database read
+sleep_time			= 10
+
+# rulebase - print all rules to this file; will be transfered to BGP host later
+rulebase			= /opt/db2dps/tmp/rulebase.txt
+
+# template strings for blackhole and reatelimit
+blackhole			= route %s next-hop black.hole.ip.addr community [65001:666 65001:400];
+ratelimit			= route %s next-hop rate.limit.ip.addr community [65001:666];
+
+# template strings for un-blackhole and reatelimit
+unblackhole			= route delete %s next-hop black.hole.ip.addr community [65001:666 65001:400];
+unratelimit			= route delete %s next-hop rate.limit.ip.addr community [65001:666];
+
+# exabgp hostnames - ''general'' is reserved by design, sorry. hostname, sshuser and identy_file self explaining
+# filtertype: how does this exabgp enforce rules: flowspec | blackhole or | ratelimit - the command strings will be taken
+# from the templates above. Exabgp communicates wia a named pipe; the template string is echo'ed after substitution
+# of % .. has taken place
+
+hostlist	= localhost
+
+[exabgp1]
+hostname		= 172.22.89.21
+sshuser			= root
+identity_file	= /home/rnd/.ssh/id_rsa
+public_key		= /home/rnd/.ssh/id_rsa.pub
+filtertype		= flowspec
+exabgp_pipe		= /run/exabgp/exabgp.cmd
+
+[exabgp2]
+hostname		= 172.22.89.22
+sshuser			= root
+identity_file	= /home/rnd/.ssh/id_rsa
+public_key		= /home/rnd/.ssh/id_rsa.pub
+filtertype		= flowspec
+exabgp_pipe		= /run/exabgp/exabgp.cmd
+
+[localhost]
+hostname		= localhost
+sshuser			= rnd
+identity_file	= /home/rnd/.ssh/id_rsa
+public_key		= /home/rnd/.ssh/id_rsa.pub
+filtertype		= flowspec
+exabgp_pipe		= /tmp/destignation-append
+

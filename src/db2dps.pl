@@ -228,6 +228,8 @@ my $validto						= "";
 my $dbh;
 my @unique_implemented_flowspecruleid;
 
+my $at_least_one_successfull_upload = 0;		# Keep track on if upload of the rulebase fails for *all* exabgp hosts
+
 ################################################################################
 # MAIN
 ################################################################################
@@ -874,6 +876,12 @@ sub mkrulebase($$)
 		# have AMD fix exabgp so we can scp to the pipe again or see
 		# https://gist.github.com/melo/2829330
 		# to do an scp (r, tmpfile) ; exec(sudo cat tmpfile > ....)
+		#
+		# TODO: change so just skip everything upon faileure for all hosts
+		# Move to global and don't exipre if = 0;
+		# my $at_least_one_successfull_upload = 0;
+
+		$at_least_one_successfull_upload = 0;
 
 		my @unique_implemented_flowspecruleid = uniq @implemented_flowspecruleid;
 		if ($#unique_implemented_flowspecruleid >= 0)
@@ -883,11 +891,14 @@ sub mkrulebase($$)
 			my $ssh2 = Net::SSH2->new(timeout => 100);								# connection timeout, not command timeout
 			if (! $ssh2->connect($host))
 			{
-				mydie("Failed connection to $host");
+				logit("Failed connection to $host");
 			}
 			if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) )
 			{
-				mydie("FAILED SCP public/private key authentication for $sshuser to $host");
+				logit("FAILED SCP public/private key authentication for $sshuser to $host: $!");
+				# If the host is up and this fails then check mode of .ssh/* for user@host; error
+				# may be 'Resource temporarily unavailable' If the error is related to auth. then
+				# the key may not have been correctly added to ~/ssh/authorized_keys 
 			}
 
 			if (! $ssh2->scp_put($rulebase, $exabgp_pipe))
@@ -899,6 +910,7 @@ sub mkrulebase($$)
 			{
 				logit("succesfully transfered $type $rulebase to $host:$exabgp_pipe");
 				$ssh2->disconnect();
+				$at_least_one_successfull_upload = 1;
 			}
 		}
 		else
@@ -906,19 +918,19 @@ sub mkrulebase($$)
 			logit("no $type rules: update $host not needed");
 		}
 
-	}	# end foreach host in hostlist announce ...
+	}	# end for each host in hostlist announce ...
 }
 
 sub processnewrules()
 {
-	# Check for new rules. Read all rule files execpt those
+	# Check for new rules. Read all rule files except those
 	# not ending with "last-line"
 	# sort rules and add to database && delete rulefiles || warn
 
 	my @rulefiles = ();
 	my $file_finished_ok_string = "last-line";
 	my $document;
-	opendir (DIR, $newrulesdir) or myddie "Could not open '$newrulesdir' $!";
+	opendir (DIR, $newrulesdir) or mydie "Could not open '$newrulesdir' $!";
 	while ( my $node = readdir(DIR) )
 	{
 		next if ($node =~ /^\./);
@@ -930,6 +942,10 @@ sub processnewrules()
 
 	foreach my $r (@rulefiles)
 	{
+		my %src_topports    = ();
+		my %toplengths      = ();
+		my $n = 0;
+
 		my $file_finished_ok_string = "last-line";
 
 		my $file	= path($newrulesdir . "/" . $r);
@@ -943,12 +959,30 @@ sub processnewrules()
 		chomp($attack_info);
 
 		my @lines = $file->lines_utf8;
+
+		my $fragment_type = 0;
+		my %tcp_flags   = ();
+
+		# https://doc.pfsense.org/index.php/What_are_TCP_Flags
+		foreach (split(/ /, "cwr ece urg ack psh rst syn fin"))
+		{
+			$tcp_flags{$_} = 0;
+		}
+
 		my ($action,$customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag);
 		my $length_min  = 90000;	# jumbo package: count down
 		my $length_max  = 0;		# max = 0: increment
 
+		my $dst_prev    = "";
+		my $dst_uniq    = 1;        # assume only one source
+
+		my $src_prev    = "";
+		my $src_uniq    = 1;        # assume only one source is targeting us
+
+
 		my $sport_min   = 65536;	# minimum port number is max value (2^16) - decrement
 		my $sport_max   = 0;
+
 		my $dport_min   = 65536;    # initialize to max value - decrement real min value
 		my $dport_max   = 0;        # initialize to min value - increment real max value
 
@@ -959,45 +993,207 @@ sub processnewrules()
 
 		$action = "discard";	# default action
 
+		my $rules_in_file = $#lines - 1; # base 0, subtract header/footer
 		logit("$file ok type=$type optimize=$optimize ver=$version attack_info=$attack_info lines=$#lines");
 
 		# process rules and add to database
 		# TODO: build better optimization
 		if ($optimize eq lc "doop" || $optimize eq lc "opop")
 		{
-			chomp($lines[1]);
-			($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
+			foreach my $line (@lines)
+			{
+				next if ($line =~ m/^head/);
+				next if ($line =~ m/$file_finished_ok_string/);
+				chomp($line);
+				($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(/;/, $line);
 
-			# assume it is flooding
-			$src = "null";
-			if ($attack_info =~ /icmp_flood/)
-			{
-				$action	= "discard";
-				$dport	= "null";
-				$sport	= "null";
-			}
-			if ($attack_info =~ /syn_flood/)
-			{
-				$action	= "rate-limit 9600";
-				$sport	= "null";
-			}
-			if ($attack_info =~ /udp_flood/)
-			{
-				$action	= "rate-limit 9600";
-				$dport	= "null";
-				$sport	= "null";
-			}
-			#
-			# TODO
-			# Implementation of mitigation rules (see DDPS-db2dps/docs/best-practise-volumetric-ddos-mitigation.md) below
-			# check fields are valid (addresses, numbers etc)
- 			# check fields comply with database field-length etc
+				# use this when calculating top10
+				# $ipnum = ip2num("10.1.1.1")
 
-			# if ($attack_info =~ /ip_fragmentation_flood/)
-			# if ($attack_info =~ /DNS amplification/)
-			# if ($attack_info =~ /NTP amplification/)
-			# if ($attack_info =~ /SSDP amplification/)
-			# if ($attack_info =~ /SNMP amplification/)
+				
+				# Type 1	IPv4 destination address
+				if ($dst_prev eq "")	# first line
+				{
+					$dst_prev 	= $dst;
+				}
+				else
+				{
+					if ($dst ne $dst_prev)
+					{
+						$dst_uniq = 0;
+					}
+					$dst_prev = $dst;
+				}
+
+				# Type 2	IPv4 source address
+				if ($src_prev eq "")	# first line
+				{
+					$src_prev = $src;
+					$length_min = 64;		# ethernet minimum packet length
+					$length_max = 64;		# 
+				}
+				else
+				{
+					if ($src ne $src_prev)
+					{
+						$src_uniq = 0;
+					}
+					$src_prev = $src;
+				}
+				
+				# Type 3	IPv4 protocol
+				# Identical in all lines
+
+
+				# Type 4	IPv4 source or destination port
+				# Type 5	IPv4 destination port
+				# Type 6	IPv4 source port
+				if ($sport =~ m/null/)
+				{
+					$sport_max = $sport_min = "null";
+				}
+				else
+				{
+					$sport_max	= max($sport_max,	$sport);
+					$sport_min	= min($sport_min,	$sport);
+				}
+				if ($dport =~ m/null/)
+				{
+					$dport_max = $dport_min = "null";
+				}
+				else
+				{
+					$dport_max	= max($dport_max,	$dport);
+					$dport_min	= min($dport_min,	$dport);
+				}
+				$src_topports{ $sport } += 1;
+
+				# Type 7	IPv4 ICMP type
+				# Type 8	IPv4 ICMP code
+				# Not reported by fastnetmon
+				# TODO
+
+				# Type 9	IPv4 TCP flags (2 bytes incl. reserveret bits)
+				if ($flags ne '' && $flags ne 'null')
+				{
+					foreach (split(/,/, $flags))
+					{
+						$tcp_flags{$_} += 1;
+					}
+				}
+
+
+				# Type 10	IPv4 package length
+				if ($length =~ m/null/)
+				{
+					$length_max = $length_min = "null";
+				}
+				else
+				{
+					$length_min	= min($length_min,	$length);
+					$length_max	= max($length_max,	$length);
+				}
+
+				# Type 11	IPv4 DSCP
+				# TODO
+
+
+				# Type 12	IPv4 fragment bits
+				if ($frag ne '' && $frag ne 'null')
+				{
+					$fragment_type = $frag;
+				}
+			}
+
+			# prepare bgp flowspec rules
+			if ($src_uniq == 0)
+			{
+				$src = "";
+			}
+
+			if ($sport =~ m/null/)
+			{
+				$sport = "";
+			}
+			else
+			{
+				if ($sport_min == $sport_max)
+				{
+					$sport = $sport_max;
+				}
+				else
+				{
+					$sport = ">=" . $sport_min . "&<=" . $sport_max ;
+				}
+			}
+			
+			if ($dport =~ m/null/)
+			{
+				$dport = "";
+			}
+			else
+			{
+				if ($dport_min == $dport_max)
+				{
+					$dport = "=" . $dport_max ;
+				}
+				else
+				{
+					$dport = ">=" . $dport_min . "&<=" . $dport_max ;
+				}
+			}
+			
+			if ($length_min =~ m/null/)
+			{
+				$length = "";
+			}
+			else
+			{
+				if ($length_min eq $length_max)
+				{
+					$length = "=" . $length_max;
+				}
+				else
+				{
+					$length = ">=" . $length_min . "&<=" . $length_max ;
+
+				}
+			}
+
+			if ($fragment_type != 0)
+			{
+				$frag = "is-fragment";
+			}
+
+			my $tcp_match_flags = "";
+			foreach my $key (keys %tcp_flags)
+			{
+				if($tcp_flags{$key} > 0)
+				{
+					$tcp_match_flags .= $key . " ";
+				}
+			}
+			$tcp_match_flags =~ s/^\s+|\s+$//g;
+			if ($tcp_match_flags eq '')
+			{
+				$tcp_match_flags = "null";
+			}
+
+
+			logit("$rules_in_file rules reduced to: ");
+			logit("insert into database ...");
+			logit("match destination '$dst'");
+			logit("match source      '$src'");
+			logit("match protocol    '$protocol'");
+			logit("match sport       '$sport'");
+			logit("match dport       '$dport'");
+			logit("match fragment    '$frag'");
+			
+			logit("match tcp flags   '$tcp_match_flags'");
+			logit("match length:     '$length'");
+			logit("then              '$action'");
+
+		
 			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action");
 			
 			# quote everything except null and false
@@ -1025,13 +1221,16 @@ sub processnewrules()
 				s/'null'/null/g;
    			}
 
+			logit("$sql_query");
 			my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
 			$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
 
-			unlink $file or logit("Could not unlink $file $!");
+			#unlink $file or logit("Could not unlink $file $!");
+			logit("NOTE not unlinked $file $!");
 		}
 		else
 		{
+			logit("no optimize as optimize = $optimize");
 			# Do not optimize but read everything literally
 			# FIXME
 			# TODO
@@ -1052,8 +1251,8 @@ sub processnewrules()
 		}
 
 	}
-	#logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done");
-	#exit 0;	# exit on debug
+	logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done");
+	exit 0;	# exit on debug
 }
 
 sub max ($$) { $_[$_[0] < $_[1]] }
