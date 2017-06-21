@@ -365,6 +365,7 @@ The C development environment including memory leak test with
     sudo apt-get -y update
     sudo apt-get -y upgrade
     sudo apt-get -y install build-essential
+	sudo apt-get -y install man
     sudo apt-get -y install valgrind
 
 Installation of the C version is documented in the `Makefile`.

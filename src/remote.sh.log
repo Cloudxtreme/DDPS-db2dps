@@ -1,27 +1,26 @@
-14:58:04 (06/06) Begin
-14:58:04 (06/06) called as: ./remote.sh -v push
-14:58:04 (06/06) Environment:
-14:58:04 (06/06) git_sha:        '87ffc81eb7373878c07603c7c23938c4660bcc94'
-14:58:04 (06/06) build_date:     '2017-06-06 14:58'
-14:58:04 (06/06) TARGETHOST:     'rnd@ddps.deic.dk'
-14:58:04 (06/06) UPLOADDIR:      '/opt/db2dps/src/'
-14:58:04 (06/06) EXCLUDE_FILE:   'rsync_exclude.txt'
-14:58:04 (06/06) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
-14:58:04 (06/06) RRSYNC:         '/usr/bin/rsync'
-14:58:04 (06/06) LRSYNC:         '/usr/bin/rsync'
-14:58:04 (06/06) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
-14:58:04 (06/06) SSH_ARGS:       '-Tq -o LogLevel=error'
-14:58:04 (06/06) SSH:            '/usr/bin/ssh'
-14:58:04 (06/06) SRCDIR:         '.'
-14:58:04 (06/06) PROJDIR:        '../../DDPS-db2dps'
-14:58:04 (06/06) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
-14:58:04 (06/06) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ rnd@ddps.deic.dk:/opt/db2dps/src//
-14:58:04 (06/06) building file list ... done
-14:58:04 (06/06) ./
-14:58:04 (06/06) .source_info
-14:58:04 (06/06) db.ini
-14:58:04 (06/06) db.ini.xxx
+14:52:43 (21/06) Begin
+14:52:43 (21/06) called as: ./remote.sh -v push
+14:52:43 (21/06) Environment:
+14:52:43 (21/06) git_sha:        'bf2173ad66f6de061ae05ce7b213668247f210f1'
+14:52:43 (21/06) build_date:     '2017-06-21 14:52'
+14:52:43 (21/06) TARGETHOST:     'root@ddps-dev'
+14:52:43 (21/06) UPLOADDIR:      '/opt/db2dps/src/'
+14:52:43 (21/06) EXCLUDE_FILE:   'rsync_exclude.txt'
+14:52:43 (21/06) TMPDIR:         '/var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/'
+14:52:43 (21/06) RRSYNC:         '/usr/bin/rsync'
+14:52:43 (21/06) LRSYNC:         '/usr/bin/rsync'
+14:52:43 (21/06) RSYNC_ARGS:     '-avzH --exclude-from=rsync_exclude.txt'
+14:52:43 (21/06) SSH_ARGS:       '-Tq -o LogLevel=error'
+14:52:43 (21/06) SSH:            '/usr/bin/ssh'
+14:52:43 (21/06) SRCDIR:         '.'
+14:52:43 (21/06) PROJDIR:        '../../DDPS-db2dps'
+14:52:43 (21/06) MYDIR:          '/Users/uninth/ownsky/src/github/DDPS-db2dps/src'
+14:52:43 (21/06) command: /usr/bin/rsync -avzH --exclude-from=rsync_exclude.txt --rsync-path /usr/bin/rsync /Users/uninth/ownsky/src/github/DDPS-db2dps/src/ root@ddps-dev:/opt/db2dps/src//
+14:52:43 (21/06) building file list ... done
+14:52:43 (21/06) ./
+14:52:43 (21/06) .source_info
+14:52:43 (21/06) default-rules.sh
 
-14:58:04 (06/06) sent 8903 bytes  received 146 bytes  18098.00 bytes/sec
-14:58:04 (06/06) total size is 28268303  speedup is 3123.91
-14:58:04 (06/06) done
+14:52:43 (21/06) sent 8711 bytes  received 88 bytes  17598.00 bytes/sec
+14:52:43 (21/06) total size is 28391055  speedup is 3226.62
+14:52:43 (21/06) done

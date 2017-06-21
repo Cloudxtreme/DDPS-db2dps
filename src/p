@@ -1,0 +1,74 @@
+
+
+	# Merge into db2dps
+	#
+	# Filter on
+	# dscp =0 =1 =3 =5 =6 =7 >=10&<=12
+	# tcp-flags [fin syn rst push ack urgent]
+	# fragment [ not-a-fragment dont-fragment is-fragment first-fragment last-fragment ];
+	#
+	# This way
+	# dscp              : discard
+	# tcp && syn        : rate-limit 9600		- if src == null else discard
+	# tcp && ack        : rate-limit 9600		- if src == null else discard
+	# tcp && !syn,ack   : discard				- if src == null else discard
+	# tcp && fragment   : discard
+	# udp && fragment   : discard
+
+#	if ($sport_min !~ m/null/)
+#	{
+#		if ($sport_max == $sport_min)
+#		{
+#			logit("only one sport $sport_max");
+#		}
+#		else
+#		{
+#			foreach my $top ((sort keys %src_topports)[0..9])
+#			{
+#				# check if top 10% is larger than 25% of the rules
+#				# do so for sport, dport dscp and length
+#				printf "%-8s %s - %s\n", $top, $src_topports{$top}, $rules_in_file;
+#			}
+#		}
+#	}
+#	else
+#	{
+#			logit("port = null");
+#	}
+			################################################################################	
+			##chomp($lines[1]);
+			#($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag) = split(';', $lines[1]);
+
+			## assume it is flooding
+			#$src = "null";
+			#if ($attack_info =~ /icmp_flood/)
+			#{
+			#	$action	= "discard";
+			#	$dport	= "null";
+			#	$sport	= "null";
+			#}
+			#if ($attack_info =~ /syn_flood/)
+			#{
+			#	$action	= "rate-limit 9600";
+			#	$sport	= "null";
+			#}
+			#if ($attack_info =~ /udp_flood/)
+			#{
+			#	$action	= "rate-limit 9600";
+			#	$dport	= "null";
+			#	$sport	= "null";
+			#}
+			################################################################################	
+			#
+			# TODO
+			# Implementation of mitigation rules (see DDPS-db2dps/docs/best-practise-volumetric-ddos-mitigation.md) below
+			# check fields are valid (addresses, numbers etc)
+ 			# check fields comply with database field-length etc
+
+			# if ($attack_info =~ /ip_fragmentation_flood/)
+			# if ($attack_info =~ /DNS amplification/)
+			# if ($attack_info =~ /NTP amplification/)
+			# if ($attack_info =~ /SSDP amplification/)
+			# if ($attack_info =~ /SNMP amplification/)
+			
+			

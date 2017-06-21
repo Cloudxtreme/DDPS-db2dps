@@ -120,6 +120,13 @@ function main()
 	done
 	shift `expr $OPTIND - 1`
 
+	MY_DIR=`dirname $0`
+
+	logit "running from $MY_DIR ... "
+	cd ${MY_DIR} || {
+		echo "chdir ${MY_DIR} failed"; exit 0
+	}
+
 	# Install internally developed Debian packages or at least the minimum 
 	# required scripts for the rest to work
 	if [ "$(ls -A ./deb/)" ];
@@ -222,7 +229,7 @@ EOF
 	service ssh restart
 
 	logit "setting up sftp user for fastnetmon .... "
-	getent passwd ddpsadm > /dev/null 2>&1  >/dev/null || adduser --home /home/ddpsadm --shell /bin/bash --gecos "DDPS admin" --ingroup staff --disabled-password ddpsadm
+	getent passwd ddpsadm > /dev/null 2>&1  >/dev/null || adduser --home /home/ddpsadm --shell /bin/bash --gecos "DDPS admin" --ingroup staff --disabled-password ddpsadm
 	if grep -q sftpgroup /etc/group
     then
          :
@@ -231,14 +238,14 @@ EOF
     fi
 
 	test -d /home/sftpgroup || mkdir /home/sftpgroup
-	getent passwd newrules >/dev/null 2>&1 >/dev/null ||  useradd -m -c "DDPS rules upload" -d /home/sftpgroup/newrules/ -s /sbin/nologin newrules
+	getent passwd newrules >/dev/null 2>&1 >/dev/null || useradd -m -c "DDPS rules upload" -d /home/sftpgroup/newrules/ -s /sbin/nologin newrules
 	usermod -G sftpgroup newrules
 
 	chown root:root /home/sftpgroup /home/sftpgroup/newrules/
-	test -d /home/sftpgroup/.ssh || mkdir /home/sftpgroup/.ssh
+	test -d /home/sftpgroup/.ssh || mkdir /home/sftpgroup/.ssh
 	chmod 755 /home/sftpgroup /home/sftpgroup/newrules/
 
-	test -d /home/sftpgroup/newrules/upload || mkdir /home/sftpgroup/newrules/upload
+	test -d /home/sftpgroup/newrules/upload || mkdir /home/sftpgroup/newrules/upload
 	chown newrules:newrules /home/sftpgroup/newrules/upload
 	chmod 777 /home/sftpgroup/newrules/upload
 
@@ -301,17 +308,27 @@ EOF
 	chown postgres:postgres ${PG_HBACONF}
 	service postgresql restart
 
-	logit "creating database .... "
+	logit "NOT creating database .... "
 
-	# this will show errors which can be ignored
-	(
+	logit "EITHER restore an existing database made with"
+	echo "cd /; echo 'pg_dumpall | gzip -9 > /tmp/netflow.dmp.sql.gz' | su postgres "
+	echo "using "
+	echo "cd /; gunzip netflow.dmp.sql.gz"
+	echo "echo 'psql -d postgres -f /tmp/netflow.dmp.sql' |  su postgres"
+	logit "OR"
+	logit "execute commands from below:"
+	cat << EOF | logit
 	echo 'psql -f db/1_create_netwlow_db.sql'             | su postgres	
 	echo 'psql -f db/2_create_netflow_schema.sql'         | su postgres
 	echo 'psql netflow -f db/netflow_flow.icmp_codes.sql' | su postgres
 	echo 'psql netflow -f db/netflow_flow.icmp_types.sql' | su postgres
 	echo 'psql netflow -f db/netflow_flow.protocols.sql'  | su postgres
 	echo 'psql netflow -f db/netflow_flow.services.sql'   | su postgres
-	) >/dev/null 2>&1
+
+	logit "connect with "
+	logit "ssh -v -L 5432:127.0.0.1:5432 sysadm@ddps-dev"
+
+EOF
 
 	logit "all done"
 

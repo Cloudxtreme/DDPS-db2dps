@@ -1,7 +1,8 @@
 # ---- Will be extracted and used by remote.sh ----
 #:REMOTE-INFO-BEGIN
 # TARGETHOST   deployment/test host or IP address, e.g. user@1.2.3.4
-TARGETHOST      = rnd@ddps.deic.dk
+#TARGETHOST      = rnd@ddps.deic.dk
+TARGETHOST      = root@ddps-dev
 #TARGETHOST      = sysadm@ddps.ssi.i2.dk
 #->TARGETHOST      = sysadm@172.16.201.113
 # UPLOADDIR    top directory for the source; everything from '.' will be synced
@@ -42,6 +43,8 @@ INITDIR		= $(PREFIX)/etc/init.d
 
 SRCDIR		= $(PREFIX)/src
 
+DIRS		= $(BINDIR) $(TMPDIR) $(LOGDIR) $(SRCDIR) $(ETCDIR)/init.d $(ETCDIR)/ssh $(LIBDIR)
+
 iniparser 	= iniparser
 libini		= $(iniparser)/src
 
@@ -53,8 +56,8 @@ SRCTOMAN	= $(PREFIX)/src/srctoman
 # required perl modules will be installed by default target (see install_perl_modules)
 pkgs		= libnet-openssh-compat-perl liblist-moreutils-perl libnet-openssh-compat-perl libnet-ssh2-perl libproc-daemon-perl libnetaddr-ip-perl libdbi-perl libdbd-pg-perl libtypes-path-tiny-perl libnetaddr-ip-perl libtypes-path-tiny-perl libnet-sftp-foreign-perl
 
-GID			= rnd
-UID			= rnd
+GID			= root
+UID			= root
 
 CC      	?= gcc
 AR	    	?= ar
@@ -84,10 +87,9 @@ default:	$(prog)
 			./$(prog) -V
 			#sudo ./$(prog) -v -s 4
 
-# default:	exabgpsyntax
+# ssh-keygen  -t ED25519 -b 16384 -f /opt/db2dps/etc/ssh/id_ed25519 -N ""
 
-# perl-version - mimic c version: add version information, set mode and print version. Do not install
-$(prog):	hostcheck db2dps.pl version.pm install_perl_modules
+$(prog):	hostcheck db2dps.pl version.pm install_perl_modules $(sqlstr)
 			$(RM) $(prog)
 			@sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  db2dps.pl > db2dps
 			@chmod 555 db2dps
@@ -105,7 +107,7 @@ bin:
 exabgpsyntax:
 			perl ./test-bgp-rules.pl | ssh rnd@exabgp1 'cat > /var/run/exabgp/exabgp.cmd'
 
-install:	hostcheck $(target) $(initrc) $(dbini)
+install:	hostcheck dirs $(target) $(initrc) $(dbini) 
 			sudo cp $(SERVICEFILE) /etc/systemd/system/
 			sudo systemctl enable $(SERVICEFILE)
 			sudo systemctl start $(SERVICEFILE)
@@ -137,8 +139,13 @@ hostcheck:
 	chmod 555 $(INSTALL) $(SRCTOMAN)
 
 dirs:
-			sudo mkdir -p $(BINDIR) $(TMPDIR) $(LOGDIR) $(SRCDIR) $(ETCDIR)/init.d $(LIBDIR)
-			sudo chown -R $(UID):$(GID) $(PREFIX)
+			for D in $(DIRS); 								\
+				do											\
+				if [ ! -d $$D ]; then						\
+						mkdir -p $$D;						\
+				fi											\
+			done
+			#sudo chown -R $(UID):$(GID) $(PREFIX);		\
 
 $(initrc):	$(RC)
 			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(RC) $(INITDIR)
