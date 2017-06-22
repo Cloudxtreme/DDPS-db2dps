@@ -2,7 +2,7 @@
 # DeIC DPS: database server installation 
 
 This document describes the installation of the _development_, _test_ and _production_
-database host.
+database hosts.
 
 All hosts are based on [Ubuntu Server 16.04.2
 LTS](https://wiki.ubuntu.com/XenialXerus/ReleaseNotes) installed on virtual
@@ -12,9 +12,9 @@ automatic update.
 Development and test are installed on 10Gb disks while the production host has
 a larger disk.
 
-The development and test hosts has two interfaces, one host-only the other
+The development and test hosts have two interfaces, one host-only the other
 behind NAT. This makes connecting from the development environment more
-consistent while still allowing internet access for software installation and
+consistent while still allowing Internet access for software installation and
 update.
 
 **Please install your public ssh keys on a user before executing the script - the sshd configuration is changed to no prevent password based login.**
@@ -30,7 +30,7 @@ after the basic installation. Then execute `install.sh` as `root`.
 You may run the script as many times as you like; you can install but not
 uninstall. The script is supposed to do the following:
 
-  1. Install 3 internal developed packages. Only `dailybuandupdate` is required
+  1. Install 3 internally developed packages. Only `dailybuandupdate` is required
 	 outside our  test environment; it  is used for patching and backup. You
 	 may decide not to install the other packages.
   2. The system is patched and may reboot if required. If so, login once more
@@ -39,7 +39,7 @@ uninstall. The script is supposed to do the following:
 	 the file `dev.lst` separated by ';'. The file is ignored if it doesn't exist.
   4. No users should have password login with ssh, so the ssh config file is
 	 modified accordingly. Also, see the `adduser` and `usermod` commands; they
-	 are required for password less login when users doesn't have a password.
+	 are required for password less login when users don't have a password.
   5. Fastnetmon uploads rule files with `sftp`, a user `newrules` and group
 	 `sftpusers` is created and a dummy ssh-ed25519 key is added to
 	 `authorized_keys`. Notice the use of `chattr +i` and ownership of the
