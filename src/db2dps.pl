@@ -708,7 +708,7 @@ sub mkrulebase($$)
 			}
 
 			################################################################################
-			# TODO
+			# TODO: re-announce all still valid rules not made by fnm
 			# Once all expired rules has been withdrawn re-announce all still valid rules
 			# which are not made by FastNetMon as the withdraw may have removed functionality
 			# added by the GUI
@@ -751,16 +751,7 @@ sub mkrulebase($$)
 			my $filtertype = $data{$host}{'filtertype'};		$filtertype =~ tr/\"//d;
 			if ($filtertype eq lc 'flowspec')
 			{
-				# build different rule(s) for: ip | icmp | tcp | udp and print to file
-				# TODO
-				# this has to be extented later with fragments, ttl, size etc
-				# and e.g. rate-limit 9600 instead of discard by readming from
-				# 'action' field
-
 				my $rule = "";
-
-				# tcp‐flags [ fin | syn | rst | push | ack | urgent ];
-				#fragment [ not‐a‐fragment | dont‐fragment | is‐fragment | first‐fragment | last‐fragment ];
 
 				if (length $sourceprefix)		{ $sourceprefix			= "source "				. $sourceprefix			. ";" }
 				if (length $destinationprefix)	{ $destinationprefix	= "destination "		. $destinationprefix	. ";" }
@@ -865,9 +856,6 @@ sub mkrulebase($$)
 
 		logit("rulebase: $rulebase, size: ",  stat($rulebase)->size);
 
-		#my $tmp_fh = new File::Temp( UNLINK => 0, TEMPLATE => 'newrules_XXXXXXXX', DIR => '/tmp', SUFFIX => '.dat');
-		#rename $rulebase, $tmp_fh;
-
 		$sth->finish();
 
 		# send $rulebase to $host:exabgp_pipe if we have any rules
@@ -877,10 +865,9 @@ sub mkrulebase($$)
 		# https://gist.github.com/melo/2829330
 		# to do an scp (r, tmpfile) ; exec(sudo cat tmpfile > ....)
 		#
-		# TODO: change so just skip everything upon faileure for all hosts
+		# TODO: Preserve rulebase if we cannot connet to at least one BGP host and try later
 		# Move to global and don't exipre if = 0;
 		# my $at_least_one_successfull_upload = 0;
-
 		$at_least_one_successfull_upload = 0;
 
 		my @unique_implemented_flowspecruleid = uniq @implemented_flowspecruleid;
@@ -895,10 +882,9 @@ sub mkrulebase($$)
 			}
 			if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) )
 			{
-				logit("FAILED SCP public/private key authentication for $sshuser to $host: $!");
-				# If the host is up and this fails then check mode of .ssh/* for user@host; error
-				# may be 'Resource temporarily unavailable' If the error is related to auth. then
-				# the key may not have been correctly added to ~/ssh/authorized_keys 
+				logit("public/private key authentication for $sshuser to $host failed with: $!");
+				logit("Please check modes for .ssh/* for user\@host and ~/.ssh/authorized_keys too");
+				logit("Some versions of Net::SSH2 may only support rsa");
 			}
 
 			if (! $ssh2->scp_put($rulebase, $exabgp_pipe))
@@ -997,7 +983,6 @@ sub processnewrules()
 		logit("$file ok type=$type optimize=$optimize ver=$version attack_info=$attack_info lines=$#lines");
 
 		# process rules and add to database
-		# TODO: build better optimization
 		if ($optimize eq lc "doop" || $optimize eq lc "opop")
 		{
 			foreach my $line (@lines)
@@ -1068,10 +1053,9 @@ sub processnewrules()
 				}
 				$src_topports{ $sport } += 1;
 
+				# TODO: handle ICMP type and code (type 7 and 8) -- which is not reported by fastnetmon
 				# Type 7	IPv4 ICMP type
 				# Type 8	IPv4 ICMP code
-				# Not reported by fastnetmon
-				# TODO
 
 				# Type 9	IPv4 TCP flags (2 bytes incl. reserveret bits)
 				if ($flags ne '' && $flags ne 'null')
@@ -1095,7 +1079,7 @@ sub processnewrules()
 				}
 
 				# Type 11	IPv4 DSCP
-				# TODO
+				# TODO: find the reporting format for DSCP (type 11)
 
 
 				# Type 12	IPv4 fragment bits
@@ -1179,22 +1163,20 @@ sub processnewrules()
 				$tcp_match_flags = "null";
 			}
 
-
-			logit("$rules_in_file rules reduced to: ");
-			logit("insert into database ...");
-			logit("match destination '$dst'");
-			logit("match source      '$src'");
-			logit("match protocol    '$protocol'");
-			logit("match sport       '$sport'");
-			logit("match dport       '$dport'");
-			logit("match fragment    '$frag'");
+			#logit("$rules_in_file rules reduced to: ");
+			#logit("insert into database ...");
+			#logit("match destination '$dst'");
+			#logit("match source      '$src'");
+			#logit("match protocol    '$protocol'");
+			#logit("match sport       '$sport'");
+			#logit("match dport       '$dport'");
+			#logit("match fragment    '$frag'");
 			
-			logit("match tcp flags   '$tcp_match_flags'");
-			logit("match length:     '$length'");
-			logit("then              '$action'");
-
+			#logit("match tcp flags   '$tcp_match_flags'");
+			#logit("match length:     '$length'");
+			#logit("then              '$action'");
 		
-			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action");
+			#logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action");
 			
 			# quote everything except null and false
 			$sql_query = $addrule;
@@ -1225,15 +1207,13 @@ sub processnewrules()
 			my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
 			$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
 
-			#unlink $file or logit("Could not unlink $file $!");
-			logit("NOTE not unlinked $file $!");
+			unlink $file or logit("Could not unlink $file $!");
 		}
 		else
 		{
 			logit("no optimize as optimize = $optimize");
 			# Do not optimize but read everything literally
-			# FIXME
-			# TODO
+			# TODO: loop all lines in rulefile if we should not optimize
 			# loop all lines 
 			# {
 			# 	$sql_query = " .... ";
@@ -1251,8 +1231,8 @@ sub processnewrules()
 		}
 
 	}
-	logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done");
-	exit 0;	# exit on debug
+	# exit on debug
+	#logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done"); exit 0;
 }
 
 sub max ($$) { $_[$_[0] < $_[1]] }

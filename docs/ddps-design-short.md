@@ -87,10 +87,22 @@ what we wanted. Among others they included
 	  the code while fixing errors and tailoring it to suit our requirements
 	- freeze the code base and the dependencies and just use it as it is
 
-Firewall on demand is a GUI which does not do any detection it self; what to mitigate against is left to the operator.
+Firewall on demand is a GUI which does not do any detection it self; what to
+mitigate against is left to the operator.
 
 We wanted a high degree of automatic mitigation, as time is critical and a
 spare resource during a DDoS attack. The need for manual rules would be to
 mitigate events in the future which may be likely to be attacked, e.g. national
-tests and on-line examines. That would require a GUI and we would like to integrate it with other information (network status stored in influxdb etc.). Finally we would like the database to be customer centric: administrators, network, fastnetmon configuration etc. should go there to simplify deployment.
+tests and on-line examines. That would require a GUI and we would like to
+integrate it with other information (network status stored in influxdb etc.).
+Finally we would like the database to be customer centric: administrators,
+network, fastnetmon configuration etc. should go there to simplify deployment.
+
+## A simpler solution
+
+We might get along with a much static simpler solution, where only the top
+volumetric attack vectors from e.g [Akamai's
+report](https://www.akamai.com/us/en/multimedia/documents/state-of-the-internet/q4-2016-state-of-the-internet-security-report.pdf)
+is banned from the edge routers as suggested in [BPCP](http://nabcop.org/index.php/DDoS-DoS-attack-BCOP)
+That is done in a [42 line long shell script](src/default-rules.sh)
 

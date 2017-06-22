@@ -330,6 +330,10 @@ EOF
 
 EOF
 
+	# this should have been fixed in the crafted ISO
+	savefile /etc/default/keyboard
+	cat /etc/default/keyboard.org |sed 's/"us"/"dk"/' > /etc/default/keyboard
+
 	logit "all done"
 
 	USR_LIST=`sed '/nologin$/d; /false$/d; s/:.*//' /etc/passwd`

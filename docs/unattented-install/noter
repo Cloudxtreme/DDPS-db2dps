@@ -1,0 +1,6 @@
+
+ISO laves på ddps-dev som brugeren uninth.
+
+scp uninth@ddps-dev:ubuntu-16.04.2-server-amd64-auto-install.iso VirtualBox\ VMs/iso/; ./xxx.sh
+
+
