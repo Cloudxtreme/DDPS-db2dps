@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 #
 # Se https://nakkaya.com/2012/08/30/create-manage-virtualBox-vms-from-the-command-line/
 # and https://www.perkin.org.uk/posts/create-virtualbox-vm-from-the-command-line.html
@@ -6,7 +6,6 @@
 # and https://github.com/netson/ubuntu-unattended
 # and https://askubuntu.com/questions/806820/how-do-i-create-a-completely-unattended-install-of-ubuntu-desktop-16-04-1-lts
 
-exit 0
 
 echo=/bin/echo
 case ${N}$C in
@@ -18,7 +17,7 @@ case ${N}$C in
 esac
 
 
-VM="ddps-dev-test"
+VM="ubuntu-16-04-auto-test"
 
 echo "removing ${VM} ... "
 VBoxManage unregistervm ${VM} --delete
@@ -53,7 +52,7 @@ VBoxManage storageattach ${VM} --storagectl "IDE Controller"  \
     --port 0 --device 0 --type hdd --medium "$HOME/VirtualBox VMs/${VM}/${VM}.vdi"
 
 VBoxManage storageattach "${VM}" --storagectl "IDE Controller" \
-    --port 1 --device 0 --type dvddrive --medium "/Users/uninth/VirtualBox VMs/iso/ubuntu-16.04.2-server-amd64-unattended.iso"
+    --port 1 --device 0 --type dvddrive --medium "/Users/uninth/VirtualBox VMs/iso/ubuntu-16.04.2-server-amd64-auto-install.iso"
 
 # echo "alternativt: ret setup.sh og behold den og kør den i hånden efter installation ... "
 

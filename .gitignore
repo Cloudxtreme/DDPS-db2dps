@@ -31,3 +31,4 @@ version.c
 version.h
 version.pm
 x.pl
+**/not-on-git

@@ -1,3 +1,4 @@
+not-on-git
 todo.md
 rsync_exclude.txt
 download-*
