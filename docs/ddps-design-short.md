@@ -8,7 +8,7 @@ This document describes the finished version 1.0 system.
 ## Workflow
 
 DDoS mitigation based on BGP flowspec requires some rules to _enter_ the
-system, and other rules to be _sent to and enforced by peering partners and upstream provider_.
+system, and other rules to be _sent to and enforced by peering partners and upstream providers_.
 The following drawing illustrates the different components: on the left we can
 see a customer site where a detection engine (here FastNetMon) monitors traffic
 to a group of networks and logs traffic statistics in a local influx database.       
