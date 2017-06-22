@@ -104,5 +104,5 @@ We might get along with a much static simpler solution, where only the top
 volumetric attack vectors from e.g [Akamai's
 report](https://www.akamai.com/us/en/multimedia/documents/state-of-the-internet/q4-2016-state-of-the-internet-security-report.pdf)
 is banned from the edge routers as suggested in [BPCP](http://nabcop.org/index.php/DDoS-DoS-attack-BCOP)
-That is done in a [42 line long shell script](src/default-rules.sh)
+That is done in a [42 line long shell script](../src/default-rules.sh)
 
