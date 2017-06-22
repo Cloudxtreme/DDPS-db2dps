@@ -1,7 +1,7 @@
 
 # i2dps daemon
 
-`db2dps` is a small daemon running on the database server which convert
+`db2dps` is a small daemon running on the database server which converts
 rules to BGP announcements. The daemon is controlled by `systemd`.  The
 installation is done with `make`.
 
@@ -15,7 +15,7 @@ Perl modules to be installed:
 
 ### Installation
 
-On the database host, execute
+On the database host, execute:
 
 	mkdir -p /opt/db2dps && chown sysadm:sysadm /opt/db2dps
 
@@ -27,7 +27,7 @@ need to change the lines to whatever your heart desire:
 	UID             = sysadm
 
 Change `TARGETHOST` and set up `ssh` credentials first. Either (depending
-on your local environment) do
+on your local environment) do:
 
 	./remote.sh -v make dirs
 
@@ -35,7 +35,7 @@ or copy the source to `/opt/db2dps/src` and execute:
 
 	cd /opt/db2dps/src && make dirs
 
-If that goes well then execute
+If that goes well then execute:
 
 	./remote.sh -v make all
 
@@ -43,7 +43,7 @@ or
 
 	cd /opt/db2dps/src && make all
 
-For the C version, the target will
+For the C version, the target will:
 
   - fetch, extract and compile required libraries from github
   - compile db2dps and place binaries etc. below `/opt/db2dps`
@@ -163,14 +163,14 @@ Usage and pseudo code below:
 
 ### Bugs
 
- Probably. Please report them to the the author or the DDPS group. Please
- notice this is early work.
+ Probably. Please report them to the author or the DDPS group. Please
+ notice that this is early work.
 
 <!-- make md end   -->
 
 ### Rulefiles
 
-Rule files has the following format, with a _header_ describing the _rule type_
+Rule files have the following format, with a _header_ describing the _rule type_
 where only `fnm` for fastnetmon is in use, rule format if we should ever change it
 and the _attack type_ for later optimisation. The last line is literally _last-line_
 to avoid processing incomplete files:
@@ -287,7 +287,7 @@ First: it is sometimes possible to distinguish between legitimate and illegitima
 [Not All SYNs Are Created Equal](https://danielmiessler.com/study/synpackets/).
 And empty UDP and TCP packet might be rare:
 
-For ethernet is the _minimum payload_ 42 octets when an 802.1Q tag is present and
+For Ethernet the _minimum payload_ is 42 octets when an 802.1Q tag is present and
 46 octets when absent according to [wikipedia on ethernet
 frames](https://en.wikipedia.org/wiki/Ethernet_frame). The minimum Layer 2
 Ethernet frame size is 64 bytes for an _empty tcp or udp packet_.
@@ -322,7 +322,7 @@ Suggestion for rule creation:
 | SSDP amplification     | discard        | protocol, port 1900, source any |
 | SNMP amplification     | discard        | protocol, port, destination     |
 
-Note: SSDP - _Simple Service Discovery Protocol_ (see [draft-cai-ssdp-v1-03](http://quimby.gnus.org/internet-drafts/draft-cai-ssdp-v1-03.txt) does not belong on a WAN an anyway? It's used
+Note: SSDP - _Simple Service Discovery Protocol_ (see [draft-cai-ssdp-v1-03](http://quimby.gnus.org/internet-drafts/draft-cai-ssdp-v1-03.txt) does not belong on a WAN anyway? It is used
 for UPnP discovery. The same goes for TCP / UDP port 1 - 19.
 
 SNMP does to my best understanding not pass the boundaries of a company
