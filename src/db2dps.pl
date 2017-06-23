@@ -1092,7 +1092,7 @@ sub processnewrules()
 			# prepare bgp flowspec rules
 			if ($src_uniq == 0)
 			{
-				$src = "";
+				$src = "null";
 			}
 
 			if ($sport =~ m/null/)
@@ -1201,6 +1201,7 @@ sub processnewrules()
 				s/__action/$action/g;
 				s/'false'/false/g;
 				s/'null'/null/g;
+				s/''/'null'/g;
    			}
 
 			logit("$sql_query");
