@@ -9,7 +9,6 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
-obsolite
 dev.lst
 
 # Vi files #
@@ -32,3 +31,4 @@ version.h
 version.pm
 x.pl
 **/not-on-git
+**/obsolite
