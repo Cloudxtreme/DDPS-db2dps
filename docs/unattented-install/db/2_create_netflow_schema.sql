@@ -2,27 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.6
--- Dumped by pg_dump version 9.5.6
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: netflow; Type: DATABASE; Schema: -; Owner: admin
---
-
-CREATE DATABASE netflow WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
-
-
-ALTER DATABASE netflow OWNER TO admin;
-
-\connect netflow
+-- Dumped from database version 9.5.7
+-- Dumped by pg_dump version 9.5.7
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -276,15 +257,15 @@ CREATE TABLE fastnetmon_conf (
     ban_for_tcp_pps character varying(3) DEFAULT 'on'::character varying,
     ban_for_udp_pps character varying(3) DEFAULT 'on'::character varying,
     ban_for_icmp_pps character varying(3) DEFAULT 'on'::character varying,
-    CONSTRAINT fastnetmon_conf_ban_for_bandwidth_check CHECK (((ban_for_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_flows_check CHECK (((ban_for_flows)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_icmp_bandwidth_check CHECK (((ban_for_icmp_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_icmp_pps_check CHECK (((ban_for_icmp_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_pps_check CHECK (((ban_for_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_tcp_bandwidth_check CHECK (((ban_for_tcp_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_tcp_pps_check CHECK (((ban_for_tcp_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_udp_bandwidth_check CHECK (((ban_for_udp_bandwidth)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[]))),
-    CONSTRAINT fastnetmon_conf_ban_for_udp_pps_check CHECK (((ban_for_udp_pps)::text = ANY ((ARRAY['on'::character varying, 'off'::character varying])::text[])))
+    CONSTRAINT fastnetmon_conf_ban_for_bandwidth_check CHECK (((ban_for_bandwidth)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_flows_check CHECK (((ban_for_flows)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_icmp_bandwidth_check CHECK (((ban_for_icmp_bandwidth)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_icmp_pps_check CHECK (((ban_for_icmp_pps)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_pps_check CHECK (((ban_for_pps)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_tcp_bandwidth_check CHECK (((ban_for_tcp_bandwidth)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_tcp_pps_check CHECK (((ban_for_tcp_pps)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_udp_bandwidth_check CHECK (((ban_for_udp_bandwidth)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text]))),
+    CONSTRAINT fastnetmon_conf_ban_for_udp_pps_check CHECK (((ban_for_udp_pps)::text = ANY (ARRAY[('on'::character varying)::text, ('off'::character varying)::text])))
 );
 
 
@@ -298,7 +279,7 @@ CREATE TABLE fastnetmoninstances (
     fastnetmoninstanceid integer NOT NULL,
     customerid integer,
     mode character varying(7),
-    CONSTRAINT fastnetmoninstances_mode_check CHECK (((mode)::text = ANY ((ARRAY['detect'::character varying, 'enforce'::character varying])::text[])))
+    CONSTRAINT fastnetmoninstances_mode_check CHECK (((mode)::text = ANY (ARRAY[('detect'::character varying)::text, ('enforce'::character varying)::text])))
 );
 
 
@@ -331,7 +312,6 @@ ALTER SEQUENCE fastnetmoninstances_fastnetmoninstanceid_seq OWNED BY fastnetmoni
 
 CREATE TABLE flowspecrules (
     flowspecruleid bigint NOT NULL,
-    -- customernetworkid integer NOT NULL,
     rule_name character varying(128),
     administratorid integer NOT NULL,
     direction character varying(3) NOT NULL,
@@ -343,20 +323,20 @@ CREATE TABLE flowspecrules (
     destinationprefix inet,
     sourceprefix inet,
     ipprotocol character varying(8),
-    srcordestport character varying(80),
-    destinationport character varying(80),
-    sourceport character varying(80),
-    icmptype integer,
-    icmpcode integer,
-    tcpflags character varying(5),
-    packetlength integer,
-    dscp character varying(80),
-    fragmentencoding integer,
+    srcordestport character varying(128),
+    destinationport character varying(128),
+    sourceport character varying(128),
+    icmptype character varying(128),
+    icmpcode character varying(128),
+    tcpflags character varying(32),
+    packetlength character varying(128),
+    dscp character varying(128),
+    fragmentencoding character varying(128),
     description character varying(256),
-    customerid integer DEFAULT 3 NOT NULL,
+    customerid integer DEFAULT 0 NOT NULL,
     action character varying(255),
     CONSTRAINT flowspecrules_check CHECK ((validto > validfrom)),
-    CONSTRAINT flowspecrules_direction_check CHECK (((direction)::text = ANY ((ARRAY['in'::character varying, 'out'::character varying])::text[])))
+    CONSTRAINT flowspecrules_direction_check CHECK (((direction)::text = ANY (ARRAY[('in'::character varying)::text, ('out'::character varying)::text])))
 );
 
 
@@ -946,11 +926,11 @@ ALTER TABLE ONLY flowspecrules
 
 
 --
--- Name: flowspecrules_customernetworkid_fkey; Type: FK CONSTRAINT; Schema: flow; Owner: flowuser
+-- Name: flowspecrules_customerid_fkey; Type: FK CONSTRAINT; Schema: flow; Owner: flowuser
 --
 
 ALTER TABLE ONLY flowspecrules
-    ADD CONSTRAINT customernid_fkey FOREIGN KEY (customerid) REFERENCES customers(customerid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT flowspecrules_customerid_fkey FOREIGN KEY (customerid) REFERENCES customers(customerid) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
