@@ -1,0 +1,14 @@
+not-on-git
+todo.md
+rsync_exclude.txt
+download-*
+*.bak
+remote.sh.log
+*.swp
+obsolite
+.vscode/
+note.md
+._*
+.DS_Store
+*.md
+*.BAK

@@ -1,0 +1,6 @@
+:
+
+cd /opt/mkiso/specific/ddps
+
+rsync -avzH --delete-after ddps-dev:/root/files/install.d/ install.d
+rsync -avzH --delete-after ddps-dev:/root/files/data/ data

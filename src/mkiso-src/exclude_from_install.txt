@@ -1,0 +1,10 @@
+.source_info
+Makefile
+Makefile.bak
+README.md
+exclude_from_install.txt
+mk-ddps-dev-hw.sh
+mkiso/docs/note.md
+not-on-git/
+remote.sh*
+rsync_exclude.txt*
