@@ -188,9 +188,8 @@ The format is
 	version:     | 1 ...
 	attack_info: | icmp_flood | syn_flood | udp_flood | unknown | ...
 
-	Rules customerid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12,action,description
+	Rules customerid,uuid,fastnetmoninstanceid,administratorid,blocktime,1 .. 12,action,description
 
-	Rules: customernetworkid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
 	customernetworkid:      Customer id (int)
 	uuid:                   Mac address -- identify fastnetmon instance
 	fastnetmoninstanceid:   Customers fastnetmon # (int)
