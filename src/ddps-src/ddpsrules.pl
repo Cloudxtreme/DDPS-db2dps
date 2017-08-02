@@ -221,8 +221,6 @@ sub main(@) {
 
 sub addrule()
 {
-	print "addrule: TODO !!!\n";
-
 	if (! is_flowspec("flow", $dport))
 	{
 		print "dstport $dport is not flowspec\n";
@@ -387,7 +385,7 @@ sub printrule()
 	$dbh->disconnect();
 	print "Read $i rules\n";
 	print "\nSee full announce and withdraw with e.g.: ";
-    print "\tsed '/rule:.*12042/!d; s/^.*rule: //; s/[ ]\+/ /g' /var/log/syslog\n\n";
+	print '    sed \'/rule:.*[0-9]\+/!d; s/^.*rule: //; s/[ ]+/ /g\' /var/log/syslog' . "\n";
 }
 
 
