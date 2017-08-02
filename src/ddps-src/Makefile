@@ -1,8 +1,8 @@
 # ---- Will be extracted and used by remote.sh ----
 #:REMOTE-INFO-BEGIN
 # TARGETHOST   deployment/test host or IP address, e.g. user@1.2.3.4
-TARGETHOST      = uninth@ddps.deic.dk
-#TARGETHOST      = uninth@ddps-dev
+#TARGETHOST      = uninth@ddps.deic.dk
+TARGETHOST      = uninth@ddps-dev
 #TARGETHOST      = sysadm@ddps.ssi.i2.dk
 #TARGETHOST      = sysadm@172.16.201.113
 # UPLOADDIR    top directory for the source; everything from '.' will be synced
@@ -84,6 +84,9 @@ initrc		= $(INITDIR)/$(RC)
 dbini		= $(ETCDIR)/$(PRODINI)
 sqlstr		= $(LIBDIR)/$(SQLSTR)
 
+ptest:
+			perl ./ddpsrules.pl del
+
 default:	$(prog)
 			./$(prog) -V
 			#sudo ./$(prog) -v -s 4
@@ -95,8 +98,8 @@ $(prog):	hostcheck db2dps.pl version.pm install_perl_modules $(sqlstr)
 			@sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  db2dps.pl > db2dps
 			@chmod 555 db2dps
 
-perlfiles	= kill_switch_restart_all_exabgp.pl
-shellfiles	= default-rules.sh ddpsrules.sh apply-default-rules.sh
+perlfiles	= kill_switch_restart_all_exabgp.pl ddpsrules.pl
+shellfiles	= default-rules.sh apply-default-rules.sh
 
 # target assumes everything is perl
 bin: $(perlfiles)
@@ -155,7 +158,7 @@ dirs:
 			for D in $(DIRS); 								\
 				do											\
 				if [ ! -d $$D ]; then						\
-						mkdir -p $$D;						\
+						sudo mkdir -p $$D;						\
 				fi											\
 			done
 			#sudo chown -R $(UID):$(GID) $(PREFIX);		\
