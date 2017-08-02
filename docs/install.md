@@ -75,7 +75,7 @@ Building the ISO for booting the host `ddps` is done this way:
 
 		/opt/mkiso/bin/mkiso -u 16.04 -s ddps
 
-The iso image will be stored in `/tmp` on the Guest OS, Copy to a place
+The ISO image will be stored in `/tmp` on the Guest OS, Copy to a place
 where the image can be read.
 
 Boot the ISO on similar hardware and you should have a working DDPS server.
