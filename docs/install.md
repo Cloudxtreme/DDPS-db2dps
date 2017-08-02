@@ -63,7 +63,7 @@ Edit the following before creating the ISO file for `ddps`
 
  - Replace `/opt/mkiso/common/authorized_keys` with your `authorized_keys`
  - Edit `/opt/mkiso/specific/ddps/host.config` and change the password
-   for the user `sysadm`.
+   for the user `sysadm`. Use host.config.template as a template.
  - Edit `/opt/mkiso/specific/ddps/install.d/1_add-interface-cfg.sh` and change
    the IP configuration at the top to match the _host only_ interface. 
  - Edit `/opt/mkiso/specific/ddps/data/dev.lst` and add your developers. They
