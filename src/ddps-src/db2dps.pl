@@ -720,7 +720,6 @@ sub mkrulebase($$)
 
 			my $destinationprefix_is_within_my_network = 1;
 
-			#TODO here is a big error as my $mynetwork is global and the code below does not work correctly
 			logit ("testing $destinationprefix = $dst_subnet within my networks: $destinationprefix_is_within_my_network");
 			foreach my $mynetwork (split ' ', $allmynetworks)
 			{
@@ -757,10 +756,16 @@ sub mkrulebase($$)
 
 					if (length $sourceprefix)		{ $sourceprefix			= "source "				. $sourceprefix			. ";" }
 					if (length $destinationprefix)	{ $destinationprefix	= "destination "		. $destinationprefix	. ";" }
+					if (length $sourceport)			{ $sourceport			= "source-port "		. $sourceport			. ";" }
 					if (length $destinationport)	{ $destinationport		= "destination-port "	. $destinationport		. ";" }
 					if (length $ipprotocol)			{ $ipprotocol			= "protocol "			. $ipprotocol			. ";" }
 					if (length $tcpflags)			{ $tcpflags				= "tcp-flags "			. $tcpflags				. ";" }
 					if (length $packetlength)		{ $packetlength			= "packet-length "		. $packetlength			. ";" }
+					if (length $fragmentencoding)	{ $fragmentencoding		= "fragment "			. $fragmentencoding		. ";" }
+					if (length $srcordestport)		{ $srcordestport		= "srcordestport "		. $srcordestport		. ";" }
+					if (length $icmptype)			{ $icmptype				= "icmptype "			. $icmptype				. ";" }
+					if (length $icmpcode)			{ $icmpcode				= "icmpcode "			. $icmpcode				. ";" }
+					if (length $dscp)				{ $dscp					= "dscp "				. $dscp					. ";" }
 
 					if ($ipprotocol  !~ /(icmp|tcp|udp|1|6|17)/)			# remove any tcp/udp/icmp specific things, if any
 					{
@@ -769,6 +774,7 @@ sub mkrulebase($$)
 						$srcordestport		= "";
 						$sourceport			= "";
 						$destinationport	= "";
+						$fragmentencoding	= "";
 					}
 
 					if ($ipprotocol =~ /icmp/)						# remove any tcp/udp specific things, if any
@@ -863,7 +869,7 @@ sub mkrulebase($$)
 					}
 
 					# final rule
-					$rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $destinationport $ipprotocol $tcpflags $packetlength } then { $action } } }";
+					$rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $srcordestport $sourceport $destinationport $ipprotocol $tcpflags $icmptype $icmpcode $packetlength $fragmentencoding $dscp } then { $action } } }";
 					logit("rule: $rule");
 					print $fh "$rule\n";
 				}
@@ -1065,7 +1071,6 @@ sub processnewrules()
 				# Type 4	IPv4 source or destination port
 				# Type 5	IPv4 destination port
 				# Type 6	IPv4 source port
-				# if ($sport =~ m/null/ || $sport eq "" || $sport =~ m/$flowstrmatch/)
 				if ($sport =~ m/$isdigit/ && $sport_max =~ m/$isdigit/ && $sport_min =~ m/$isdigit/)
 				{
 					$sport_max	= max($sport_max,	$sport);
@@ -1238,7 +1243,7 @@ sub processnewrules()
 #			logit("match length:     '$length'");
 #			logit("then              '$action'");
 		
-			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action");
+			logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action description: $description");
 			
 			# quote everything except null and false
 			$sql_query = $addrule;
@@ -1261,6 +1266,7 @@ sub processnewrules()
 				s/__dscp/$dscp/g;
 				s/__frag/$frag/g;
 				s/__action/$action/g;
+				s/__description/$description/g;
 				s/'false'/false/g;
 				s/'null'/null/g;
 				s/''/'null'/g;
@@ -1298,7 +1304,7 @@ sub processnewrules()
 			}
 			else
 			{
-				logit("$sql_query");
+				logit("running sql_query: $sql_query");
 				my $sth = $dbh->prepare($sql_query)	or logit("Failed in statement prepare: $dbh->errstr");
 				$sth->execute()						or logit("Failed to execute statement: $dbh->errstr");
 			}

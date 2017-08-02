@@ -14,25 +14,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: netflow; Type: DATABASE; Schema: -; Owner: admin
---
-
-CREATE DATABASE netflow WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
-
-
-ALTER DATABASE netflow OWNER TO admin;
-
-\connect netflow
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
 -- Name: flow; Type: SCHEMA; Schema: -; Owner: flowuser
 --
 
@@ -341,16 +322,16 @@ CREATE TABLE flowspecrules (
     isexpired boolean NOT NULL,
     destinationprefix inet,
     sourceprefix inet,
-    ipprotocol character varying(8),
-    srcordestport character varying(80),
-    destinationport character varying(80),
-    sourceport character varying(80),
-    icmptype integer,
-    icmpcode integer,
+    ipprotocol character varying(64),
+    srcordestport character varying(128),
+    destinationport character varying(128),
+    sourceport character varying(128),
+    icmptype character varying(128),
+    icmpcode character varying(128),
     tcpflags character varying(32),
-    packetlength integer,
-    dscp character varying(80),
-    fragmentencoding integer,
+    packetlength character varying(128),
+    dscp character varying(128),
+    fragmentencoding character varying(128),
     description character varying(256),
     customerid integer DEFAULT 0 NOT NULL,
     action character varying(255),
@@ -663,6 +644,39 @@ ALTER SEQUENCE services_id_seq OWNED BY services.id;
 
 
 --
+-- Name: tcpflags; Type: TABLE; Schema: flow; Owner: flowuser
+--
+
+CREATE TABLE tcpflags (
+    id integer NOT NULL,
+    tcpflag json
+);
+
+
+ALTER TABLE tcpflags OWNER TO flowuser;
+
+--
+-- Name: tcpflags_id_seq; Type: SEQUENCE; Schema: flow; Owner: flowuser
+--
+
+CREATE SEQUENCE tcpflags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE tcpflags_id_seq OWNER TO flowuser;
+
+--
+-- Name: tcpflags_id_seq; Type: SEQUENCE OWNED BY; Schema: flow; Owner: flowuser
+--
+
+ALTER SEQUENCE tcpflags_id_seq OWNED BY tcpflags.id;
+
+
+--
 -- Name: administratorid; Type: DEFAULT; Schema: flow; Owner: flowuser
 --
 
@@ -758,6 +772,13 @@ ALTER TABLE ONLY protocols ALTER COLUMN id SET DEFAULT nextval('protocols_id_seq
 --
 
 ALTER TABLE ONLY services ALTER COLUMN id SET DEFAULT nextval('services_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: flow; Owner: flowuser
+--
+
+ALTER TABLE ONLY tcpflags ALTER COLUMN id SET DEFAULT nextval('tcpflags_id_seq'::regclass);
 
 
 --
@@ -894,6 +915,14 @@ ALTER TABLE ONLY protocols
 
 ALTER TABLE ONLY services
     ADD CONSTRAINT services_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tcpflags_pkey; Type: CONSTRAINT; Schema: flow; Owner: flowuser
+--
+
+ALTER TABLE ONLY tcpflags
+    ADD CONSTRAINT tcpflags_pkey PRIMARY KEY (id);
 
 
 --

@@ -34,7 +34,7 @@ do
 	${DO} default-discard-udp-fragments { match { ${DST}; protocol udp; fragment [ is-fragment first-fragment last-fragment ]; } then { discard } }
 	${DO} default-discard-ntp-amplification { match { ${DST}; protocol udp; source-port =123; packet-length =468; } then { discard } }
 	${DO} default-discard-dns-amplification { match { ${DST}; protocol udp; source-port =53; packet-length =512; } then { discard } }
-	${DO} default-discard-dns-amplification { match { ${DST}; protocol udp; source-port =19; } then { discard } }
+	${DO} default-discard-dns-amplification { match { ${DST}; protocol udp; source-port =53; } then { discard } }
 	${DO} default-discard-chargen { match { ${DST}; protocol udp; source-port =19; } then { discard } }
 	${DO} default-discard-chargen { match { ${DST}; protocol tcp; source-port =19; } then { discard } }
 	${DO} default-discard-QOTD { match { ${DST}; protocol udp; source-port =17; } then { discard } }
