@@ -6,16 +6,10 @@ queries the database for new and expired rules.
 
 ## Documentation and installation procedure and a short configuration guide:
 
-  - [Installation](docs/README-docs.md)
-
-## Direct link to main source code below:
-
-  - Start here: [README](src/ddps-src/README.md)
-  - Read / change [Makefile](src/ddps-src/Makefile)
-  - Daemon configuration file [db.ini](src/ddps-src/db.ini)
-  - Daemon source: [db2dps.pl](src/ddps-src/db2dps.pl)
-  - [SQL strings](src/ddps-src/sqlstr.pm)
-  - [Kill switch source](src/ddps-src/kill_switch_restart_all_exabgp.pl)
+  - [Design overview](docs/ddps-design-short.md)
+  - [Installation](docs/install.md)
+  - [db2dps documentatin](docs/db2dps-documentation.md)
+  - [General documentation](docs/README-docs.md)
 
 ## License
 
