@@ -419,18 +419,19 @@ route flow_http_bad_source {
 }
 
 
-#/*
-# * Copyright (c) 2016, Niels Thomas Haugård, All Rights Reserved
-# *
-# * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF  dtu.dk, i2.dk
-# * and DeIC.dk, DENMARK
-# *
-# * The copyright notice above does not evidence  any  actual  or
-# * intended publication of such source code.
-# *
-# * This software may include source code made by others and dis-
-# * tributed under other licences.  Licences and copyright infor-
-# * mation is included in the source code.
-# *
-#*/
 
+#
+#   Copyright 2017, DeiC, Niels Thomas Haugård
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#

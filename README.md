@@ -6,7 +6,7 @@ queries the database for new and expired rules.
 
 ## Documentation and installation procedure and a short configuration guide:
 
-  - [DDPS database host installation](docs/README-docs.md)
+  - [Installation](docs/README-docs.md)
 
 ## Direct link to main source code below:
 
