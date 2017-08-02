@@ -122,9 +122,6 @@ function main()
 		echo "chdir ${MY_DIR} failed"; exit 0
 	}
 
-	# for make to work
-	apt-get -y install build-essential
-
 	# for postgres backup to work:
 	/bin/cp ${DATADIR}/cfg/bin/autopgsqlbackup /usr/local/bin/autopgsqlbackup
 	chmod 555 /usr/local/bin/autopgsqlbackup
@@ -287,7 +284,7 @@ EOF
 	echo "cd /; gunzip netflow.dmp.sql.gz"
 	echo "echo 'psql -d postgres -f /tmp/netflow.dmp.sql' |  su postgres"
 	logit "OR"
-	logit "execute commands from below: (should be in /root/files/data/db"
+	logit "execute commands from below:"
 	cat << EOF | logit
 	echo 'psql -f db/1_create_netwlow_db.sql'             | su postgres	
 	echo 'psql -f db/2_create_netflow_schema.sql'         | su postgres

@@ -125,13 +125,15 @@ add:
 
 	- use 'null' for whildcard fields
 	- protocol:         0-255 or well known name (first field in /etc/protocols)
-	- src, dst:         IPv4 address only in CIDR format
+	- src, dst:         One IPv4 address only in CIDR format (database value limitation)
 	- s/dport:          source / destination port (0-65535)
-	- icmp type/code:   one value between 0-255
-	- length:           one value between 64-65535
+	- icmp type/code:   value between 0-255
+	- length:           value between 64-65535
 	- TCP-flags:        cwr ece urg ack psh rst syn fin
 	- fragmentencoding: is-fragment or null
 	- blocktime:        minutes e.g. hour/day/week: 600 1440 10080
+
+    Action should match either accept, discard or rate-limit 9600
 
 	Rules will be added as customer '1' administrator '42' and a random
 	picked fastnetmon identy
