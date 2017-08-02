@@ -1,2 +1,0 @@
-# Periodic backup on a daily basis to the local filesystem. Archives will be consolidated with rsync"
-59 23 * * * root [ -x /usr/local/bin/daily_backup.sh ] && /usr/local/bin/daily_backup.sh
