@@ -188,14 +188,16 @@ The format is
 	version:     | 1 ...
 	attack_info: | icmp_flood | syn_flood | udp_flood | unknown | ...
 
+	Rules customerid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12,action,description
+
 	Rules: customernetworkid,uuid,fastnetmoninstanceid,administratorid,blocktime,1,2,3,4,5,6,7,8,9,10,11,12
 	customernetworkid:      Customer id (int)
 	uuid:                   Mac address -- identify fastnetmon instance
 	fastnetmoninstanceid:   Customers fastnetmon # (int)
 	administratorid:        Administrator id (int)
 	blocktime:              Minutes
-	Type 1 - Destination Prefix
-	Type 2 - Source Prefix
+	Type 1 - Destination Prefix: Only one CIDR is allowed due to database type limitations
+	Type 2 - Source Prefix:      Only one CIDR is allowed due to database type limitations
 	Type 3 - IP Protocol
 	Type 4 – Source or Destination Port
 	Type 5 – Destination Port
@@ -206,6 +208,7 @@ The format is
 	Type 10 - Packet length
 	Type 11 – DSCP
 	Type 12 - Fragment Encoding
+	action:                Action upon match: accept discard or rate-limit 9600  (accept is a secret)
 
 	last-line
 
@@ -228,6 +231,8 @@ Example:
 	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;66.141.26.81;tcp;14372;80;80;null;null;syn;60;63;null;0
 	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;161.185.77.224;tcp;14374;80;80;null;null;syn;60;63;null;0
 	last-line
+
+*Note*: the example is old and the two last fields is missing.
 
 Some fields are read by `fnm2db` from its configuration file. The configuration file is written based
 on information from the database:

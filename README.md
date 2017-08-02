@@ -8,7 +8,7 @@ queries the database for new and expired rules.
 
   - [Design overview](docs/ddps-design-short.md)
   - [Installation](docs/install.md)
-  - [db2dps documentatin](docs/db2dps-documentation.md)
+  - [db2dps documentation](docs/db2dps-documentation.md)
   - [General documentation](docs/README-docs.md)
 
 ## License
