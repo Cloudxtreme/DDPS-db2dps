@@ -1,0 +1,5 @@
+
+hostname="auto"
+fqdn=".something.tld"
+password="cleartext password here"
+

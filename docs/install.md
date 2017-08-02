@@ -66,6 +66,9 @@ Edit the following before creating the ISO file for `ddps`
    for the user `sysadm`.
  - Edit `/opt/mkiso/specific/ddps/install.d/1_add-interface-cfg.sh` and change
    the IP configuration at the top to match the _host only_ interface. 
+ - Edit `/opt/mkiso/specific/ddps/data/dev.lst` and add your developers. They
+   will have to provide ssh keys as their accounts will be created locked.
+   If the file is missing no developers will be added during installation.
  
 Building the ISO for booting the host `ddps` is done this way:
 
