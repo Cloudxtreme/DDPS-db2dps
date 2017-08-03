@@ -37,7 +37,7 @@ together with some customer information.
 
 Rules are added to the system from two sources:
 
-  - a *policy editor* operated by the customer
+  - a *policy editor* operated by the customer (Web-UI and command line)
   - an *automatic detection engine* based on
     [fastnetmon](https://github.com/pavel-odintsov/fastnetmon)
 

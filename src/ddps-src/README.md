@@ -109,8 +109,9 @@ The rules which should go to exabgp is in `/tmp/destignation-append`
 
 All historical rules may be viewed with
 
-	/opt/db2dps/bin/ddpsrules log
+	sudo ddpsrules log
 
+`sudo` is required for read access to `/var/log/syslog`.         
 All active rules may be deleted with
 
 	/opt/db2dps/bin/ddpsrules del `ddpsrules active|awk ' $1 ~ /^[0-9]+$/ { print $1 }'`
