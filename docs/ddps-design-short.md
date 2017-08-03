@@ -80,7 +80,7 @@ what we wanted. Among others they included
 	e.g. using [exabgp](https://github.com/Exa-Networks/exabgp) and just restart
 	the service.
   - The code requires [shibboleth](https://shibboleth.net) for authentication while
-    we would use something simpler
+    we would use [WAYF — the digital recycling centre](http://wayf.dk)
   - At the time we started the project was no longer maintained. The project
     has a long list of dependencies and we could choose between
 	- take on the maintenance of the code base ourself, using time trying to understand
