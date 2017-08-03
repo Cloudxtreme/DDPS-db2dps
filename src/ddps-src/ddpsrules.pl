@@ -403,9 +403,7 @@ sub printrule()
 	}
 	$sth->finish();
 	$dbh->disconnect();
-	print "Read $i rules\n";
-	print "\nSee full announce and withdraw with e.g.: ";
-	print '    sed \'/rule:.*[0-9]\+/!d; s/^.*rule: //; s/[ ]+/ /g\' /var/log/syslog' . "\n";
+	print "Read $i rules - see full rules with sudo /opt/db2dps/bin/ddpsrules log\n";
 }
 
 

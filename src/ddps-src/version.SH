@@ -1,3 +1,3 @@
-version="1.0-59"
-build_date="2017-08-03 17:36"
-build_git_sha="7496d609237640557a78aba84ed6488e71003229"
+version="1.0-61"
+build_date="2017-08-03 18:01"
+build_git_sha="5ea4b7f7b6fded1e48b07c1719376abd8c28f163"
