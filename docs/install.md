@@ -37,7 +37,7 @@ it has been created new ISO images may be made there.
 
   - Create an 16.04.2 64 bit server with 2 NIC's, 10Gb disk and 512Mb RAM,
     similar to the hardware made by
-    [mk-ddps-dev-hw.sh](../src/mkiso-src/mk-ddps-dev-hw.sh).
+    [mkvbox.sh](../src/mkiso-src/mkvbox.sh).
   
   - Install the packages `mkisofs`, `curl` and `build-essential`:
 

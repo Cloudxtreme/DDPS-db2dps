@@ -15,51 +15,66 @@ case ${N}$C in
 	fi ;;
 esac
 
-ISO="${HOME}/VirtualBox VMs/iso/ubuntu-16.04.2-server-amd64-auto-install.ddps.iso"
+case $1 in
+	*)	GUEST=$1
+	;;
+	"")	:
+	;;
+esac
 
-VM="ddps-dev-test"
-VM="ubuntu-16.04-ddps-test"
 
-echo "removing ${VM} ... "
-VBoxManage unregistervm ${VM} --delete
+ISODIR="${HOME}/VirtualBox VMs/iso/"
+ISO="${ISODIR}/ubuntu-16.04.2-server-amd64-auto-install.${GUEST}.iso"
+
+VM="ubuntu-16.04-${GUEST}-test"
+
+if [ ! -f "${ISO}" ]; then
+	echo "iso ${ISO} not found" 
+	exit 
+fi
+
+FOUND=`VBoxManage list vms | awk '$1 ~ /'$VM'/ { gsub(/\"/, ""); print $1 }'`
+if [ "${FOUND}" = "${VM}" ]; then
+	echo "VM ${VM} exists, remove with "
+	echo "VBoxManage unregistervm ${VM} --delete"
+	exit 0
+fi
+
+echo "creating guest OS ${VM}"
+echo "using iso ${ISO}"
 
 VBoxManage createvm --name ${VM} --register
 VBoxManage modifyvm ${VM} --memory 512 --acpi on --boot1 dvd
 VBoxManage modifyvm ${VM} --vram 128
-
+ 
 VBoxManage modifyvm ${VM} --nic1 NAT --bridgeadapter1 en0
 VBoxManage modifyvm ${VM} --nic2 hostonly --hostonlyadapter2 vboxnet0
-
+ 
 # AMD PCNet PCI II = Am79C970A
 # AMD PCNet FAST III = Am79C973 (the default)
 # Intel PRO/1000 MT Desktop = 82540EM
 # Intel PRO/1000 T Server = 82543GC
 # Intel PRO/1000 MT Server = 82545EM
 # Paravirtualized network adapter = virtio-net
-
+ 
 VBoxManage modifyvm ${VM} --nictype1 82545EM
 VBoxManage modifyvm ${VM} --nictype2 82545EM
-
+ 
 VBoxManage modifyvm ${VM} --cableconnected1 on
 VBoxManage modifyvm ${VM} --cableconnected2 on
-
+ 
 VBoxManage modifyvm ${VM} --macaddress1 "0800276398d2"
 VBoxManage modifyvm ${VM} --ostype Ubuntu_64
-
+ 
 VBoxManage createhd --filename "$HOME/VirtualBox VMs/${VM}/${VM}.vdi" --size 10000
 VBoxManage storagectl ${VM} --name "IDE Controller" --add ide
-
+ 
 VBoxManage storageattach ${VM} --storagectl "IDE Controller"  \
     --port 0 --device 0 --type hdd --medium "$HOME/VirtualBox VMs/${VM}/${VM}.vdi"
-
+ 
 VBoxManage storageattach "${VM}" --storagectl "IDE Controller" \
 	--port 1 --device 0 --type dvddrive --medium "${ISO}"
 
-VBoxManage modifyvm ${VM} --description "scratch host made `date` based on Ubuntu-Server 16.04.2 LTS \"Xenial Xerus\" - Release amd64 (20170215.8)"
-
-# echo "alternativt: ret setup.sh og behold den og kør den i hånden efter installation ... "
-
-#echo "eller installer wget og hent et setup.sh fil og kør den ... hvilket måske er det pæneste"
-#echo "idet man kan sætte MAC adressen og gøre noget i setup.sh på basis af dét."
-
+VBoxManage modifyvm ${VM} --description "scratch host made `date` booted from ${ISO}"
+ 
 VBoxHeadless -s ${VM}	 &
