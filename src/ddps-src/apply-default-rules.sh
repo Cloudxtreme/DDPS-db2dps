@@ -58,8 +58,8 @@ description="Default rule"
 
 blocktime=1
 
-#ournetworks=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
-ournetworks="130.226.136.242/32"
+ournetworks=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
+#ournetworks="130.226.136.242/32"
 
 
 now=`/bin/date +%s`

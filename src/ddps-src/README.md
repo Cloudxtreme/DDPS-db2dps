@@ -100,7 +100,7 @@ Apply default rules with:
 
 See a short view of currently enforced rules with 
 
-	/opt/db2dps/bin/ddpsrules print
+	/opt/db2dps/bin/ddpsrules active
 
 `ddpsrules` may be used for adding, deleting and printing current rules. See
 `ddpsrules -h` for usage.
@@ -109,6 +109,15 @@ The rules which should go to exabgp is in `/tmp/destignation-append`
 
 All historical rules may be viewed with
 
-	sed '/rule:.*[0-9]\+/!d; s/^.*rule: //; s/[ ]+/ /g' /var/log/syslog
+	/opt/db2dps/bin/ddpsrules log
+
+All active rules may be deleted with
+
+	/opt/db2dps/bin/ddpsrules del `ddpsrules active|awk ' $1 ~ /^[0-9]+$/ { print $1 }'`
+
+If everything else fails, a full reset of all announcements may be initiated
+with
+
+	/opt/db2dps/bin/kill_switch_restart_all_exabgp.pl
 
 

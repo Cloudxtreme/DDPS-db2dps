@@ -25,6 +25,8 @@ use sigtrap qw(die normal-signals);
 use NetAddr::IP;
 use Net::SSH2;          # ssh v2 access to postgres db
 use DBI;                # database
+use Sys::Hostname;
+
 
 use Getopt::Long qw(:config no_ignore_case);
 
@@ -32,25 +34,24 @@ use Sys::Syslog;        # only needed for logit
 use POSIX;              # only needed for logit
 use Time::Piece;
 
-require '/opt/db2dps/lib/sqlstr.pm';
-my $q_withdraw_rule	= 'update flow.flowspecrules set validto=now() where flowspecruleid in ( ${flowspecruleid} );';
-my $q_active_rules	= 'select flowspecruleid, destinationprefix, sourceprefix, ipprotocol, destinationport, validto from flow.flowspecrules, flow.fastnetmoninstances where flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid AND not isexpired AND mode = \'enforce\' order by validto DESC, validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding;';
-
 # prototypes
 sub main(@);
 sub	logit(@);
 sub	parseini();
 sub addrule();
 sub is_flowspec(@);
-
-# included from version.pm
-#INCLUDE_VERSION_PM
+require '/opt/db2dps/lib/sqlstr.pm';
 
 #
 # Global vars
 #
 
 my ($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sordport,$dport,$sport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$action,$description);
+
+my $q_withdraw_rule	= 'update flow.flowspecrules set validto=now() where flowspecruleid in ( ${flowspecruleid} );';
+
+my $q_active_rules	= 'select flowspecruleid, destinationprefix, sourceprefix, ipprotocol, destinationport, validto from flow.flowspecrules, flow.fastnetmoninstances where flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid AND not isexpired AND mode = \'enforce\' order by validto DESC, validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding;';
+
 # ttl not used
 #
 
@@ -95,9 +96,9 @@ my $now = strftime "%Y-%m%d %H:%M:%S", localtime(time);
 my $isdigit				= qr/^[[:digit:]]+$/x;
 
 my $usage = "
-    $0 [-v] add [-h] ... | del ... | print
+    $0 [-v] add [-h] ... | del ... | active | log
 
-    print:
+    active:
         Print active rules with rule id's from database
 
     del:
@@ -137,12 +138,9 @@ my $usage = "
                  or UDP protocols
 \n";
 
-# fast zap all active rules:
-#
-# ddpsrules del `ddpsrules print|awk ' $1 ~ /^[0-9]+$/ { print $1 }'`
-
 ################################################################################
-# main
+# included from version.pm
+#INCLUDE_VERSION_PM
 ################################################################################
 
 main();
@@ -209,14 +207,36 @@ sub main(@) {
 			exit 0;
 		}
 		addrule();
-	}
-	if ($do eq 'del') {
+	}elsif ($do eq 'del')
+	{
 		delrule();
 	}
-
-	if ($do eq 'print') {
+	elsif ($do eq 'active')
+	{
 		printrule();
 	}
+	elsif ($do eq 'log')
+	{
+		my $hostname = hostname;
+		#print '    sed \'/rule:.*[0-9]\+/!d; s/^.*rule: //; s/[ ]+/ /g\' /var/log/syslog' . "\n";
+		my $syslog = "/var/log/syslog";
+		open my $fh, '<', $syslog or die("Could not open '$syslog' $!");
+
+        while (my $line = <$fh>) {
+			if ($line =~ m/rule:/)
+			{
+				#$line =~ s/^.*rule://;
+				$line =~ s/$hostname.*rule: //;
+				$line =~ tr/ //s;
+				print "$line";
+			}
+		}
+	}
+	else
+	{
+		print $usage; exit 0;
+	}
+
 }
 
 sub addrule()

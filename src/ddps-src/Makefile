@@ -84,9 +84,6 @@ initrc		= $(INITDIR)/$(RC)
 dbini		= $(ETCDIR)/$(PRODINI)
 sqlstr		= $(LIBDIR)/$(SQLSTR)
 
-ptest:
-			perl ./ddpsrules.pl del
-
 default:	$(prog)
 			./$(prog) -V
 			#sudo ./$(prog) -v -s 4
