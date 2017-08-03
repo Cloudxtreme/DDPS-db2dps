@@ -120,4 +120,4 @@ with
 
 	/opt/db2dps/bin/kill_switch_restart_all_exabgp.pl
 
-
+Which will restart the exabgp services.
