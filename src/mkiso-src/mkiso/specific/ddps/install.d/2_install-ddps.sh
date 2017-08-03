@@ -8,7 +8,7 @@
 # preferably two net cards, one with internet access for updates etc.
 # and one for (static) connecting from the development environment
 
-MY_LOGFILE=/tmp/install.log
+MY_LOGFILE=/var/log/install-ddps.log
 VERBOSE=FALSE
 DATADIR=/root/files/data/
 
@@ -167,6 +167,17 @@ function main()
 		logit "installing locale da_DK.UTF-8 .... "
 		locale-gen da_DK.UTF-8
 	}
+
+	logit "Append /opt/db2dps/bin and /opt/mkiso/bin to PATH ... "
+	echo "PATH=$PATH:/opt/db2dps/bin:/opt/mkiso/bin" > /etc/profile.d/ddps.sh 
+	chmod 644 /etc/profile.d/ddps.sh
+	chown root:root /etc/profile.d/ddps.sh
+
+	logit " modify /etc/sudoers so /opt/db2dps/bin and /opt/mkiso/bin is in PATH "
+	sed 's%.*secure_path.*%Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:/opt/db2dps/bin:/opt/mkiso/bin"%'  /etc/sudoers > /tmp/sudoers
+	/bin/mv /tmp/sudoers /etc/sudoers
+	chmod  0440 /etc/sudoers 
+	chown root:root /etc/sudoers
 
 	savefile /etc/ssh/sshd_config
 
