@@ -61,9 +61,9 @@ function mkautoiso()
 	kickstart-cfg $auto
 	cat >> $auto/ks.cfg <<-EOF
 	%post --nochroot
-	mkdir -p /target/home/sysadm/.ssh/
-	echo $(cat /opt/mkiso/common/authorized_keys) >> /target/home/sysadm/.ssh/authorized_keys
-	chown -R sysadm /target/home/sysadm/.ssh/
+	mkdir -p /target/home/${loginuser}/.ssh/
+	echo $(cat /opt/mkiso/common/authorized_keys) >> /target/home/${loginuser}/.ssh/authorized_keys
+	chown -R ${loginuser} /target/home/${loginuser}/.ssh/
 	setv() { sed -i "s/^\(\$2=\).*/\1\$3/" \$1; }
 	cd /target/etc/default
 	setv grub GRUB_CMDLINE_LINUX_DEFAULT ""
@@ -91,15 +91,28 @@ function mkautoiso()
 
 function kickstart-cfg()
 {
+	cat << EOF > /tmp/setperm.sh
+#!/bin/sh
+
+# Set permissions on /home/${loginuser}/.ssh/
+chown -R sysadm:sysadm /home/${loginuser}
+chmod 700              /home/${loginuser}/.ssh /home/${loginuser}/.ssh/*
+chmod 755 /tmp/setperm.sh
+EOF
+
 	mkdir -p $1/files/install.d $1/files/data
 	cp -r /opt/mkiso/common/* $1/files/
 
-	if [ -d "${SPECIFIC_HOSTDIR}/install.d" ]; then
+	if [ -d "${SPECIFIC_HOSTDIR}/data" ]; then
 		cp -r ${SPECIFIC_HOSTDIR}/data/* $1/files/data
 	fi
 	if [ -d "${SPECIFIC_HOSTDIR}/install.d" ]; then
+		/bin/mv /tmp/setperm.sh ${SPECIFIC_HOSTDIR}/install.d/
 		cp -r ${SPECIFIC_HOSTDIR}/install.d/* $1/files/install.d
+	else
+		/bin/mv /tmp/setperm.sh $1/files/install.d
 	fi
+
 	echo en > $1/isolinux/lang
 	cat > $1/isolinux/isolinux.cfg <<- EOF
 		default install
@@ -113,7 +126,7 @@ function kickstart-cfg()
 		keyboard dk
 		timezone $(cat /etc/timezone)
 		rootpw --disabled
-		user sysadm --fullname sysadm --password ${password}
+		user ${loginuser} --fullname ${loginuser} --password ${password}
 		text
 		install
 		cdrom

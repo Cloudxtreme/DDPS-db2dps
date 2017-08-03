@@ -5,52 +5,23 @@
 rules to BGP announcements. The daemon is controlled by `systemd`.  The
 installation is done with `make`.
 
-The current version of `i2dps` is written in Perl. It requires the following
-Perl modules to be installed:
-
-    sudo apt-get -y	install libnet-openssh-compat-perl liblist-moreutils-perl \
-                            libnet-openssh-compat-perl libnet-ssh2-perl       \
-                            libproc-daemon-perl libnetaddr-ip-perl            \
-                            libdbi-perl libdbd-pg-perl libtypes-path-tiny-perl
-
 ### Installation
 
-On the database host, execute:
+Change directory to `../src/ddps-src/` and edit `Makefile` to match 
+login and hostname / ip address of the ddps server host.
 
-	mkdir -p /opt/db2dps && chown sysadm:sysadm /opt/db2dps
+The default values from the ISO image is set in
+`/opt/mkiso/specific/ddps/host.config` and
+`/mkiso/specific/ddps/install.d/1_add-interface-cfg.sh`.
 
-Edit `Makefile` and copy the source for `db2dps` to `/opt/db2dps`. You only
-need to change the lines to whatever your heart desire:
+	TARGETHOST      = loginuser@192.168.99.10
 
-	TARGETHOST      = sysadm@ddps.deic.dk
-	GID             = sysadm
-	UID             = sysadm
+Check ssh and sudo is working on the ddps host, then execute
 
-Change `TARGETHOST` and set up `ssh` credentials first. Either (depending
-on your local environment) do:
+	./remote.sh -v make install
 
-	./remote.sh -v make dirs
-
-or copy the source to `/opt/db2dps/src` and execute:
-
-	cd /opt/db2dps/src && make dirs
-
-If that goes well then execute:
-
-	./remote.sh -v make all
-
-or
-
-	cd /opt/db2dps/src && make all
-
-For the C version, the target will:
-
-  - fetch, extract and compile required libraries from github
-  - compile db2dps and place binaries etc. below `/opt/db2dps`
-  - install db2dps as a [systemd](https://en.wikipedia.org/wiki/Systemd) service which
-    will start as part of the boot process
-
-For the Perl version the target will
+Which will copy files to the target host, fetch and install
+dependencies and install but not configure the database.
 
   - add version information to `db2dps`
   - install db2dps as a [systemd](https://en.wikipedia.org/wiki/Systemd) service which

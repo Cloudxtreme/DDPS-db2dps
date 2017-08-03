@@ -2,7 +2,7 @@
 #
 # NTH
 #
-
+ 
 #:   1 Apply all patches by doing an update, upgrade and a dist-upgrade
 apt-get -y update
 apt-get -y upgrade
@@ -36,10 +36,6 @@ find . -type f | while read SHELLSCRIPT
 do
 	bash ${SHELLSCRIPT}
 done
-
-#:    6 Set permissions on /home/sysadm/.ssh/ (not done correctly by isomaker)
-chown -R sysadm:sysadm /home/sysadm
-chmod 700              /home/sysadm/.ssh /home/sysadm/.ssh/*
 
 echo "all done" > ./finished
 logger -p mail.crig "Installation complete"
