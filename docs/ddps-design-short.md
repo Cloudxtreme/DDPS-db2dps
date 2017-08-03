@@ -48,7 +48,8 @@ announces and withdraw rules and inserts them in two
 [exabgp](https://github.com/Exa-Networks/exabgp) instances from where they are
 sent to our edge routeres, peers and upstream provider.
 
-![Database schema](assets/img/db.png)
+![](assets/img/db.png)
+Database schema
 
 ## Design
 
