@@ -60,7 +60,7 @@ blocktime=1
 
 ournetworks=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
 #ournetworks="130.226.136.242/32"
-sleeptime=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
+sleeptime=`sed '/^sleep_time/!d; s/^sleep_time.*=[\t ]*//'	${INI}`
 
 now=`/bin/date +%s`
 randomstr=`tr -dc A-Za-z0-9_ < /dev/urandom | head -c 8 | xargs`
