@@ -50,11 +50,11 @@ it has been created new ISO images may be made there.
 	and
 	execute
 
-        ./remote.sh -v make install
+	./remote.sh -v make install
 
 You should now be able to build ISO images for all hosts with the command
 
-		/opt/mkiso/bin/mkiso -u 16.04 -s HOSTNAME
+	/opt/mkiso/bin/mkiso -u 16.04 -s HOSTNAME
 
 This host is no longer needed once the DDPS host has been made, but copy the
 changed configuration files for `mkiso` to `ddps` before deleting the guest OS.
@@ -75,7 +75,7 @@ Edit the following before creating the ISO file for `ddps`
  
 Building the ISO for booting the host `ddps` is done this way:
 
-		/opt/mkiso/bin/mkiso -u 16.04 -s ddps
+	/opt/mkiso/bin/mkiso -u 16.04 -s ddps
 
 The ISO image will be stored in `/tmp` on the Guest OS, Copy to a place
 where the image can be read.
