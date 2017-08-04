@@ -96,29 +96,100 @@ report](https://www.akamai.com/us/en/multimedia/documents/state-of-the-internet/
 
 Apply default rules with:
 
-	/opt/db2dps/bin/apply-default-rules
+	apply-default-rules
 
 See a short view of currently enforced rules with 
 
-	/opt/db2dps/bin/ddpsrules active
+	ddpsrules active
 
 `ddpsrules` may be used for adding, deleting and printing current rules. See
 `ddpsrules -h` for usage.
 
-The rules which should go to exabgp is in `/tmp/destignation-append`
+The rules which should go to exabgp is in `/tmp/destignation-append`.
 
-All historical rules may be viewed with
+##### Example rule creation
 
-	sudo ddpsrules log
+Block UDP fragments for 1 min. from all to 95.128.24.0/21:
 
-`sudo` is required for read access to `/var/log/syslog`.         
+	ddpsrules add    --blocktime '1' --dst '95.128.24.0/21'        \
+        --src 'null' --protocol 'udp'  --dport 'null'              \
+        --sport 'null' --icmp_type 'null' --icmp_code 'null'       \
+        --tcpflags 'null' --length 'null' --dscp 'null'            \
+        --frag '[is-fragment first-fragment last-fragment]'        \
+        --action 'discard'
+   
+Rate limit SNMP traffic:
+
+    ddpsrules add --blocktime '1' --dst '95.128.24.0/21'           \
+                  --src 'null' --protocol '=udp'  --dport 'null'   \
+                  --sport '=161&=162' --icmp_type 'null'           \
+                  --icmp_code 'null'  --tcpflags 'null'            \
+                  --length 'null' --dscp 'null' --frag 'null       \
+                   --action 'rate-limit 9600'
+
+Block chargen (tcp and udp)
+                   
+    ddpsrules add   --blocktime '1' --dst '95.128.24.0/21'          \
+                    --src 'null' --protocol '=tcp =udp'             \
+                    --dport 'null' --sport '=19' --icmp_type 'null' \
+                    --icmp_code 'null'  --tcpflags 'null'           \
+                    --length 'null' --dscp 'null' --frag 'null'     \
+                    --action 'discard'
+
+Block NTP amplification attacks; notice filtering on the source port
+
+    ddpsrules add   --blocktime '1' --dst '95.128.24.0/21'  \
+                    --src 'null' --protocol 'udp'  --dport 'null'   \
+                    --sport '=123' --icmp_type 'null'               \
+                    --icmp_code 'null'  --tcpflags 'null'           \
+                    --length '=468' --dscp 'null' --frag 'null'     \
+                    --action 'discard'
+
+### View active rules
+
+Active rules may be view'ed with
+
+`````
+ddpsrules active
+-------------------------------------------------------------------------------------------------------------------------------------
+| Connected to db netflow as dbadmin, Active rules                                                                                  |
+-------------------------------------------------------------------------------------------------------------------------------------
+ flowspecruleid   | dest. prefix     | src. prefix      | ipprotocol           | destinationport  | validto
+-----------------+------------------+------------------+----------------------+------------------+-----------------------------------
+ 12483            | 95.128.24.0/21   | @Any             | udp                  | =123             | 2017-08-04 12:21:09.050498+02
+
+`````
+
+And the enforced rule (exabgp syntax) is show with:
+
+`````
+sudo ddpsrules log
+Aug 4 12:21:09 withdraw flow route 12483 { match { destination 95.128.24.0/21; srcordestport =123; destination-port =123; protocol udp; packet-length =468; } then { discard } } }
+
+`````
+Which also shows all historical rules (but only from `/var/log/syslog`).
+`sudo` is required for read access to `/var/log/syslog`.
+
+### Delete active rule
+
+Rules are withdrawn by setting their expire time to `now()`.
+
+
+`````
+ddpsrules del 12483
+flowspecruleid 12484 expires at 2017-08-04 12:24:24, in 0 seconds
+db update freq is 10 seconds
+`````
+
+### Delete all active rules
+
 All active rules may be deleted with
 
-	/opt/db2dps/bin/ddpsrules del `ddpsrules active|awk ' $1 ~ /^[0-9]+$/ { print $1 }'`
-
+	ddpsrules del `ddpsrules active|awk ' $1 ~ /^[0-9]+$/ { print $1 }'`
+	
 If everything else fails, a full reset of all announcements may be initiated
-with
 
-	/opt/db2dps/bin/kill_switch_restart_all_exabgp.pl
+	kill_switch_restart_all_exabgp.pl
+	
+Which will restart the exabgp services
 
-Which will restart the exabgp services.
