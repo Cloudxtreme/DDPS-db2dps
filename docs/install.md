@@ -97,7 +97,7 @@ from working correctly under
 virtualbox](https://www.virtualbox.org/wiki/VirtualBox),
 
 
-# Final note about creating ISO images
+## Final note about creating ISO images
 
 Building the boot image for the database server takes about 30 seconds first time
 mainly download time of the Ubuntu 16.04 image. Creating the boot image after
