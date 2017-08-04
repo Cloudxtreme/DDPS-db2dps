@@ -61,11 +61,6 @@ my $q_active_rules	= 'select flowspecruleid, destinationprefix, sourceprefix, ip
 my $verbose = 0;
 $customerid = 1;
 
-$uuid					= "00:25:90:47:2b:48";
-$fastnetmoninstanceid	= "1";
-$administratorid		= "42";
-$blocktime				= "10";
-
 $dst					= "null";
 $src					= "null";
 $protocol				= "null";
@@ -545,6 +540,11 @@ sub parseini()
 	$allmynetworks					= $data{'general'}{'ournetworks'};
 	$sleep_time						= $data{'general'}{'sleep_time'};
 
+	$uuid							= $data{'ddpsrules'}{'uuid'};
+	$fastnetmoninstanceid			= $data{'ddpsrules'}{'fastnetmoninstanceid'};
+	$administratorid				= $data{'ddpsrules'}{'administratorid'};
+	$blocktime						= $data{'ddpsrules'}{'blocktime'};
+
 }
 
 sub logit(@)
@@ -626,21 +626,3 @@ sub is_flowspec(@)
 	}
 
 }
-
-__DATA__
-
-#
-#   Copyright 2017, DeiC, Niels Thomas Haugård
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
-#

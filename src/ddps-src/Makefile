@@ -107,13 +107,14 @@ bin: $(perlfiles)
 		sudo sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  $$exec.pl > $$exec;	\
 		sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
 	done
-	for exec in $(shellfiles);																		\
-	do																								\
-		exec=`basename $$exec .sh`	;							\
-		sudo $(RM) $$exec;																			\
-		sudo sed -e '/#INCLUDE_VERSION_SH/ {' -e 'r version.SH' -e 'd' -e'}'  $$exec.sh > $$exec;	\
-		sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
-	done
+
+	#for exec in $(shellfiles);																		\
+	#do																								\
+	#	exec=`basename $$exec .sh`	;							\
+	#	sudo $(RM) $$exec;																			\
+	#	sudo sed -e '/#INCLUDE_VERSION_SH/ {' -e 'r version.SH' -e 'd' -e'}'  $$exec.sh > $$exec;	\
+	#	sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
+	#done
 	#sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) default-rules.sh $(BINDIR);
 
 exabgpsyntax:
@@ -155,7 +156,7 @@ dirs:
 			for D in $(DIRS); 								\
 				do											\
 				if [ ! -d $$D ]; then						\
-						sudo mkdir -p $$D;						\
+						sudo mkdir -p $$D;					\
 				fi											\
 			done
 			#sudo chown -R $(UID):$(GID) $(PREFIX);		\
@@ -167,7 +168,14 @@ $(target):	$(prog)
 			sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $(prog) $(BINDIR)
 
 $(dbini):	$(PRODINI)
-			sudo $(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(PRODINI) $(ETCDIR)
+			if [ -e ${dbini} ]; then													\
+				echo "existing ${dbini} preserved";										\
+				echo "not removing existing ${dbini}";									\
+				echo "new db.ini installed as ${dbini}.new";							\
+				sudo /bin/cp ${PRODINI}	${dbini}.new;									\
+			else																		\
+				sudo $(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(PRODINI) $(ETCDIR);	\
+			fi
 
 $(sqlstr):	$(SQLSTR)
 			sudo $(INSTALL) -c -m 0755 -o $(UID) -g $(GID) $(SQLSTR) $(LIBDIR)
