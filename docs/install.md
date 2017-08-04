@@ -92,7 +92,7 @@ See the [README for ddps](../src/ddps-src/README.md) on configuration.
 
 ### Building the ISO for FastNetMon
 
-TODO
+TODO:
 
 Notice, that the 10Gb drivers on `fnm` is installed and may prevent the host
 from working correctly under
