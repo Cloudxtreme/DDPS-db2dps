@@ -97,3 +97,42 @@ from working correctly under
 virtualbox](https://www.virtualbox.org/wiki/VirtualBox),
 
 
+# Final note about creating ISO images
+
+Building the boot image for the database server takes about 30 seconds first time
+mainly download time of the Ubuntu 16.04 image. Creating the boot image after
+download takes just less than 10 seconds.
+
+First time with a valid `host.config`:
+
+	time /opt/mkiso/bin/mkautoiso -u 16.04 -s ddps
+	--2017-08-04 14:59:25--  http://releases.ubuntu.com/16.04/ubuntu-16.04.3-server-amd64.iso
+	Resolving releases.ubuntu.com (releases.ubuntu.com)... 91.189.88.23, 2001:67c:1560:8001::7
+	Connecting to releases.ubuntu.com (releases.ubuntu.com)|91.189.88.23|:80... connected.
+	HTTP request sent, awaiting response... 200 OK
+	Length: 865075200 (825M) [application/x-iso9660-image]
+	Saving to: ‘/opt/mkiso//downloads/ubuntu-16.04.3-server-amd64.iso’
+
+	ubuntu-16.04.3-server-amd64.iso              100%[==> .... ] 825.00M  55.7MB/s    in 17s
+
+	2017-08-04 14:59:42 (49.7 MB/s) - ‘/opt/mkiso//downloads/ubuntu-16.04.3-server-amd64.iso’ saved [865075200/865075200]
+
+	Ubuntu-Server 16.04.3 LTS "Xenial Xerus" - Release amd64 (20170801)
+	created /tmp/ubuntu-16.04.3-server-amd64-auto-install.ddps.iso
+
+	real	0m27.448s
+	user	0m0.820s
+	sys	0m6.760s
+
+Not so bad.
+
+	time /opt/mkiso/bin/mkautoiso -u 16.04 -s ddps
+	Ubuntu-Server 16.04.3 LTS "Xenial Xerus" - Release amd64 (20170801)
+	created /tmp/ubuntu-16.04.3-server-amd64-auto-install.ddps.iso
+
+	real	0m9.790s
+	user	0m0.492s
+	sys	0m2.628s
+
+Better.
+
