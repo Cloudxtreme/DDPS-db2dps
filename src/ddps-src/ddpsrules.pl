@@ -26,6 +26,9 @@ use NetAddr::IP;
 use Net::SSH2;          # ssh v2 access to postgres db
 use DBI;                # database
 use Sys::Hostname;
+use File::Temp qw(tempfile);
+use File::Copy;
+use File::Basename;
 
 
 use Getopt::Long qw(:config no_ignore_case);
@@ -46,7 +49,7 @@ require '/opt/db2dps/lib/sqlstr.pm';
 # Global vars
 #
 
-my ($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sordport,$dport,$sport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$action,$description);
+my ($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sordport,$dport,$sport,$icmp_type,$icmp_code,$tcpflags,$length,$ttl,$dscp,$frag,$action,$description);
 
 my $q_withdraw_rule	= 'update flow.flowspecrules set validto=now() where flowspecruleid in ( ${flowspecruleid} );';
 
@@ -71,7 +74,7 @@ $dport					= "null";
 $sport					= "null";
 $icmp_type				= "null";
 $icmp_code				= "null";
-$flags					= "null";
+$tcpflags				= "null";
 $length					= "null";
 $dscp					= "null";
 $frag					= "null";
@@ -94,6 +97,7 @@ my $inicfg  = "/opt/db2dps/etc/db.ini";
 my $now = strftime "%Y-%m%d %H:%M:%S", localtime(time);
 
 my $isdigit				= qr/^[[:digit:]]+$/x;
+my $assume_yes = 0;
 
 my $usage = "
     $0 [-v] add [-h] ... | del ... | active | log
@@ -113,7 +117,7 @@ my $usage = "
         --sport|s        source port
         --icmp_type|t    icmp type 
         --icmp_code|c    icmp code
-        --flags|T        TCP flags
+        --tcpflags|T     TCP tcpflags
         --length|l       package length
         --dscp|C         DSCP flags
         --frag|f         fragments
@@ -121,20 +125,22 @@ my $usage = "
 
         IP version 4 addresses only
 
+		Please quote all arguments in single quotes ''
+
         flowspec syntax (exabgp) is accepted for all parameters but IP addresses
         e.g.
         Specify http and https only
           -P '=80 =443'
         Specify length: 3 specific all more than 300 or less than 302
           -l '=205 =206 =207 >=300&<=302' 
-		 Specify fragments and TCP flags
+		 Specify fragments and TCP tcpflags
           -f '[not-a-fragment dont-fragment is-fragment first-fragment last-fragment]'
           -T '[fin syn rst push ack urgent]'
 
         See exabgp documentation for further explanation.
 
         WARNING: Only the dest. CIDR is checked, no other parameters. Errors
-                 may kill exabgp. Do not annouce nonsence: TCP flags on ICMP
+                 may kill exabgp. Do not annouce nonsence: TCP tcpflags on ICMP
                  or UDP protocols
 \n";
 
@@ -186,6 +192,20 @@ sub main(@) {
 	
 	if ($do eq 'add')
 	{
+		if (defined $ARGV[0] && $ARGV[0] eq '-y')
+		{
+			$assume_yes = 1;
+			shift @ARGV;
+		}
+		if (defined $ARGV[0] && $ARGV[0] eq '-h')
+		{
+			print "${usage}\n" ; exit;
+		}
+		if (! defined $ARGV[0])
+		{
+			print "${usage}\n"; exit ;
+		}
+
 		if (!GetOptions(
 			'blocktime|b=s'		=> \$blocktime,
 			'dst|D=s'			=> \$dst,
@@ -196,7 +216,7 @@ sub main(@) {
 			'sport|s=s'			=> \$sport,
 			'icmp_type|t=s'		=> \$icmp_type,
 			'icmp_code|c=s'		=> \$icmp_code,
-			'flags|T=s'			=> \$flags,
+			'tcpflags|T=s'		=> \$tcpflags,
 			'length|l=s'		=> \$length,
 			'dscp|C=s'			=> \$dscp,
 			'frag|f=s'			=> \$frag,
@@ -217,8 +237,9 @@ sub main(@) {
 	}
 	elsif ($do eq 'log')
 	{
+		my $login = (getpwuid $>);
+		die "$0 log must run as root" if $login ne 'root';
 		my $hostname = hostname;
-		#print '    sed \'/rule:.*[0-9]\+/!d; s/^.*rule: //; s/[ ]+/ /g\' /var/log/syslog' . "\n";
 		my $syslog = "/var/log/syslog";
 		open my $fh, '<', $syslog or die("Could not open '$syslog' $!");
 
@@ -236,15 +257,77 @@ sub main(@) {
 	{
 		print $usage; exit 0;
 	}
-
 }
 
 sub addrule()
 {
-	if (! is_flowspec("flow", $dport))
+	my $login = (getpwuid $>);
+	die "$0 add must run as root" if $login ne 'root';
+
+	if ($protocol eq 'null')					{ print "please specify protocol (eg =tcp =udp =icmp)\n";	exit 0; }
+
+	if (! is_flowspec("flow", $src))			{ print "src $src is not flowspec\n";						exit 0; }
+	if (! is_flowspec("flow", $dst))			{ print "dst $dst is not flowspec\n";						exit 0; }
+	if (! is_flowspec("flow", $dport))			{ print "dstport $dport is not flowspec\n";					exit 0; }
+	if (! is_flowspec("flow", $sport))			{ print "dstport $dport is not flowspec\n";					exit 0; }
+
+	if (! is_flowspec("protocol", $protocol))	{ print "protocol $protocol is not flowspec\n";				exit 0; }
+
+	if (! is_flowspec("flow", $icmp_code))		{ print "icmp_code $icmp_code is not flowspec\n";			exit 0; }
+	if (! is_flowspec("flow", $icmp_type))		{ print "icmp_type $icmp_type is not flowspec\n";			exit 0; }
+
+	if ($frag ne 'null')
 	{
-		print "dstport $dport is not flowspec\n";
-		exit 0;
+		for ($frag) {
+			s/\[//;
+			s/\]//;
+		}
+		my $tmpstr = $frag;
+		for ($tmpstr) {
+			s/not-a-fragment//;
+			s/dont-fragment//;
+			s/is-fragment//;
+			s/first-fragment//;
+			s/last-fragment//;
+			s/\s+//;
+		}
+		if ($tmpstr ne '') { print "fragmentencoding incorrect: found $tmpstr\n";	exit 0; }
+
+		$frag = "[" . $frag . "]";
+	}
+
+	# tcp tcpflags
+	# cwr ece urg ack psh rst syn fin
+
+	if ($tcpflags ne 'null')
+	{
+		for ($tcpflags) {
+			s/\[//;
+			s/\]//;
+		}
+		$tmpstr = $tcpflags;
+		for ($tmpstr) {
+			s/cwr//;
+			s/ece//;
+			s/urg//;
+			s/ack//;
+			s/psh//;
+			s/rst//;
+			s/syn//;
+			s/fin//;
+		}
+		if ($tmpstr ne '') { print "tcp tcpflags incorrect: found $tmpstr\n";	exit 0; }
+		$tcpflags = "[" . $tcpflags . "]";
+	}
+
+	if ($protocol =~ m/tcp|6/ && ($icmp_type ne 'null' || $icmp_code ne 'null'))
+	{
+		print "protocol mismatch: $protocol and icmp type/code\n"; exit ;
+	}
+
+	if ($protocol !~ /tcp|6/i && $tcpflags ne 'null')
+	{
+		print "tcpflags $tcpflags require TCP protocol not $protocol\n"; exit;
 	}
 
 	if($dst eq 'null')
@@ -260,7 +343,6 @@ sub addrule()
 	if ($action =~ m/accept/ || $action =~ m/discard/ || $action =~ m/rate-limit \d\d\d\d/)
 	{
 		;
-
 	}
 	else
 	{
@@ -281,19 +363,38 @@ dport:                 $dport
 sport:                 $sport
 icmp_type:             $icmp_type
 icmp_code:             $icmp_code
-flags:                 $flags
+tcpflags:              $tcpflags
 length:                $length
-ttl:                   $ttl
 dscp:                  $dscp
 frag:                  $frag
 action:                $action
 description:           $description
 
-Vars with 'null' will not be matched by exabgp
+Vars with 'null' are wild charts, and will match anything by exabgp
 
 EOF
 
-	print "$customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sordport,$dport,$sport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$action,$description\n";
+	if (${assume_yes} eq 0)
+	{
+		print "enforce rule ? [no] ";
+		my $input = <STDIN>;
+		if (${input} !~ m/^[yYjJ].*$/)
+		{
+			print "Ok, bye\n"; exit 0;
+		}
+	}
+
+	my $tmp_fh = new File::Temp( UNLINK => 0, TEMPLATE => 'newrules_XXXXXXXX', DIR => '/tmp', SUFFIX => '.dat');
+
+	print $tmp_fh "head;fnm;noop;1;unknown\n";
+	print $tmp_fh "$customerid;$uuid;$fastnetmoninstanceid;$administratorid;$blocktime;$dst;$src;$protocol;$sordport;$dport;$sport;$icmp_type;$icmp_code;$tcpflags;$length;$ttl;$dscp;$frag;$action;$description\n";
+	print $tmp_fh "last-line\n";
+	close($tmp_fh)||die "close $tmp_fh failed: $!";
+
+	my $basename = basename($tmp_fh);
+	#print "$tmp_fh -> $newrulesdir/$basename\n";
+	move("$tmp_fh", "$newrulesdir/$basename") || die "move failed: $!";
+	print "done\nshow result with\n$0 active or $0 log\n";
 }
 
 sub delrule()
@@ -403,7 +504,7 @@ sub printrule()
 	}
 	$sth->finish();
 	$dbh->disconnect();
-	print "Read $i rules - see full rules with sudo /opt/db2dps/bin/ddpsrules log\n";
+	print "Read $i rules - see full rules with sudo ddpsrules log\n";
 }
 
 
@@ -484,6 +585,10 @@ sub is_flowspec(@)
 {
 	# simple check if vars are what they claim
 	my ($tmpl, $var) = @_;
+	if($var eq 'null')
+	{
+		return 1;
+	}
 	if ($tmpl eq 'flow')
 	{
 		if ($var =~ m/^[ -=<>&\.0-9]*$/)
@@ -503,6 +608,23 @@ sub is_flowspec(@)
 		}
 		return 0;
 	}
+	elsif($tmpl eq 'digit')
+	{
+		if ($var =~ m/^[[:digit:]]+$/)
+		{
+			return 1;
+		}
+		return 0;
+	}
+	elsif($tmpl eq 'protocol')
+	{
+		if ($var =~ m/^[ -=<>&\.0-9a-z]*$/)
+		{
+			return 1;
+		}
+		return 0;
+	}
+
 }
 
 __DATA__
