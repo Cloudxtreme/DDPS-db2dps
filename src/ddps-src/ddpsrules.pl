@@ -100,7 +100,7 @@ my $isdigit				= qr/^[[:digit:]]+$/x;
 my $assume_yes = 0;
 
 my $usage = "
-    $0 [-v] add [-h] ... | del ... | active | log
+    $0 [-v] add [-h] ... | del ... | active | log
 
     active:
         Print active rules with rule id's from database
