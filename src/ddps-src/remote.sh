@@ -198,6 +198,19 @@ fi	# DEV
 #
 # update git
 #
+FILES=`gfind . -type f -not -path '*/\.*' -printf "%T@ %p\n"| sed '/version.*/d; /.git/d; ;/bak/d; /.log/d' | sort -n | cut -d' ' -f 2- | tail -n 3`
+
+for f in $FILES
+do
+	f="`basename $f`"
+	P="$P $f"
+done
+FILES=$P
+unset f
+unset P
+
+FILES=`echo $FILES | sed 's/ /, /g; s/\(.*\), /\1 and /;' `
+
 if [ "${GIT}" = "TRUE" ]; then
 	if [ "${DRYRUN}" = "TRUE" ]; then
 		logit "no gitupdate on dry-run"
@@ -209,7 +222,7 @@ if [ "${GIT}" = "TRUE" ]; then
 		git push origin ${VERSION}
 		git add .
 		git push origin master
-		git commit -m "automatic commit by $0"
+		git commit -m "Changes to $FILES, automatic commit by $0"
 		popd
 	fi
 fi
