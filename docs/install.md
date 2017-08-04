@@ -22,6 +22,8 @@ unattended for both the database/web server and the fastnetmon instances.
 The ISO images are made with an modified version of
 [ubuntu-server-auto-install](https://github.com/makelinux/ubuntu-server-auto-install).
 
+## Build instruction
+
 The following procedure is written for
 [virtualbox](https://www.virtualbox.org/wiki/VirtualBox) on OS X or Linux. 
 
@@ -30,7 +32,7 @@ behind NAT and be accessible with SSH from the host OS the Virtual machine must
 have two NIC's. Also notice that internet access is required from the guest OS
 for software installation and updates.
 
-## First boot image
+### First boot image
 
 The first host is just for creating the ISO images for the DDPS server; once
 it has been created new ISO images may be made there.
@@ -57,7 +59,7 @@ You should now be able to build ISO images for all hosts with the command
 This host is no longer needed once the DDPS host has been made, but copy the
 changed configuration files for `mkiso` to `ddps` before deleting the guest OS.
 
-## Building the ISO for DDPS
+### Building the ISO for DDPS
 
 Edit the following before creating the ISO file for `ddps`
 
@@ -88,7 +90,7 @@ Edit `Makefile` in `mkiso-src` and `db2dps-src`  and execute
 
 See the [README for ddps](../src/ddps-src/README.md) on configuration.
 
-## Building the ISO for FastNetMon
+### Building the ISO for FastNetMon
 
 TODO
 
