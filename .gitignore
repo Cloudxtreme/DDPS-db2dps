@@ -32,3 +32,4 @@ version.pm
 x.pl
 **/not-on-git
 **/obsolite
+**/host.config
