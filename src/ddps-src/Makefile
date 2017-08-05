@@ -1,8 +1,8 @@
 # ---- Will be extracted and used by remote.sh ----
 #:REMOTE-INFO-BEGIN
 # TARGETHOST   deployment/test host or IP address, e.g. user@1.2.3.4
-#TARGETHOST      = uninth@ddps.deic.dk
-TARGETHOST      = uninth@ddps-dev
+TARGETHOST      = uninth@ddps.deic.dk
+#TARGETHOST      = uninth@ddps-dev
 #TARGETHOST      = sysadm@ddps.ssi.i2.dk
 #TARGETHOST      = sysadm@172.16.201.113
 # UPLOADDIR    top directory for the source; everything from '.' will be synced
