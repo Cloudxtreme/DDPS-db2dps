@@ -9,3 +9,4 @@ mkiso/docs/note.md
 not-on-git/
 remote.sh*
 rsync_exclude.txt*
+*.iso

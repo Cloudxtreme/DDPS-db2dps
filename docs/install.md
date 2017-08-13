@@ -1,6 +1,10 @@
 
 # Installation
 
+Installation of DDPS is based on CD images: one for the database server and an
+other for the fastnetmon instances. The CD images does an unattended boot based
+on an answer file (`preseed.cfg`) and with added software.
+
 ## Introduction 
 
 This installation procedure will work on both physical and virtual self hosted
@@ -61,7 +65,7 @@ changed configuration files for `mkiso` to `ddps` before deleting the guest OS.
 
 ### Building the ISO for DDPS
 
-Edit the following before creating the ISO file for `ddps`
+Edit the following before creating the ISO file for `ddps`:
 
  - Replace `/opt/mkiso/common/authorized_keys` with your `authorized_keys`
  - Edit `/opt/mkiso/specific/ddps/host.config` and change the name and password
@@ -88,15 +92,25 @@ Edit `Makefile` in `mkiso-src` and `db2dps-src`  and execute
 
 	./remote.sh -v make install
 
-See the [README for ddps](../src/ddps-src/README.md) on configuration.
+See the [README for ddps](../src/ddps-src/README.md) on configuration, you
+have to
+
+  - _install an empty dabase_ 
+  - _restore from an existing database_.
 
 ### Building the ISO for FastNetMon
+
 
 TODO:
 
 Notice, that the 10Gb drivers on `fnm` is installed and may prevent the host
 from working correctly under
 virtualbox](https://www.virtualbox.org/wiki/VirtualBox),
+
+
+
+
+
 
 
 ## Final note about creating ISO images
