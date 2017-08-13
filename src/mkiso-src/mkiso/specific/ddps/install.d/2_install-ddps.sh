@@ -232,13 +232,13 @@ EOF
 	chown newrules:newrules /home/sftpgroup/newrules/upload
 	chmod 777 /home/sftpgroup/newrules/upload
 
-	chattr -i /home/sftpgroup/.ssh/authorized_keys /home/sftpgroup/.ssh/
+	chattr -i /home/sftpgroup/newrules/.ssh/authorized_keys /home/sftpgroup/newrules/.ssh/
 	cat << EOF | tr -d '\n' > /home/sftpgroup/.ssh/authorized_keys
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBgM0xg9opRyCXvRApeRsmMT6zzZ154ligQXBF8z
 HsgS root@00:25:90:46:c2:fe-fastnetmon2.deic.dk
 EOF
 	chown -R newrules:newrules /home/sftpgroup/.ssh
-	chattr +i /home/sftpgroup/.ssh /home/sftpgroup/.ssh/*
+	chattr +i /home/sftpgroup/newrules/.ssh   /home/sftpgroup/newrules/.ssh/*
 
 	logit "keys added to /home/sftpgroup/.ssh/authorized_keys change if required"
 

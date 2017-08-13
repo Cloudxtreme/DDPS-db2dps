@@ -1,0 +1,16 @@
+# find 10Gb interface logical name
+INTERFACE=`lshw -C network 2>/dev/null | egrep 'capasity:|logical name:|serial:' | awk '
+		BEGIN { logical = ""; serial = ""; size = ""; found = 0; ifname = ""; ifserial = ""  }
+		{
+				if ($1 == "logical")    { logical = $3 ; next }
+				if ($1 == "serial:")    { serial = $2 ; next }
+				if ($1 == "size:")      { size = $2;  }
+				if ($0 ~ /10Gbit/ )		{ ifname = logical; ifserial = serial; found = 1; next }
+		}
+		END {
+				if ( found )
+						print ifname
+				else
+						print "NO_10Gbit_interface_on_host"
+		}
+		'`

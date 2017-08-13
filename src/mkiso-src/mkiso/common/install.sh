@@ -4,9 +4,9 @@
 #
  
 #:   1 Apply all patches by doing an update, upgrade and a dist-upgrade
-apt-get -y update
-apt-get -y upgrade
-apt-get -y dist-upgrade
+echo apt-get -y update
+echo apt-get -y upgrade
+echo apt-get -y dist-upgrade
 
 #:   2 Install local packages cmod, dailybuandupdate and grouproot.
 cd      /root/files

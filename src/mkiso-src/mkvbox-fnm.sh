@@ -24,10 +24,11 @@ esac
 
 
 ISODIR="${HOME}/VirtualBox VMs/iso/"
-ISO="${ISODIR}/ubuntu-16.04.2-server-amd64-auto-install.${GUEST}.iso"
-ISO="${ISODIR}/debian-9.1.0-amd64-netinst.iso"
+ISO="${ISODIR}/ubuntu-16.04.3-server-amd64-auto-install.${GUEST}.iso"
+ISO="./ubuntu-16.04.3-server-amd64-auto-install.${GUEST}.iso"
+ISO="${ISODIR}/${GUEST}.iso"
 
-VM="ubuntu-16.04-${GUEST}-test"
+VM="${GUEST}-scratch-test"
 
 if [ ! -f "${ISO}" ]; then
 	echo "iso ${ISO} not found" 
@@ -36,9 +37,9 @@ fi
 
 FOUND=`VBoxManage list vms | awk '$1 ~ /'$VM'/ { gsub(/\"/, ""); print $1 }'`
 if [ "${FOUND}" = "${VM}" ]; then
-	echo "VM ${VM} exists, remove with "
-	echo "VBoxManage unregistervm ${VM} --delete"
-	exit 0
+	echo "VM ${VM} exists, press <ok> to remove, <ctrl-c> to abort"
+	read ok
+	VBoxManage unregistervm ${VM} --delete
 fi
 
 echo "creating guest OS ${VM}"
@@ -60,7 +61,7 @@ VBoxManage modifyvm ${VM} --nic3 hostonly --hostonlyadapter3 vboxnet0
 # Paravirtualized network adapter = virtio-net
  
 VBoxManage modifyvm ${VM} --nictype1 Am79C973
-VBoxManage modifyvm ${VM} --nictype2 Am79C973
+VBoxManage modifyvm ${VM} --nictype2 82545EM
 VBoxManage modifyvm ${VM} --nictype3 82545EM			# hope vi can use the ixgbe driver
  
 VBoxManage modifyvm ${VM} --cableconnected1 on

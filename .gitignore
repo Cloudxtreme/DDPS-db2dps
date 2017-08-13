@@ -17,6 +17,7 @@ dev.lst
 **/*.bak
 **/*.sw[abcdefghijklmnop]
 
+**/*.ORG
 Makefile.proj
 db2dpsrc
 fnm2db-new.pl
@@ -33,3 +34,12 @@ x.pl
 **/not-on-git
 **/obsolite
 **/host.config
+**/data/openvpn/*
+**/data/openvpn_test/*
+**/*vpn-udp-1194*
+**/ssh/id_*
+**/data/drivers/*
+**/compile_stock_driver/*.gz
+**/compile_stock_driver/
+**/compile_stock_driver/ixgbe*
+**/compile_stock_driver/i40e*
