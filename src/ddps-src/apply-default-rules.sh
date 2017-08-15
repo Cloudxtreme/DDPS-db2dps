@@ -56,7 +56,7 @@ src="null"
 action="discard"
 description="Default rule"
 
-blocktime=1
+blocktime=10
 
 ournetworks=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
 #ournetworks="130.226.136.242/32"

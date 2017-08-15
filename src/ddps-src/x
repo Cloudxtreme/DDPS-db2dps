@@ -1,6 +1,0 @@
-
-
-
-
-chattr -i /home/sftpgroup/newrules/.ssh/authorized_keys /home/sftpgroup/newrules/.ssh/
-chattr +i /home/sftpgroup/newrules/.ssh   /home/sftpgroup/newrules/.ssh/*
