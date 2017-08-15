@@ -1,0 +1,230 @@
+#!/usr/bin/perl -w
+#
+# $Header$
+#
+#   Copyright 2017, DeiC, Niels Thomas Haugård
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#
+#
+################################################################################
+#
+# -r: read from files
+# -d: read from databse
+# -w: write to files / database
+# -p: print/dump to stdout
+#
+################################################################################
+
+#
+# Requirements
+#
+use DBI;                # database
+use Digest::MD5;
+use English;
+use File::Basename;
+use File::Copy;
+use File::Temp qw(tempfile);
+use FileHandle;
+use Getopt::Long qw(:config no_ignore_case);
+use Net::SSH2;          # ssh v2 access to postgres db
+use NetAddr::IP;
+use POSIX;              # only needed for logit
+use Sys::Hostname;
+use Sys::Syslog;        # only needed for logit
+use Time::Piece;
+use sigtrap qw(die normal-signals);
+#
+#
+# Global vars
+#
+my $read_from_files = 0;
+my $read_from_db	= 0;
+my $write_to		= 0;
+my $print_to_stdout	= 0;
+my $verbose			= 0;
+my $show_version	= 0;
+
+my $usage = "
+	usage:
+
+	$0	[-v] -r | -f | -w | -p hostname
+	$0 -V
+		-f: Read info from files
+		-d: Read info from database
+		-w: Write to db if read from file and file if read from db
+		-v: Print verbose information
+		
+		Hostname: a specific fastnetmon
+
+		-v: Print version and exit
+
+";
+
+my $hostname		= "";
+
+my $specific_config_dir = "/opt/mkiso/specific/";
+my $pathname		 = "";
+
+################################################################################
+# included from version.pm
+#INCLUDE_VERSION_PM
+################################################################################
+
+#
+# prototypes
+#
+sub main(@);
+sub logit(@);
+sub mydie(@);
+sub read_from_files();
+sub read_from_db();
+sub wtite_to_db();
+sub wtite_to_files();
+
+################################################################################
+# MAIN
+################################################################################
+
+main();
+
+exit(0);
+
+
+#
+# Subs
+#
+sub main(@) {
+	if (!GetOptions(
+		'read_from_files|f'	=> \$read_from_files,
+		'read_from_db|d'	=> \$read_from_db,
+		'write|w'			=> \$write_to,
+		'print|p'			=> \$print_to_stdout,
+		'verbose|v'			=> \$verbose,
+		'show_version|V'	=> \$show_version
+	))
+	{
+		print $usage;
+		exit 0;
+	}
+
+	$hostname = $ARGV[0];
+	$pathname = $specific_config_dir . "/" . $hostname;
+
+	if (length($hostname) == 0)
+	{
+		print "hostname missing, $usage\n";
+		exit 0;
+	}
+
+	if ($read_from_files && $read_from_db)
+	{
+		print "-r and -d are mutally exclusive\n"; exit 0;
+	}
+
+	if ($write_to == 0 && $print_to_stdout == 0)
+	{
+		print "please select output: -p stdout or DB/files\n"; exit 0;
+	}
+
+	if ($read_from_db == 0 && $read_from_files == 0)
+	{
+		print "Please select read form database -d or files -f\n";
+		exit 0;
+	}
+
+	logit("hostname: $hostname");
+	logit("read_from_files: $read_from_files");
+	logit("read_from_db: $read_from_db");
+	logit("write_to: $write_to");
+	logit("print_to_stdout:	$print_to_stdout");
+
+	if (-d $pathname) {
+	  print  "$pathname exists and is a directory\n"
+	  #  seems ok to now
+	}
+	elsif (-e _) {
+	  print "$pathname exists, but is NOT a directory\n";
+	  exit 0;
+	}
+	else {
+	  print "$pathname does not exist\n";
+	  exit 0;
+	}
+
+	if ($read_from_files)
+	{
+		read_from_files();
+	}
+	if ($read_from_db)
+	{
+		read_from_db();
+	}
+
+	if ($write_to)		
+	{
+		if ($read_from_files)	{ wtite_to_db(); }
+		if ($read_from_db)		{ write_to_files(); }
+	}
+
+	exit 0;
+}
+
+sub wtite_to_db()
+{
+	logit("in write to db");
+}
+
+sub write_to_files()
+{
+	logit("in write to files");
+	# use fastnetmon version when reading templates
+}
+sub read_from_db()
+{
+	logit("in read from db");
+}
+sub read_from_files()
+{
+	logit("in read from files");
+	# /opt/i2dps/etc/fnm2db.ini
+	# /opt/i2dps/etc/ssh/id_ed25519
+	# /opt/i2dps/etc/ssh/id_ed25519.pub
+	# /etc/networks_whitelist
+	# /etc/fastnetmon.conf
+	# /etc/networks_list
+	# /etc/networks_whitelist
+	# /etc/networks_list
+	# OpenVPN 3 files
+}
+
+sub logit(@)
+{
+	my $msg = join(' ', @_);
+	syslog("user|err", "$msg");
+	my $now = strftime "%H:%M:%S (%Y/%m/%d)", localtime(time);
+	print STDOUT "$now: $msg\n" if ($verbose);
+
+	#open(LOGFILE, ">>$logfile");
+	#print LOGFILE "$now: $msg\n";
+	#close(LOGFILE);
+}
+
+sub mydie(@)
+{
+	logit(@_);
+	exit(0);
+}
+
+__DATA__
+

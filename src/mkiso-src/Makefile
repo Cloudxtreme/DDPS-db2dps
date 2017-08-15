@@ -44,7 +44,8 @@ EXCLUDE_INSTALL	= exclude_from_install.txt
 pkgs		= mkisofs curl
 
 install:	hostcheck install_pkgs
-		sudo rsync -avzH --delete-before --exclude-from=$(EXCLUDE_INSTALL) $(PROJECT) $(PREFIX)
+	#  fix VERSION and make it a bit more elegant
+	sudo rsync -avzH --delete-before --exclude-from=$(EXCLUDE_INSTALL) $(PROJECT) $(PREFIX)
 
 uninstall:
 			echo remove everything below $(PREFIX)

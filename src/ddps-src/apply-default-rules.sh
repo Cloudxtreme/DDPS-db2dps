@@ -131,7 +131,6 @@ echo "last-line"
 
 /bin/mv $tmprules $rulefile
 echo "rules prepared and will be applied within ${sleeptime} seconds"
-echo wrote rules to $rulefile
 
 exit 
 
