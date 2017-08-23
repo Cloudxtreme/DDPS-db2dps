@@ -41,7 +41,7 @@ UID			= root
 
 EXCLUDE_INSTALL	= exclude_from_install.txt
 
-pkgs		= mkisofs curl
+pkgs		= mkisofs curl libdata-dumper-simple-perl
 
 install:	hostcheck install_pkgs
 	#  fix VERSION and make it a bit more elegant
@@ -51,21 +51,38 @@ uninstall:
 			echo remove everything below $(PREFIX)
 
 hostcheck:
-	@if [ "`hostname -f`" != "`echo $(TARGETHOST) | sed 's/.*@//'`" ]; then					\
-		echo "make should not be executed on the wrong host ... ";							\
-		echo "hostname = `hostname` expected `echo $(TARGETHOST) | sed 's/.*@//'`, bye ";	\
-		exit 1;																				\
+	@if [ "`hostname -f`" != "`echo $(TARGETHOST) | sed 's/.*@//'`" ]; then							\
+		echo "make should not be executed on the wrong host ... ";									\
+		echo "hostname = `hostname` expected `echo $(TARGETHOST) | sed 's/.*@//'`, bye ";			\
+		exit 1;																						\
 	fi
 
+bin: $(perlfiles) $(shellfiles)
+	@for exec in $(perlfiles);																		\
+	do																								\
+		exec=`basename $$exec .pl`  ;																\
+		sudo $(RM) $$exec;																			\
+		sudo sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  $$exec.pl > $$exec;	\
+		sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
+	done
+	@for exec in $(shellfiles);																		\
+	do																								\
+		exec=`basename $$exec .sh`  ;																\
+		sudo $(RM) $$exec;																			\
+		sudo sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.SH' -e 'd' -e'}'  $$exec.sh > $$exec;	\
+		sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
+	done
+
+
 install_pkgs:
-	for P in $(pkgs);						\
-	do										\
-		dpkg -s "$$P" >/dev/null 2>&1;		\
-		case $$? in							\
-			0)	:							\
-			;;								\
-			1)	sudo apt-get -y install $$P	\
-			;;								\
-		esac								\
-	done									\
+	@for P in $(pkgs);																				\
+	do																								\
+		dpkg -s "$$P" >/dev/null 2>&1;																\
+		case $$? in																					\
+			0)	:																					\
+			;;																						\
+			1)	sudo apt-get -y install $$P															\
+			;;																						\
+		esac																						\
+	done																							\
 

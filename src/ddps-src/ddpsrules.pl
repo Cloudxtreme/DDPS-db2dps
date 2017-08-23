@@ -117,6 +117,8 @@ my $usage = "
         --dscp|C         DSCP flags
         --frag|f         fragments
         --action|a       action:      accept discard or 'rate-limit 9600'
+		-h               print help on add
+		-y               do not prompt before implement the rule
 
         IP version 4 addresses only
 
