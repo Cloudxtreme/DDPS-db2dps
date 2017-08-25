@@ -16,14 +16,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-#
-################################################################################
-#
-# -r: read from files
-# -d: read from databse
-# -w: write to files / database
-# -p: print/dump to stdout
-#
 ################################################################################
 
 #
@@ -76,6 +68,7 @@ my $usage = "
 
 		-V: Print version and exit
 
+TODO: -f, -u
 		-s: generate and save ssh keys
 		-o: generate and save OpenVPN keys
 		-n: update nds with hostname / ip address information
@@ -162,12 +155,13 @@ my ($fastnetmon_instanceid, $customerid, $mode, $internet_if, $lan_if,
 sub main(@);
 sub logit(@);
 sub mydie(@);
-sub	parseini();
+sub parseini();
 sub read_from_files();
 sub read_from_db();
 sub write_to_db();
 sub wtite_to_files();
 sub print_to_stdout();
+sub mungle_vars(@);
 
 ################################################################################
 # MAIN
@@ -620,11 +614,12 @@ sub write_to_files()
 			# create dest. directory tree
 			make_path $dest_path unless -d $dest_path;
 			
-			# mungle $template_content
-			# see db2dps.pl +1251
+			# replace template var with walues
+			mungle_vars($content);
 
 			# write with replacement(s)
 			path("$dest_file")->spew_utf8("$content");
+			# TODO errors in printed file
 			
 		}
 		else
@@ -697,6 +692,136 @@ sub parseini()
 
 }
 
+sub mungle_vars(@)
+{
+	# Build s/ .. /g below with
+	# fnmconfig -d -w  fnm.deic.dk -p 2>&1 |sed '/^\$/!d; s/=.*//; s/\$//'|awk '{ print "s/__" $1 "__/$" $1 "/g;" }'
+	for ($_[0])
+	{
+		s/__fastnetmon_instanceid__/$fastnetmon_instanceid/g;
+		s/__customerid__/$customerid/g;
+		s/__mode__/$mode/g;
+		s/__internet_if__/$internet_if/g;
+		s/__lan_if__/$lan_if/g;
+		s/__fastnetmon_if__/$fastnetmon_if/g;
+		s/__gw__/$gw/g;
+		s/__vpn_ip_addr__/$vpn_ip_addr/g;
+		s/__hostname__/$hostname/g;
+		s/__key__/$key/g;
+		s/__ovpn__/$ovpn/g;
+		s/__p12__/$p12/g;
+		s/__usr__/$usr/g;
+		s/__password__/$password/g;
+		s/__fastnetmoninstanceid__/$fastnetmoninstanceid/g;
+		s/__uuid__/$uuid/g;
+		s/__administratorid__/$administratorid/g;
+		s/__blocktime__/$blocktime/g;
+		s/__public_ssh_key_for_upload_to_ddps__/$public_ssh_key_for_upload_to_ddps/g;
+		s/__private_ssh_key_for_upload_to_ddps__/$private_ssh_key_for_upload_to_ddps/g;
+		s/__networks_whitelist__/$networks_whitelist/g;
+		s/__fastnetmonversion__/$fastnetmonversion/g;
+		s/__local_syslog_logging__/$local_syslog_logging/g;
+		s/__remote_syslog_logging__/$remote_syslog_logging/g;
+		s/__remote_syslog_server__/$remote_syslog_server/g;
+		s/__remote_syslog_port__/$remote_syslog_port/g;
+		s/__enable_ban__/$enable_ban/g;
+		s/__process_incoming_traffic__/$process_incoming_traffic/g;
+		s/__process_outgoing_traffic__/$process_outgoing_traffic/g;
+		s/__ban_details_records_count__/$ban_details_records_count/g;
+		s/__ban_time__/$ban_time/g;
+		s/__unban_only_if_attack_finished__/$unban_only_if_attack_finished/g;
+		s/__enable_subnet_counters__/$enable_subnet_counters/g;
+		s/__networks_list_path__/$networks_list_path/g;
+		s/__white_list_path__/$white_list_path/g;
+		s/__check_period__/$check_period/g;
+		s/__enable_connection_tracking__/$enable_connection_tracking/g;
+		s/__ban_for_pps__/$ban_for_pps/g;
+		s/__ban_for_bandwidth__/$ban_for_bandwidth/g;
+		s/__ban_for_flows__/$ban_for_flows/g;
+		s/__threshold_pps__/$threshold_pps/g;
+		s/__threshold_mbps__/$threshold_mbps/g;
+		s/__threshold_flows__/$threshold_flows/g;
+		s/__threshold_tcp_mbps__/$threshold_tcp_mbps/g;
+		s/__threshold_udp_mbps__/$threshold_udp_mbps/g;
+		s/__threshold_icmp_mbps__/$threshold_icmp_mbps/g;
+		s/__threshold_tcp_pps__/$threshold_tcp_pps/g;
+		s/__threshold_udp_pps__/$threshold_udp_pps/g;
+		s/__threshold_icmp_pps__/$threshold_icmp_pps/g;
+		s/__ban_for_tcp_bandwidth__/$ban_for_tcp_bandwidth/g;
+		s/__ban_for_udp_bandwidth__/$ban_for_udp_bandwidth/g;
+		s/__ban_for_icmp_bandwidth__/$ban_for_icmp_bandwidth/g;
+		s/__ban_for_tcp_pps__/$ban_for_tcp_pps/g;
+		s/__ban_for_udp_pps__/$ban_for_udp_pps/g;
+		s/__ban_for_icmp_pps__/$ban_for_icmp_pps/g;
+		s/__mirror__/$mirror/g;
+		s/__pfring_sampling_ratio__/$pfring_sampling_ratio/g;
+		s/__mirror_netmap__/$mirror_netmap/g;
+		s/__mirror_snabbswitch__/$mirror_snabbswitch/g;
+		s/__mirror_afpacket__/$mirror_afpacket/g;
+		s/__netmap_sampling_ratio__/$netmap_sampling_ratio/g;
+		s/__netmap_read_packet_length_from_ip_header__/$netmap_read_packet_length_from_ip_header/g;
+		s/__pcap__/$pcap/g;
+		s/__netflow__/$netflow/g;
+		s/__sflow__/$sflow/g;
+		s/__enable_pf_ring_zc_mode__/$enable_pf_ring_zc_mode/g;
+		s/__interfaces__/$interfaces/g;
+		s/__average_calculation_time__/$average_calculation_time/g;
+		s/__average_calculation_time_for_subnets__/$average_calculation_time_for_subnets/g;
+		s/__netflow_port__/$netflow_port/g;
+		s/__netflow_host__/$netflow_host/g;
+		s/__netflow_sampling_ratio__/$netflow_sampling_ratio/g;
+		s/__netflow_divide_counters_on_interval_length__/$netflow_divide_counters_on_interval_length/g;
+		s/__netflow_lua_hooks_path__/$netflow_lua_hooks_path/g;
+		s/__sflow_port__/$sflow_port/g;
+		s/__sflow_host__/$sflow_host/g;
+		s/__notify_script_path__/$notify_script_path/g;
+		s/__notify_script_pass_details__/$notify_script_pass_details/g;
+		s/__collect_attack_pcap_dumps__/$collect_attack_pcap_dumps/g;
+		s/__process_pcap_attack_dumps_with_dpi__/$process_pcap_attack_dumps_with_dpi/g;
+		s/__redis_enabled__/$redis_enabled/g;
+		s/__redis_port__/$redis_port/g;
+		s/__redis_host__/$redis_host/g;
+		s/__redis_prefix__/$redis_prefix/g;
+		s/__mongodb_enabled__/$mongodb_enabled/g;
+		s/__mongodb_host__/$mongodb_host/g;
+		s/__mongodb_port__/$mongodb_port/g;
+		s/__mongodb_database_name__/$mongodb_database_name/g;
+		s/__pfring_hardware_filters_enabled__/$pfring_hardware_filters_enabled/g;
+		s/__exabgp__/$exabgp/g;
+		s/__exabgp_command_pipe__/$exabgp_command_pipe/g;
+		s/__exabgp_community__/$exabgp_community/g;
+		s/__exabgp_community_subnet__/$exabgp_community_subnet/g;
+		s/__exabgp_community_host__/$exabgp_community_host/g;
+		s/__exabgp_next_hop__/$exabgp_next_hop/g;
+		s/__exabgp_announce_host__/$exabgp_announce_host/g;
+		s/__exabgp_announce_whole_subnet__/$exabgp_announce_whole_subnet/g;
+		s/__exabgp_flow_spec_announces__/$exabgp_flow_spec_announces/g;
+		s/__gobgp__/$gobgp/g;
+		s/__gobgp_next_hop__/$gobgp_next_hop/g;
+		s/__gobgp_announce_host__/$gobgp_announce_host/g;
+		s/__gobgp_announce_whole_subnet__/$gobgp_announce_whole_subnet/g;
+		s/__graphite__/$graphite/g;
+		s/__graphite_host__/$graphite_host/g;
+		s/__graphite_port__/$graphite_port/g;
+		s/__graphite_prefix__/$graphite_prefix/g;
+		s/__monitor_local_ip_addresses__/$monitor_local_ip_addresses/g;
+		s/__hostgroup__/$hostgroup/g;
+		s/__my_hosts_enable_ban__/$my_hosts_enable_ban/g;
+		s/__my_hosts_ban_for_pps__/$my_hosts_ban_for_pps/g;
+		s/__my_hosts_ban_for_bandwidth__/$my_hosts_ban_for_bandwidth/g;
+		s/__my_hosts_ban_for_flows__/$my_hosts_ban_for_flows/g;
+		s/__my_hosts_threshold_pps__/$my_hosts_threshold_pps/g;
+		s/__my_hosts_threshold_mbps__/$my_hosts_threshold_mbps/g;
+		s/__my_hosts_threshold_flows__/$my_hosts_threshold_flows/g;
+		s/__pid_path__/$pid_path/g;
+		s/__cli_stats_file_path__/$cli_stats_file_path/g;
+		s/__enable_api__/$enable_api/g;
+		s/__sort_parameter__/$sort_parameter/g;
+		s/__max_ips_in_list__/$max_ips_in_list/g;
+		s/__networks_list__/$networks_list/g;
+
+	}
+}
 
 
 __DATA__
