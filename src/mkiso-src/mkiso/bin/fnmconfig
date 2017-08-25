@@ -44,6 +44,11 @@ use Sys::Hostname;
 use Sys::Syslog;        # only needed for logit
 use Time::Piece;
 use sigtrap qw(die normal-signals);
+use Path::Tiny;
+use Data::Dumper::Simple;
+use File::Basename;
+use File::Path qw(make_path);
+
 #
 #
 # Global vars
@@ -58,16 +63,22 @@ my $show_version	= 0;
 my $usage = "
 	usage:
 
-	$0	[-v] -r | -f | -w | -p hostname
-	$0 -V
+	$0	[-v] -f | -r | -p | -u | -w hostname
 		-f: Read info from files
 		-d: Read info from database
-		-w: Write to db if read from file and file if read from db
+		-u: Update remote FastNetMon with config changes
 		-v: Print verbose information
+		-w: Write to db if read from file and file if read from db
+	$0 -V
+	$0 -h: help
 		
 		Hostname: a specific fastnetmon
 
-		-v: Print version and exit
+		-V: Print version and exit
+
+		-s: generate and save ssh keys
+		-o: generate and save OpenVPN keys
+		-n: update nds with hostname / ip address information
 
 ";
 
@@ -546,8 +557,6 @@ EOF
 
 sub print_to_stdout()	# write or read variables
 {
-	use Data::Dumper::Simple;
-
 	warn Dumper($fastnetmon_instanceid, $customerid, $mode, $internet_if, $lan_if,
 		$fastnetmon_if, $gw, $vpn_ip_addr, $hostname, $key, $ovpn, $p12, $usr,
 		$password, $fastnetmoninstanceid, $uuid, $administratorid, $blocktime,
@@ -599,20 +608,31 @@ sub write_to_files()
 	foreach my $file (@files)
 	{
 		my $tmpl_file = $config_file_template_dir . "/" . $fastnetmonversion . "/" . $file;
+		my $dest_file = $specific_config_file_dir . "/" . $file;
+		my $dest_path =  dirname($dest_file);
 		if ( -s $tmpl_file)
 		{
 			logit("src $tmpl_file");
-			# open template -r read whole file
-			# open file -w
+			# read whole file
+			my $content = path("$tmpl_file")->slurp_utf8;
+
+			#print $content;
+			# create dest. directory tree
+			make_path $dest_path unless -d $dest_path;
+			
+			# mungle $template_content
 			# see db2dps.pl +1251
+
 			# write with replacement(s)
+			path("$dest_file")->spew_utf8("$content");
+			
 		}
 		else
 		{
 			logit("src $tmpl_file is empty or does not exist");
 			exit 0;
 		}
-		logit("dst $specific_config_file_dir/$fastnetmonversion/$file");
+		logit("dst $dest_file");
 	}
 }
 
