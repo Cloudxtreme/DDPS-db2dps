@@ -288,14 +288,14 @@ Suggestion for rule creation:
 
 | Attack type            | Mitigation     | Match on    |
 | :--------------------- | :------------- | :---------- |
-| syn_flood              | rate-limit     | tcp option (syn) protocol, destination port, tcp flags, size, (ttl would be nice but [is still in draft](https://tools.ietf.org/id/draft-ietf-idr-bgp-flowspec-label-00.txt)), and source any  |
-| udp_flood              | rate-limit     | protocol and destination host and port  |
+| syn_flood              | rate-limit     | tcp option (syn) protocol, destination port, tcp flags, size, (ttl would be nice but [is still in draft](https://tools.ietf.org/id/draft-ietf-idr-bgp-flowspec-label-00.txt)), size, and source any  |
+| udp_flood              | rate-limit     | protocol and destination, size, host and port  |
 | icmp flood             | discard        | protocol and destination  |
-| ip_fragmentation_flood | rate-limit     | protocol and destination  |
-| DNS amplification      | rate-limit     | protocol, port and destination |
-| NTP amplification      | rate-limit     | protocol, port and destination |
-| SSDP amplification     | discard        | protocol, port 1900, source any |
-| SNMP amplification     | discard        | protocol, port, destination     |
+| ip_fragmentation_flood | rate-limit     | protocol size, and destination  |
+| DNS amplification      | rate-limit     | protocol, size, port and destination |
+| NTP amplification      | rate-limit     | protocol, size, port and destination |
+| SSDP amplification     | discard        | protocol, size, port 1900, source any |
+| SNMP amplification     | discard        | protocol, size, port, destination     |
 
 Note: SSDP - _Simple Service Discovery Protocol_ (see [draft-cai-ssdp-v1-03](http://quimby.gnus.org/internet-drafts/draft-cai-ssdp-v1-03.txt) does not belong on a WAN anyway? It is used
 for UPnP discovery. The same goes for TCP / UDP port 1 - 19.
@@ -303,6 +303,10 @@ for UPnP discovery. The same goes for TCP / UDP port 1 - 19.
 SNMP does to my best understanding not pass the boundaries of a company
 network, even not protocol version 3. And sacrificing monitoring data for
 the sake of the network is fine with me.
+
+Sometimes FastNetMon does not provide enough data, then don't match on the
+missing information (e.g. icmp code and type). With e.g. ICMP flooding use
+the fact that ICMP is not a critical protocol like e.g. HTTP or TCP SYN.
 
 The objective is to reduce the rule files to a bare minimum of rules the
 following is done for _type 10 - Packet length_ and _type 4 port_ assuming it

@@ -40,6 +40,10 @@ use Path::Tiny;
 use Data::Dumper::Simple;
 use File::Basename;
 use File::Path qw(make_path);
+use File::Copy;
+use Tie::File;
+use File::Compare;
+
 
 #
 #
@@ -78,7 +82,6 @@ TODO: -f, -u
 my $specific_hostname		= "";
 
 my $specific_config_dir = "/opt/mkiso/specific";
-my $pathname		 = "";
 my $specific_config_file_dir = ""; 		# $specific_config_dir / hostname / data/config_files
 
 my $inicfg  = "/opt/db2dps/etc/db.ini";
@@ -90,7 +93,7 @@ my $latest_fastnetmonversion = "1.1.3";
 
 my $config_file_template_dir = "/opt/mkiso/etc/config_files";	# append $fastnetmonversion
 
-my @files = (
+my @fnm_config_files = (
 	'opt/i2dps/etc/fnm2db.ini',
 	'opt/i2dps/etc/ssh/id_ed25519',
 	'opt/i2dps/etc/ssh/id_ed25519.pub',
@@ -103,6 +106,17 @@ my @files = (
 	'etc/openvpn/openvpn.key',
 	'etc/openvpn/openvpn.p12',
 	'etc/openvpn/openvpn.txt',
+);
+
+my $authorized_keys = "/home/sftpgroup/newrules/.ssh/authorized_keys";
+
+my @fnm_install_d_files = (
+		'1_add_interface-cfg.sh',
+		'2_install_packages.sh',
+		'3_install_ixgbe.sh',
+		'4_install_fastnetmon.sh',
+		'4_setup_openvpn.sh',
+		'5_install_openvpn_keys.sh'
 );
 
 my ($fastnetmon_instanceid, $customerid, $mode, $internet_if, $lan_if,
@@ -161,6 +175,7 @@ sub read_from_db();
 sub write_to_db();
 sub wtite_to_files();
 sub print_to_stdout();
+sub ssh_keygen();
 sub mungle_vars(@);
 
 ################################################################################
@@ -200,9 +215,6 @@ sub main(@) {
 		exit 0;
 	}
 	
-	$pathname = $specific_config_dir . "/" . $specific_hostname;
-	
-
 	if ($read_from_files && $read_from_db)
 	{
 		print "-r and -d are mutally exclusive\n"; exit 0;
@@ -226,28 +238,47 @@ sub main(@) {
 	logit("write_to: $write_to");
 	logit("print_to_stdout:	$print_to_stdout");
 
-	if (-d $pathname) {
-	  logit("found directory '$pathname' ok");
-	  #  seems ok to now
-	}
-	elsif (-e _) {
-	  print "error: $pathname exists, but is NOT a directory\n";
-	  exit 0;
-	}
-	else {
-	  print "hmm: $pathname does not exist\n";	# TODO: create if write to files
-	  exit 0;
-	}
-
 	$specific_config_file_dir = $specific_config_dir . "/" . $specific_hostname . "/" . "data/config_files";
 
-	if ( -d $specific_config_file_dir)
-	{
-		logit("found config dir: $specific_config_file_dir");
+	if (-d $specific_config_file_dir) {
+	  logit("found directory with specific configs '$specific_config_file_dir' ok");
+	}
+	elsif (-e _) {
+		print "error: expected directory with specific config '$specific_config_file_dir' exists, but is NOT a directory\n";
+		exit 0;
+	}
+	else {
+		logit("creating directory with specific config '$specific_config_file_dir' ... ");
+	  	make_path $specific_config_file_dir;
 
-	} else
-	{
-		logit("config dir: $specific_config_file_dir does NOT exist");
+		my $domain = $specific_hostname;
+		$domain =~ s/[0-9a-z-]*\./\./i;	#  RFC 952, RFC 1123
+		
+		# Create a host.config file for the unattended installation
+		# And copy install.d files for FastNetMon install to the host
+		my $hostconfig = $specific_config_dir . "/" . $specific_hostname . "/host.config" ;
+		open(my $fh, '>', "$hostconfig") or mydie "Could not create '$hostconfig' $!";
+		logit("creating '$hostconfig' and copy of install.d/ ... ");
+		print $fh <<EOF;
+
+hostname="$specific_hostname"
+fqdn="$domain"
+loginuser="sysadm"
+password="sysadm"
+
+EOF
+		close($fh) or mydie "close $fh failed:$!";
+
+	  	make_path "$specific_config_dir/$specific_hostname/install.d/";
+
+		foreach my $file (@fnm_install_d_files)
+		{
+			my $src_file = "$config_file_template_dir/install.d/$file";
+			my $dst_file = "$specific_config_dir/$specific_hostname/install.d/$file";
+
+			copy($src_file, $dst_file) or die "Copy failed: $src_file, $dst_file $!";
+		}
+		exit 0;
 	}
 
 	if ($read_from_files)
@@ -419,6 +450,7 @@ EOF
 	my $default_value = "null";
 
 	# TODO set default values -- see database on create
+	my $count = 0;
 	while (my @row = $sth->fetchrow_array)
 	{
 		$fastnetmon_instanceid                             =  $row[0] ?  $row[0] : $default_value;
@@ -542,11 +574,61 @@ EOF
 		$sort_parameter                                    = $row[118] ? $row[118] : $default_value;
 		$max_ips_in_list                                   = $row[119] ? $row[119] : $default_value;
 		$networks_list                                     = $row[120] ? $row[120] : $default_value;
+
+		$count++;
+	}
+	unless ($count) {
+		logit("error: no data found in database!");
+		$sth->finish();
+		exit 0;
 	}
 	$sth->finish();
 
-	# create commented template files
-	# do search / replace on all values for each file
+	# check keys not in database
+	if ($private_ssh_key_for_upload_to_ddps eq $default_value)
+	{
+		# check key file based on template
+		my $specific_config_file = $specific_config_file_dir . "/opt/i2dps/etc/ssh/id_ed25519.pub";
+		my $tmpl_file = $config_file_template_dir . "/" . $fastnetmonversion . "/opt/i2dps/etc/ssh/id_ed25519.pub";
+		# and file exists
+		if (-e $specific_config_file)
+		{
+			# TODO should be ssh-keygen -l -f $specific_config_file
+			my $cmd = "ssh-keygen -l -f $specific_config_file";
+			logit("command: $cmd");
+			system("$cmd");
+
+			if    ( $? == -1  )	{ mydie "failed to execute $!\n"; }
+			elsif ( $? & 0x7F )	{ mydie "command killed by signal " . ( $? & 0x7F ) . "\n"; }
+			elsif ( $? >> 8   )
+			{
+				logit("Not a valid key file - command exited with error ".( $? >> 8 ));
+				if (compare("$tmpl_file", "$specific_config_file") == 0)
+				{
+					logit("$specific_config_file is the template");
+				}
+				logit("Generating new keys");
+				ssh_keygen;
+			}
+			else
+			{
+				logit("$specific_config_file is a valid key file, not generating new one");
+			}
+		}
+		else
+		{
+				logit("file '$specific_config_file' not found, generating new ssh keys ... ");
+				ssh_keygen;
+		}
+	}
+	my $ssh_private_key_file	= $specific_config_file_dir . "/opt/i2dps/etc/ssh/id_ed25519";
+	my $ssh_public_key_file		= $specific_config_file_dir . "/opt/i2dps/etc/ssh/id_ed25519.pub";
+	$private_ssh_key_for_upload_to_ddps	= path($ssh_private_key_file)->slurp_utf8;
+	$public_ssh_key_for_upload_to_ddps	= path($ssh_public_key_file)->slurp_utf8;
+
+	#logit ("public:		$public_ssh_key_for_upload_to_ddps");
+	#logit ("private:	$private_ssh_key_for_upload_to_ddps");
+
 }
 
 sub print_to_stdout()	# write or read variables
@@ -597,16 +679,28 @@ sub write_to_db()
 
 sub write_to_files()
 {
-	logit("$config_file_template_dir");
+
+	if (-d $config_file_template_dir) {
+	  logit("directory with template configs '$config_file_template_dir' ok");
+	}
+	elsif (-e _) {
+	  print "error: expected directory with template config '$config_file_template_dir' exists, but is NOT a directory\n";
+	  exit 0;
+	}
+	else {
+		print "directory with config tempates '$config_file_template_dir' does not exist\n";
+		exit 0;
+	}
+
+ 	# TODO: check all template files exists
 	logit("fastnetmon version: $fastnetmonversion, hostname: $hostname");
-	foreach my $file (@files)
+	foreach my $file (@fnm_config_files)
 	{
 		my $tmpl_file = $config_file_template_dir . "/" . $fastnetmonversion . "/" . $file;
 		my $dest_file = $specific_config_file_dir . "/" . $file;
 		my $dest_path =  dirname($dest_file);
 		if ( -s $tmpl_file)
 		{
-			logit("src $tmpl_file");
 			# read whole file
 			my $content = path("$tmpl_file")->slurp_utf8;
 
@@ -627,7 +721,7 @@ sub write_to_files()
 			logit("src $tmpl_file is empty or does not exist");
 			exit 0;
 		}
-		logit("dst $dest_file");
+		logit("wrote $dest_file");
 	}
 }
 
@@ -635,7 +729,7 @@ sub read_from_files()
 {
 	logit("in read from files");
 	logit("fastnetmon version: $fastnetmonversion, hostname: $hostname, networks_list $networks_list cli_stats_file_path $cli_stats_file_path");
-	foreach my $file (@files) { logit("file: $specific_config_file_dir/$fastnetmonversion/$file"); }
+	foreach my $file (@fnm_config_files) { logit("file: $specific_config_file_dir/$fastnetmonversion/$file"); }
 }
 
 sub logit(@)
@@ -692,6 +786,51 @@ sub parseini()
 
 }
 
+sub ssh_keygen()
+{
+	# Net::SSH::Perl::Key does implement eliptic keys but is not available as a ubuntu managed perl module
+
+	my $ssh_private_key_file	= $specific_config_file_dir . "/opt/i2dps/etc/ssh/id_ed25519";
+	my $ssh_public_key_file		= $specific_config_file_dir . "/opt/i2dps/etc/ssh/id_ed25519.pub";
+	my $cmd = "ssh-keygen -q -C \"root\@$specific_hostname\" -N '' -t ED25519 -b 16384 -f $ssh_private_key_file";
+
+	# remove files based on template information to prevent ssh-keygen asking questions
+	foreach my $file ($ssh_private_key_file, $ssh_public_key_file)
+	{
+		if (-f $file)
+		{
+			logit("removing $file");
+			unlink $file or mydie "Could not unlink $file $!";
+		}
+	}
+
+	logit("command: $cmd");
+	system("$cmd");
+
+	if    ( $? == -1  )	{ mydie "failed to execute $!\n"; }
+	elsif ( $? & 0x7F )	{ mydie "command killed by signal ".( $? & 0x7F )."\n"; }
+	elsif ( $? >> 8   )	{ mydie "command exited with error ".( $? >> 8 )."\n"; }
+	else				{ logit("command executed successfully"); }
+
+	$private_ssh_key_for_upload_to_ddps	= path($ssh_private_key_file)->slurp_utf8;
+	$public_ssh_key_for_upload_to_ddps	= path($ssh_public_key_file)->slurp_utf8;
+
+	# ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPr1PaJkwEVf8iWKT8jbitUjTmOsNeUyDvrrczupKrgY root@fnm.deic.dk
+	#
+	# my $count = 0;
+	# tie my @authkeys, "Tie::File", $authorized_keys;
+	# for (@authkeys)
+	# {
+	# 	$count++ if ($_ =~ m/\Q$public_ssh_key_for_upload_to_ddps/);
+	# }
+	# logit ("'$public_ssh_key_for_upload_to_ddps' fount $count times in $authorized_keys");
+
+	logit ("adding new ssh key ... ");
+	system("chattr -i $authorized_keys");
+	path("$authorized_keys")->append_utf8($public_ssh_key_for_upload_to_ddps);
+	system("chattr +i $authorized_keys");
+}
+
 sub mungle_vars(@)
 {
 	# Build s/ .. /g below with
@@ -716,7 +855,7 @@ sub mungle_vars(@)
 		s/__uuid__/$uuid/g;
 		s/__administratorid__/$administratorid/g;
 		s/__blocktime__/$blocktime/g;
-		s/__public_ssh_key_for_upload_to_ddps__/$public_ssh_key_for_upload_to_ddps/g;
+		s%__public_ssh_key_for_upload_to_ddps__%$public_ssh_key_for_upload_to_ddps%g;
 		s/__private_ssh_key_for_upload_to_ddps__/$private_ssh_key_for_upload_to_ddps/g;
 		s/__networks_whitelist__/$networks_whitelist/g;
 		s/__fastnetmonversion__/$fastnetmonversion/g;
@@ -820,6 +959,7 @@ sub mungle_vars(@)
 		s/__max_ips_in_list__/$max_ips_in_list/g;
 		s/__networks_list__/$networks_list/g;
 
+		chomp;
 	}
 }
 

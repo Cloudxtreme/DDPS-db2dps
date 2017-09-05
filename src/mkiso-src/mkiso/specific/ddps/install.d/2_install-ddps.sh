@@ -225,7 +225,7 @@ EOF
 	usermod -G sftpgroup newrules
 
 	chown root:root /home/sftpgroup /home/sftpgroup/newrules/
-	test -d /home/sftpgroup/.ssh || mkdir /home/sftpgroup/.ssh
+	test -d /home/sftpgroup/newrules/.ssh || mkdir /home/sftpgroup/newrules/.ssh
 	chmod 755 /home/sftpgroup /home/sftpgroup/newrules/
 
 	test -d /home/sftpgroup/newrules/upload || mkdir /home/sftpgroup/newrules/upload
@@ -237,7 +237,7 @@ EOF
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBgM0xg9opRyCXvRApeRsmMT6zzZ154ligQXBF8z
 HsgS root@00:25:90:46:c2:fe-fastnetmon2.deic.dk
 EOF
-	chown -R newrules:newrules /home/sftpgroup/.ssh
+	chown -R newrules:newrules /home/sftpgroup/newrules/.ssh
 	chattr +i /home/sftpgroup/newrules/.ssh   /home/sftpgroup/newrules/.ssh/*
 
 	logit "keys added to /home/sftpgroup/.ssh/authorized_keys change if required"
