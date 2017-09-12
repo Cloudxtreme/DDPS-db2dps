@@ -2,13 +2,16 @@
 #
 # fnm-dev
 #
-# Add static IPv4 addr to interface with no assigned IP
-# Only required in our test environment
+# Add static IPv4 address to interface with no assigned IP. This
+# is only required in our VirtualBox test environment, where the
+# guest has default gateway behind the NAT interface, and access
+# to that interface is not possible.
+# The address should be on the host-only adapter.
 #
 
 IPV4ADDR=192.168.99.100
 IPV4MASK=255.255.255.0
-IPV4NET=192.168.99.1
+IPV4NET=192.168.99.0
 IPV4BC=192.168.99.255
 
 # list of interfaces

@@ -234,8 +234,7 @@ EOF
 
 	chattr -i /home/sftpgroup/newrules/.ssh/authorized_keys /home/sftpgroup/newrules/.ssh/
 	cat << EOF | tr -d '\n' > /home/sftpgroup/.ssh/authorized_keys
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBgM0xg9opRyCXvRApeRsmMT6zzZ154ligQXBF8z
-HsgS root@00:25:90:46:c2:fe-fastnetmon2.deic.dk
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBgM0xg9opRyCXvRApeRsmMT6zzZ154ligQXBF8zHsgS root@00:25:90:46:c2:fe-fastnetmon2.deic.dk
 EOF
 	chown -R newrules:newrules /home/sftpgroup/newrules/.ssh
 	chattr +i /home/sftpgroup/newrules/.ssh   /home/sftpgroup/newrules/.ssh/*

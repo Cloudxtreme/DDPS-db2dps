@@ -233,10 +233,10 @@ sub main(@) {
 
 	parseini();
 
-	logit("read_from_files: $read_from_files");
-	logit("read_from_db: $read_from_db");
-	logit("write_to: $write_to");
-	logit("print_to_stdout:	$print_to_stdout");
+	#logit("read_from_files: $read_from_files");
+	#logit("read_from_db: $read_from_db");
+	#logit("write_to: $write_to");
+	#logit("print_to_stdout:	$print_to_stdout");
 
 	$specific_config_file_dir = $specific_config_dir . "/" . $specific_hostname . "/" . "data/config_files";
 
@@ -593,8 +593,7 @@ EOF
 		# and file exists
 		if (-e $specific_config_file)
 		{
-			# TODO should be ssh-keygen -l -f $specific_config_file
-			my $cmd = "ssh-keygen -l -f $specific_config_file";
+			my $cmd = "ssh-keygen -q -l -f $specific_config_file";
 			logit("command: $cmd");
 			system("$cmd");
 
@@ -625,10 +624,6 @@ EOF
 	my $ssh_public_key_file		= $specific_config_file_dir . "/opt/i2dps/etc/ssh/id_ed25519.pub";
 	$private_ssh_key_for_upload_to_ddps	= path($ssh_private_key_file)->slurp_utf8;
 	$public_ssh_key_for_upload_to_ddps	= path($ssh_public_key_file)->slurp_utf8;
-
-	#logit ("public:		$public_ssh_key_for_upload_to_ddps");
-	#logit ("private:	$private_ssh_key_for_upload_to_ddps");
-
 }
 
 sub print_to_stdout()	# write or read variables
