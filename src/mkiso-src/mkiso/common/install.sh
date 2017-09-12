@@ -4,14 +4,14 @@
 #
  
 #:   1 Apply all patches by doing an update, upgrade and a dist-upgrade
-echo apt-get -y update
-echo apt-get -y upgrade
-echo apt-get -y dist-upgrade
+apt-get -y update
+apt-get -y upgrade
+apt-get -y dist-upgrade
 
 #:   2 Install local packages cmod, dailybuandupdate and grouproot.
 cd      /root/files
 dpkg -i cmod_1.1-2.deb
-dpkg -i dailybuandupdate_1.6-1.deb
+dpkg -i dailybuandupdate_1.7-1.deb
 dpkg -i grouproot_1.2-1.deb
 
 #:   3 Set DK console keyboard, xenial preseed cannot set keyboard layout, as of
