@@ -1,5 +1,9 @@
 #! /bin/bash
 #
+# A poor mans static DDoS protection system.
+#
+# This script is part of DDPS but not used in production
+#
 # This static BGP flowspec filter will deny the following traffic passing the core routers:
 # 	- UDP Fragments
 #	- DNS replies larger than 512 bytes
@@ -10,11 +14,20 @@
 #
 # idea from http://nabcop.org/index.php/DDoS-DoS-attack-BCOP, conversation with Nordunet and
 # https://www.akamai.com/us/en/multimedia/documents/state-of-the-internet/q4-2016-state-of-the-internet-security-report.pdf
+#
+# Assumes you have one or more exabgp instances for announcements
+#
+# Destination networks (DST) has the format 
+# 	ournetworks = a.b.c.d/e f.g.h.i/j
+# The list of exabgp hosts (EXABGPHOSTS) has the format
+#      hostlist = 1.2.3.4 5.6.7.8
+#
 
 INI=/opt/db2dps/etc/db.ini
 
 DST=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
 EXABGPHOSTS=`sed '/^hostlist/!d; s/^.*=[\t ]*//'		${INI}`
+EXABGPHOSTS=localhost
 
 ################################################################################
 #INCLUDE_VERSION_SH
@@ -30,19 +43,22 @@ esac
 
 for EXAHOST in ${EXABGPHOSTS}
 do
-	cat << EOF | sed '/^#/d;' | ssh root@${EXAHOST} 'cat > /var/run/exabgp/exabgp.cmd'
-	${DO} default-discard-udp-fragments { match { ${DST}; protocol udp; fragment [ is-fragment first-fragment last-fragment ]; } then { discard } }
-	${DO} default-discard-ntp-amplification { match { ${DST}; protocol udp; source-port =123; packet-length =468; } then { discard } }
-	${DO} default-discard-dns-amplification { match { ${DST}; protocol udp; source-port =53; packet-length =512; } then { discard } }
-	${DO} default-discard-dns-amplification { match { ${DST}; protocol udp; source-port =53; } then { discard } }
-	${DO} default-discard-chargen { match { ${DST}; protocol udp; source-port =19; } then { discard } }
-	${DO} default-discard-chargen { match { ${DST}; protocol tcp; source-port =19; } then { discard } }
-	${DO} default-discard-QOTD { match { ${DST}; protocol udp; source-port =17; } then { discard } }
-	${DO} default-discard-QOTD { match { ${DST}; protocol tcp; source-port =17; } then { discard } }
-	${DO} default-discard-gre { match { ${DST}; protocol =47; source-port =17; } then { discard } }
-	${DO} default-ratelimit-SSDP { match { ${DST}; protocol udp; source-port =1900 } then { rate-limit 9600; } }
-	${DO} default-ratelimit-snmp { match { ${DST}; protocol udp; source-port =161&=162; } then { rate-limit 9600; } }
+	for D in $DST
+	do
+		cat <<-EOF | sed '/^#/d;' | ssh root@${EXAHOST} 'cat > /var/run/exabgp/exabgp.cmd'
+		${DO} default-discard-udp-fragments { match { destination ${D}; protocol udp; fragment [ is-fragment first-fragment last-fragment ]; } then { discard } }
+		${DO} default-discard-ntp-amplification { match { destination ${D}; protocol udp; source-port =123; packet-length =468; } then { discard } }
+		${DO} default-discard-dns-amplification { match { destination ${D}; protocol udp; source-port =53; packet-length =512; } then { discard } }
+		${DO} default-discard-dns-amplification { match { destination ${D}; protocol udp; source-port =53; } then { discard } }
+		${DO} default-discard-chargen { match { destination ${D}; protocol udp; source-port =19; } then { discard } }
+		${DO} default-discard-chargen { match { destination ${D}; protocol tcp; source-port =19; } then { discard } }
+		${DO} default-discard-QOTD { match { destination ${D}; protocol udp; source-port =17; } then { discard } }
+		${DO} default-discard-QOTD { match { destination ${D}; protocol tcp; source-port =17; } then { discard } }
+		${DO} default-discard-gre { match { destination ${D}; protocol =47; source-port =17; } then { discard } }
+		${DO} default-ratelimit-SSDP { match { destination ${D}; protocol udp; source-port =1900 } then { rate-limit 9600; } }
+		${DO} default-ratelimit-snmp { match { destination ${D}; protocol udp; source-port =161&=162; } then { rate-limit 9600; } }
 EOF
+	done
 done
 
 

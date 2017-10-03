@@ -1,0 +1,33 @@
+
+
+
+Programmet mkiso/bin/fnmconfig skal ændres til at kaldes med f.eks.
+
+mandatory: -r files | -r db              <hostname> 
+optional:  -w files | -w db | -w stdout 
+optional:  -u                            <hostname>
+           hvor -u forudsætter en -r
+
+-w og -d må naturligvis ikke må være ens
+
+-n 
+
+
+      usage:
+
+        $0      [-v] -f | -r | -p | -u | -w hostname
+                -f: Read info from files
+                -d: Read info from database
+                -u: Update remote FastNetMon with config changes
+                -v: Print verbose information
+                -w: Write to db if read from file and file if read from db
+        $0 -V
+        $0 -h: help
+
+                Hostname: a specific fastnetmon
+
+                -V: Print version and exit
+
+TODO:  -u
+                - generate and save OpenVPN keys
+                - update nds with hostname / ip address information
