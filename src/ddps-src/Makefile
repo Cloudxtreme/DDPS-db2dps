@@ -108,15 +108,14 @@ bin: $(perlfiles)
 		sudo sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  $$exec.pl > $$exec;	\
 		sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
 	done
-
-	#for exec in $(shellfiles);																		\
-	#do																								\
-	#	exec=`basename $$exec .sh`	;							\
-	#	sudo $(RM) $$exec;																			\
-	#	sudo sed -e '/#INCLUDE_VERSION_SH/ {' -e 'r version.SH' -e 'd' -e'}'  $$exec.sh > $$exec;	\
-	#	sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
-	#done
-	#sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) default-rules.sh $(BINDIR);
+	for exec in $(shellfiles);																		\
+	do																								\
+		exec=`basename $$exec .sh`	;							\
+		sudo $(RM) $$exec;																			\
+		sudo sed -e '/#INCLUDE_VERSION_SH/ {' -e 'r version.SH' -e 'd' -e'}'  $$exec.sh > $$exec;	\
+		sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) $$exec $(BINDIR);							\
+	done
+	sudo $(INSTALL) -c -m 0555 -o $(UID) -g $(GID) default-rules.sh $(BINDIR);
 
 exabgpsyntax:
 			perl ./test-bgp-rules.pl | ssh rnd@exabgp1 'cat > /var/run/exabgp/exabgp.cmd'
