@@ -44,7 +44,11 @@ EXCLUDE_INSTALL	= exclude_from_install.txt
 pkgs		= mkisofs curl libdata-dumper-simple-perl
 
 install:	hostcheck install_pkgs
-	#  fix VERSION and make it a bit more elegant
+	# should be made more generic
+	sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  $(PROJECT)/bin/fnmconfig > /tmp/fnmconfig
+	/bin/mv /tmp/fnmconfig $(PROJECT)/bin/fnmconfig
+	chown -R $(UID):$(GID) $(PROJECT)
+	chmod -R 555 $(PROJECT)/bin/*
 	sudo rsync -avzH --delete-before --exclude-from=$(EXCLUDE_INSTALL) $(PROJECT) $(PREFIX)
 
 uninstall:

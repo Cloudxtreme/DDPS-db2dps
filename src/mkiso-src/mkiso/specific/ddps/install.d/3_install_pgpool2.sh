@@ -20,7 +20,7 @@ make clean
 # logit "Append /opt/db2dps/bin and /opt/mkiso/bin to PATH ... "
 # Installed in non-default location, so add PATH 
 
-echo "PATH=$PATH:/opt/pgpool2/bin" > /etc/profile.d/pgpool2.sh
+echo 'PATH=$PATH:/opt/pgpool2/bin' > /etc/profile.d/pgpool2.sh
 chmod 644 /etc/profile.d/pgpool2.sh
 chown root:root /etc/profile.d/pgpool2.sh
 

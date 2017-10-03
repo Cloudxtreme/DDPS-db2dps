@@ -17,6 +17,16 @@
 #   limitations under the License.
 #
 ################################################################################
+#
+# To be run ahead of adding a new fastnetmon host in /opt/mkiso/specific
+#
+#
+################################################################################
+# TODO
+# - merge x.pl into this
+# - add -u and -c functionality
+#
+################################################################################
 
 #
 # Requirements
@@ -57,6 +67,12 @@ my $verbose			= 0;
 my $show_version	= 0;
 
 my $usage = "
+	
+	Convert fastnetmon host configuration files to database information or
+	write configuration files from database information.
+
+	Will generate and add ssh keys when missing
+
 	usage:
 
 	$0	[-v] -f | -r | -p | -u | -w hostname
@@ -72,10 +88,9 @@ my $usage = "
 
 		-V: Print version and exit
 
-TODO: -f, -u
-		-s: generate and save ssh keys
-		-o: generate and save OpenVPN keys
-		-n: update nds with hostname / ip address information
+TODO:  -u
+		- generate and save OpenVPN keys
+		- update nds with hostname / ip address information
 
 ";
 
@@ -99,8 +114,6 @@ my @fnm_config_files = (
 	'opt/i2dps/etc/ssh/id_ed25519.pub',
 	'etc/networks_whitelist',
 	'etc/fastnetmon.conf',
-	'etc/networks_list',
-	'etc/networks_whitelist',
 	'etc/networks_list',
 	'etc/openvpn/openvpn.conf',
 	'etc/openvpn/openvpn.key',
@@ -186,11 +199,28 @@ main();
 
 exit(0);
 
-
 #
 # Subs
 #
 sub main(@) {
+	{
+		#
+		# check for credentials, chattr require root access so for now just
+		# require it for all actions
+		# 
+		my $login = (getpwuid $>);
+		if ($login ne 'root')
+		{
+			print "\n$0 log must run as root\n\n";
+			exit 1;
+		}
+	}
+
+	# should be changed to
+	# mandatory: -r files | -r db              <hostname>
+	# optional:  -w files | -w db | -w stdout
+	# optional:  -u                            <hostname>
+	#
 	if (!GetOptions(
 		'read_from_files|f'	=> \$read_from_files,
 		'read_from_db|d'	=> \$read_from_db,
@@ -201,6 +231,14 @@ sub main(@) {
 	))
 	{
 		print $usage;
+		exit 0;
+	}
+
+	if ($show_version eq 1)
+	{
+		print "version:       $version\n";
+		print "build date:    $build_date\n";
+		print "build_git_sha: $build_git_sha\n";
 		exit 0;
 	}
 
@@ -231,12 +269,9 @@ sub main(@) {
 		exit 0;
 	}
 
-	parseini();
+	logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done"); exit 0;
 
-	#logit("read_from_files: $read_from_files");
-	#logit("read_from_db: $read_from_db");
-	#logit("write_to: $write_to");
-	#logit("print_to_stdout:	$print_to_stdout");
+	parseini();
 
 	$specific_config_file_dir = $specific_config_dir . "/" . $specific_hostname . "/" . "data/config_files";
 
@@ -562,9 +597,9 @@ EOF
 		$monitor_local_ip_addresses                        = $row[106] ? $row[106] : $default_value;
 		$hostgroup                                         = $row[107] ? $row[107] : $default_value;
 		$my_hosts_enable_ban                               = $row[108] ? $row[108] : $default_value;
-		$my_hosts_ban_for_pps                              = $row[109] ? $row[109] : $default_value;
-		$my_hosts_ban_for_bandwidth                        = $row[110] ? $row[110] : $default_value;
-		$my_hosts_ban_for_flows                            = $row[111] ? $row[111] : $default_value;
+		$my_hosts_ban_for_pps                              = $row[109] ? $row[109] : "off";
+		$my_hosts_ban_for_bandwidth                        = $row[110] ? $row[110] : "off";
+		$my_hosts_ban_for_flows                            = $row[111] ? $row[111] : "off";
 		$my_hosts_threshold_pps                            = $row[112] ? $row[112] : $default_value;
 		$my_hosts_threshold_mbps                           = $row[113] ? $row[113] : $default_value;
 		$my_hosts_threshold_flows                          = $row[114] ? $row[114] : $default_value;
@@ -670,6 +705,29 @@ sub print_to_stdout()	# write or read variables
 sub write_to_db()
 {
 	logit("in write to db");
+	my $driver  = "Pg";
+	my $dsn = "DBI:$driver:dbname=$db;host=127.0.0.1;port=5432";
+	my $dbh = DBI->connect($dsn, $dbuser, $dbpass, { RaiseError => 1 }) or die $DBI::errstr;
+	$sql_query = <<EOF;
+	INSERT 
+		...
+		;
+EOF
+
+	my $sth = $dbh->prepare($sql_query);
+	
+	$sth = $dbh->prepare($sql_query);
+	$sth->execute();
+
+#	... 
+#	unless ($count) {
+#		logit("error: no data found in database!");
+#		$sth->finish();
+#		exit 0;
+#	}
+	$sth->finish();
+
+
 }
 
 sub write_to_files()
@@ -722,9 +780,181 @@ sub write_to_files()
 
 sub read_from_files()
 {
+	
+ 	$fastnetmonversion = $fastnetmonversion ? $fastnetmonversion : $latest_fastnetmonversion;
+
+	# Read +122 parameters from the config files
+	my $file_not_found_so_stop = 0;
+
 	logit("in read from files");
-	logit("fastnetmon version: $fastnetmonversion, hostname: $hostname, networks_list $networks_list cli_stats_file_path $cli_stats_file_path");
-	foreach my $file (@fnm_config_files) { logit("file: $specific_config_file_dir/$fastnetmonversion/$file"); }
+	foreach my $file (@fnm_config_files)
+	{
+		if (-e "$specific_config_file_dir/$file")
+		{
+			logit("    ok: $specific_config_file_dir/$file");
+
+			if ($file =~ m/fnm2db.ini/)
+			{
+				logit("found file fnm2db.ini");
+
+				my @lines = path("$specific_config_file_dir/$file")->lines;
+				foreach my $row (@lines)
+				{
+					next if ($row =~ /^$/);
+					$customerid				= $1 if ($row =~ m/customerid\s*=\s*(\S+)/);
+					$fastnetmoninstanceid	= $1 if ($row =~ m/fastnetmoninstanceid\s*=\s*(\S+)/);
+					$uuid					= $1 if ($row =~ m/uuid\s*=\s*(\S+)/);
+					$administratorid		= $1 if ($row =~ m/administratorid\s*=\s*(\S+)/);
+				}
+			}
+			elsif($file =~ m/id_ed25519$/)
+			{
+				$private_ssh_key_for_upload_to_ddps	= path("$specific_config_file_dir/$file")->slurp_utf8;
+				chomp($private_ssh_key_for_upload_to_ddps);
+				logit("id_ed25519: $private_ssh_key_for_upload_to_ddps");
+			}
+			elsif($file =~ m/id_ed25519.pub/)
+			{
+				$public_ssh_key_for_upload_to_ddps	= path("$specific_config_file_dir/$file")->slurp_utf8;
+				chomp($public_ssh_key_for_upload_to_ddps);
+				logit("id_ed25519.pub: $public_ssh_key_for_upload_to_ddps");
+			}
+			elsif($file =~ m/networks_whitelist/)
+			{
+				$networks_whitelist = path("$specific_config_file_dir/$file")->slurp_utf8;
+				chomp($networks_whitelist);
+				logit("networks_whitelist: $networks_whitelist");
+			}
+			
+			elsif($file =~ m/fastnetmon.conf/)
+			{
+				logit("found file fastnetmon.conf");
+
+				my @lines = path("$specific_config_file_dir/$file")->lines;
+				foreach my $row (@lines)
+				{
+					chomp($row);
+					next if ($row =~ /^$/);
+					next if ($row =~ /^\s*#/);
+					
+					$local_syslog_logging						=  $1 if ($row =~ m/local_syslog_logging\s*=\s*(\S+)/);
+					$remote_syslog_logging						=  $1 if ($row =~ m/remote_syslog_logging\s*=\s*(\S+)/);
+					$remote_syslog_server						=  $1 if ($row =~ m/remote_syslog_server\s*=\s*(\S+)/);
+					$remote_syslog_port							=  $1 if ($row =~ m/remote_syslog_port\s*=\s*(\S+)/);
+					$enable_ban									=  $1 if ($row =~ m/enable_ban\s*=\s*(\S+)/);
+					$process_incoming_traffic					=  $1 if ($row =~ m/process_incoming_traffic\s*=\s*(\S+)/);
+					$process_outgoing_traffic					=  $1 if ($row =~ m/process_outgoing_traffic\s*=\s*(\S+)/);
+					$ban_details_records_count					=  $1 if ($row =~ m/ban_details_records_count\s*=\s*(\S+)/);
+					$ban_time									=  $1 if ($row =~ m/ban_time\s*=\s*(\S+)/);
+					$unban_only_if_attack_finished				=  $1 if ($row =~ m/unban_only_if_attack_finished\s*=\s*(\S+)/);
+					$enable_subnet_counters						=  $1 if ($row =~ m/enable_subnet_counters\s*=\s*(\S+)/);
+					$networks_list_path							=  $1 if ($row =~ m/networks_list_path\s*=\s*(\S+)/);
+					$white_list_path							=  $1 if ($row =~ m/white_list_path\s*=\s*(\S+)/);
+					$check_period								=  $1 if ($row =~ m/check_period\s*=\s*(\S+)/);
+					$enable_connection_tracking					=  $1 if ($row =~ m/enable_connection_tracking\s*=\s*(\S+)/);
+					$ban_for_pps								=  $1 if ($row =~ m/ban_for_pps\s*=\s*(\S+)/);
+					$ban_for_bandwidth							=  $1 if ($row =~ m/ban_for_bandwidth\s*=\s*(\S+)/);
+					$ban_for_flows								=  $1 if ($row =~ m/ban_for_flows\s*=\s*(\S+)/);
+					$threshold_pps								=  $1 if ($row =~ m/threshold_pps\s*=\s*(\S+)/);
+					$threshold_mbps								=  $1 if ($row =~ m/threshold_mbps\s*=\s*(\S+)/);
+					$threshold_flows							=  $1 if ($row =~ m/threshold_flows\s*=\s*(\S+)/);
+					$threshold_tcp_mbps							=  $1 if ($row =~ m/threshold_tcp_mbps\s*=\s*(\S+)/);
+					$threshold_udp_mbps							=  $1 if ($row =~ m/threshold_udp_mbps\s*=\s*(\S+)/);
+					$threshold_icmp_mbps						=  $1 if ($row =~ m/threshold_icmp_mbps\s*=\s*(\S+)/);
+					$threshold_tcp_pps							=  $1 if ($row =~ m/threshold_tcp_pps\s*=\s*(\S+)/);
+					$threshold_udp_pps							=  $1 if ($row =~ m/threshold_udp_pps\s*=\s*(\S+)/);
+					$threshold_icmp_pps							=  $1 if ($row =~ m/threshold_icmp_pps\s*=\s*(\S+)/);
+					$ban_for_tcp_bandwidth						=  $1 if ($row =~ m/ban_for_tcp_bandwidth\s*=\s*(\S+)/);
+					$ban_for_udp_bandwidth						=  $1 if ($row =~ m/ban_for_udp_bandwidth\s*=\s*(\S+)/);
+					$ban_for_icmp_bandwidth						=  $1 if ($row =~ m/ban_for_icmp_bandwidth\s*=\s*(\S+)/);
+					$ban_for_tcp_pps							=  $1 if ($row =~ m/ban_for_tcp_pps\s*=\s*(\S+)/);
+					$ban_for_udp_pps							=  $1 if ($row =~ m/ban_for_udp_pps\s*=\s*(\S+)/);
+					$ban_for_icmp_pps							=  $1 if ($row =~ m/ban_for_icmp_pps\s*=\s*(\S+)/);
+					$mirror										=  $1 if ($row =~ m/mirror\s*=\s*(\S+)/);
+					$pfring_sampling_ratio						=  $1 if ($row =~ m/pfring_sampling_ratio\s*=\s*(\S+)/);
+					$mirror_netmap								=  $1 if ($row =~ m/mirror_netmap\s*=\s*(\S+)/);
+					$mirror_snabbswitch							=  $1 if ($row =~ m/mirror_snabbswitch\s*=\s*(\S+)/);
+					$mirror_afpacket							=  $1 if ($row =~ m/mirror_afpacket\s*=\s*(\S+)/);
+					$netmap_sampling_ratio						=  $1 if ($row =~ m/netmap_sampling_ratio\s*=\s*(\S+)/);
+					$netmap_read_packet_length_from_ip_header	=  $1 if ($row =~ m/netmap_read_packet_length_from_ip_header\s*=\s*(\S+)/);
+					$pcap										=  $1 if ($row =~ m/pcap\s*=\s*(\S+)/);
+					$netflow									=  $1 if ($row =~ m/netflow\s*=\s*(\S+)/);
+					$sflow										=  $1 if ($row =~ m/sflow\s*=\s*(\S+)/);
+					$enable_pf_ring_zc_mode						=  $1 if ($row =~ m/enable_pf_ring_zc_mode\s*=\s*(\S+)/);
+					$interfaces									=  $1 if ($row =~ m/interfaces\s*=\s*(\S+)/);
+					$average_calculation_time					=  $1 if ($row =~ m/average_calculation_time\s*=\s*(\S+)/);
+					$average_calculation_time_for_subnets		=  $1 if ($row =~ m/average_calculation_time_for_subnets\s*=\s*(\S+)/);
+					$netflow_port								=  $1 if ($row =~ m/netflow_port\s*=\s*(\S+)/);
+					$netflow_host								=  $1 if ($row =~ m/netflow_host\s*=\s*(\S+)/);
+					$netflow_sampling_ratio						=  $1 if ($row =~ m/netflow_sampling_ratio\s*=\s*(\S+)/);
+					$netflow_divide_counters_on_interval_length	=  $1 if ($row =~ m/netflow_divide_counters_on_interval_length\s*=\s*(\S+)/);
+					$sflow_port									=  $1 if ($row =~ m/sflow_port\s*=\s*(\S+)/);
+					$sflow_host									=  $1 if ($row =~ m/sflow_host\s*=\s*(\S+)/);
+					$notify_script_path							=  $1 if ($row =~ m/notify_script_path\s*=\s*(\S+)/);
+					$notify_script_pass_details					=  $1 if ($row =~ m/notify_script_pass_details\s*=\s*(\S+)/);
+					$collect_attack_pcap_dumps					=  $1 if ($row =~ m/collect_attack_pcap_dumps\s*=\s*(\S+)/);
+					$process_pcap_attack_dumps_with_dpi			=  $1 if ($row =~ m/process_pcap_attack_dumps_with_dpi\s*=\s*(\S+)/);
+					$redis_enabled								=  $1 if ($row =~ m/redis_enabled\s*=\s*(\S+)/);
+					$redis_port									=  $1 if ($row =~ m/redis_port\s*=\s*(\S+)/);
+					$redis_host									=  $1 if ($row =~ m/redis_host\s*=\s*(\S+)/);
+					$redis_prefix								=  $1 if ($row =~ m/redis_prefix\s*=\s*(\S+)/);
+					$mongodb_enabled							=  $1 if ($row =~ m/mongodb_enabled\s*=\s*(\S+)/);
+					$mongodb_host								=  $1 if ($row =~ m/mongodb_host\s*=\s*(\S+)/);
+					$mongodb_port								=  $1 if ($row =~ m/mongodb_port\s*=\s*(\S+)/);
+					$mongodb_database_name						=  $1 if ($row =~ m/mongodb_database_name\s*=\s*(\S+)/);
+					$pfring_hardware_filters_enabled			=  $1 if ($row =~ m/pfring_hardware_filters_enabled\s*=\s*(\S+)/);
+					$exabgp										=  $1 if ($row =~ m/exabgp\s*=\s*(\S+)/);
+					$exabgp_command_pipe						=  $1 if ($row =~ m/exabgp_command_pipe\s*=\s*(\S+)/);
+					$exabgp_community							=  $1 if ($row =~ m/exabgp_community\s*=\s*(\S+)/);
+					$exabgp_next_hop							=  $1 if ($row =~ m/exabgp_next_hop\s*=\s*(\S+)/);
+					$exabgp_announce_host						=  $1 if ($row =~ m/exabgp_announce_host\s*=\s*(\S+)/);
+					$exabgp_announce_whole_subnet				=  $1 if ($row =~ m/exabgp_announce_whole_subnet\s*=\s*(\S+)/);
+					$exabgp_flow_spec_announces					=  $1 if ($row =~ m/exabgp_flow_spec_announces\s*=\s*(\S+)/);
+					$gobgp										=  $1 if ($row =~ m/gobgp\s*=\s*(\S+)/);
+					$gobgp_next_hop								=  $1 if ($row =~ m/gobgp_next_hop\s*=\s*(\S+)/);
+					$gobgp_announce_host						=  $1 if ($row =~ m/gobgp_announce_host\s*=\s*(\S+)/);
+					$gobgp_announce_whole_subnet				=  $1 if ($row =~ m/gobgp_announce_whole_subnet\s*=\s*(\S+)/);
+					$graphite									=  $1 if ($row =~ m/graphite\s*=\s*(\S+)/);
+					$graphite_host								=  $1 if ($row =~ m/graphite_host\s*=\s*(\S+)/);
+					$graphite_port								=  $1 if ($row =~ m/graphite_port\s*=\s*(\S+)/);
+					$graphite_prefix							=  $1 if ($row =~ m/graphite_prefix\s*=\s*(\S+)/);
+					$monitor_local_ip_addresses					=  $1 if ($row =~ m/monitor_local_ip_addresses\s*=\s*(\S+)/);
+					$pid_path									=  $1 if ($row =~ m/pid_path\s*=\s*(\S+)/);
+					$cli_stats_file_path						=  $1 if ($row =~ m/cli_stats_file_path\s*=\s*(\S+)/);
+					$enable_api									=  $1 if ($row =~ m/enable_api\s*=\s*(\S+)/);
+					$sort_parameter								=  $1 if ($row =~ m/sort_parameter\s*=\s*(\S+)/);
+					$max_ips_in_list							=  $1 if ($row =~ m/max_ips_in_list\s*=\s*(\S+)/);
+				}
+			}
+			elsif($file =~ m/networks_list/)
+			{
+				$networks_list = path("$specific_config_file_dir/$file")->slurp_utf8;
+				chomp($networks_list);
+				logit("networks_list: $networks_list");
+			}
+			elsif($file =~ m/openvpn.conf/)
+			{
+				logit("found file openvpn.conf");
+			}
+			#elsif($file =~ m/openvpn.key/) { logit("found file ..."); }
+			#elsif($file =~ m/openvpn.p12/) { logit("found file ..."); }
+			#else ($file =~ m/openvpn.txt/) { logit("found file ..."); }
+		}
+		else
+		{
+				logit("not ok: $specific_config_file_dir/$file");
+				$file_not_found_so_stop = 1;
+
+		}
+
+		if ($file_not_found_so_stop == 1)
+		{
+			mydie("cannot read all required files, bye");
+		}
+
+	}
+	logit("fastnetmon version: $fastnetmonversion, hostname: $specific_hostname");
+	# logit("Exit in file", __FILE__, ", line:", __LINE__, ". Done"); exit 0;
 }
 
 sub logit(@)
