@@ -142,9 +142,6 @@ WHERE
 	flowspecruleid in ( %s );
 EOF
 
-
 # end queries
-#UPDATE
-#	flow.flowspecrules set isexpired = TRUE where flowspecruleid in ( %s );
 
 1;

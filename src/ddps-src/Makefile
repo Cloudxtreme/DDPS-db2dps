@@ -82,9 +82,6 @@ initrc		= $(INITDIR)/$(RC)
 dbini		= $(ETCDIR)/$(PRODINI)
 sqlstr		= $(LIBDIR)/$(SQLSTR)
 
-default-test:
-			perl ./fnmconfig.pl
-
 default:	$(prog)
 			./$(prog) -V
 			#sudo ./$(prog) -v -s 4
@@ -96,7 +93,7 @@ $(prog):	hostcheck db2dps.pl version.pm install_perl_modules $(sqlstr)
 			@sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  db2dps.pl > db2dps
 			@chmod 555 db2dps
 
-perlfiles	= kill_switch_restart_all_exabgp.pl ddpsrules.pl fnmconfig.pl
+perlfiles	= kill_switch_restart_all_exabgp.pl ddpsrules.pl
 shellfiles	= default-rules.sh apply-default-rules.sh
 
 # target assumes everything is perl
@@ -119,6 +116,10 @@ bin: $(perlfiles)
 exabgpsyntax:
 			perl ./test-bgp-rules.pl | ssh rnd@exabgp1 'cat > /var/run/exabgp/exabgp.cmd'
 
+update:
+			sudo systemctl stop $(SERVICEFILE)
+			$(MAKE) install
+			
 install:	hostcheck dirs $(target) $(initrc) $(dbini) bin $(sqlstr)
 			sudo cp $(SERVICEFILE) /etc/systemd/system/
 			sudo systemctl enable $(SERVICEFILE)
@@ -283,4 +284,4 @@ md:
 
 .SUFFIXES:
 
-.SILENT:
+# .SILENT:
