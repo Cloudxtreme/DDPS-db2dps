@@ -137,9 +137,14 @@ EOF
 #
 $update_rules_when_expired = <<'EOF';
 UPDATE
-	flow.flowspecrules set isexpired = TRUE where flowspecruleid in ( %s );
+	flow.flowspecrules set isexpired = TRUE, isactivated = FALSE
+WHERE
+	flowspecruleid in ( %s );
 EOF
 
+
 # end queries
+#UPDATE
+#	flow.flowspecrules set isexpired = TRUE where flowspecruleid in ( %s );
 
 1;
