@@ -97,7 +97,7 @@
 #       }
 #     }
 #   }
-#   query(set isexpired for withdrawn rules in database)
+#   query(set isexpired = TRUE and isactivated = FALSE for withdrawn rules in database)
 # }
 # 
 # close database connection and exit normal
@@ -437,8 +437,8 @@ EOF
 		@unique_implemented_flowspecruleid = uniq @implemented_flowspecruleid;
 		if ($#unique_implemented_flowspecruleid >= 0)
 		{
-			logit("setting isexpired for $#unique_implemented_flowspecruleid rules in db");
-			logit("isexpired ids: @unique_implemented_flowspecruleid");
+			logit("expiring $#unique_implemented_flowspecruleid rules in db");
+			logit("query below, ids: @unique_implemented_flowspecruleid");
 			my $unique_implemented_flowspecruleid = join(', ', @implemented_flowspecruleid);
 
 			# careful with sql statemets and " in db.ini ...
