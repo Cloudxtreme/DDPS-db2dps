@@ -420,7 +420,13 @@ EOF
 		{
 			logit("setting isactivated for $#unique_implemented_flowspecruleid rules in db");
 			logit("isactivated ids: @unique_implemented_flowspecruleid");
+            foreach my $id (@implemented_flowspecruleid) { $id = "'{$id}'"; }
+
 			my $unique_implemented_flowspecruleid = join(', ', @implemented_flowspecruleid);
+            # !!!!!!!! TODO TODO 
+            # ... TRUE where uuid_flowspecruleid in ( 708df52c-2f8d-463d-8e75-b73e38bb2a94, ...
+            # fails, must be
+            # ... TRUE where uuid_flowspecruleid in ( '{708df52c-2f8d-463d-8e75-b73e38bb2a94}', ...
 
 			# careful with sql statemets and " in db.ini ...
 			$sql_query = $update_rules_when_announced;
@@ -438,6 +444,7 @@ EOF
 		if ($#unique_implemented_flowspecruleid >= 0)
 		{
 			logit("expiring $#unique_implemented_flowspecruleid rules in db");
+            foreach my $id (@implemented_flowspecruleid) { $id = "'{$id}'"; }
 			logit("query below, ids: @unique_implemented_flowspecruleid");
 			my $unique_implemented_flowspecruleid = join(', ', @implemented_flowspecruleid);
 

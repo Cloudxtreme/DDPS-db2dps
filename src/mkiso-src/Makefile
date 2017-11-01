@@ -1,10 +1,9 @@
 # ---- Will be extracted and used by remote.sh ----
 #:REMOTE-INFO-BEGIN
 # TARGETHOST   deployment/test host or IP address, e.g. user@1.2.3.4
-#TARGETHOST      = uninth@ddps.deic.dk
 TARGETHOST      = root@ddps-dev
-#TARGETHOST      = sysadm@ddps.ssi.i2.dk
-#TARGETHOST      = sysadm@172.16.201.113
+#TARGETHOST      = uninth@ww1.ddps.deic.dk
+#TARGETHOST      = uninth@ww2.ddps.deic.dk
 # UPLOADDIR    top directory for the source; everything from '.' will be synced
 #              with rsync to there! The directory must exist
 UPLOADDIR       = mkiso-src/
@@ -46,9 +45,9 @@ pkgs		= mkisofs curl libdata-dumper-simple-perl
 install:	hostcheck install_pkgs
 	# should be made more generic
 	sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  $(PROJECT)/bin/fnmconfig > /tmp/fnmconfig
-	/bin/mv /tmp/fnmconfig $(PROJECT)/bin/fnmconfig
-	chown -R $(UID):$(GID) $(PROJECT)
-	chmod -R 555 $(PROJECT)/bin/*
+	sudo /bin/mv /tmp/fnmconfig $(PROJECT)/bin/fnmconfig
+	sudo chown -R $(UID):$(GID) $(PROJECT)
+	sudo chmod -R 555 $(PROJECT)/bin/*
 	sudo rsync -avzH --delete-before --exclude-from=$(EXCLUDE_INSTALL) $(PROJECT) $(PREFIX)
 
 uninstall:

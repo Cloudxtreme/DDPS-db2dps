@@ -29,9 +29,8 @@ use Sys::Hostname;
 use File::Temp qw(tempfile);
 use File::Copy;
 use File::Basename;
-
-
-use Getopt::Long qw(:config no_ignore_case);
+use Term::ANSIColor;
+use Term::ReadKey;
 
 use Sys::Syslog;        # only needed for logit
 use POSIX;              # only needed for logit
@@ -51,15 +50,14 @@ require '/opt/db2dps/lib/sqlstr.pm';
 
 my ($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sordport,$dport,$sport,$icmp_type,$icmp_code,$tcpflags,$length,$ttl,$dscp,$frag,$action,$description);
 
-my $q_withdraw_rule	= 'update flow.flowspecrules set validto=now() where flowspecruleid in ( ${flowspecruleid} );';
-
-my $q_active_rules	= 'select flowspecruleid, destinationprefix, sourceprefix, ipprotocol, destinationport, validto from flow.flowspecrules, flow.fastnetmoninstances where flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid AND not isexpired AND mode = \'enforce\' order by validto DESC, validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding;';
+# my $q_withdraw_rule	= 'update flow.flowspecrules set validto=now() where uuid_flowspecruleid in ( \'${uuid_flowspecruleid}\' );';
+# my $q_active_rules	= 'select uuid_flowspecruleid, destinationprefix, sourceprefix, ipprotocol from flow.flowspecrules, flow.fastnetmoninstances where flow.flowspecrules.uuid_fastnetmoninstanceid = flow.fastnetmoninstances.uuid_fastnetmoninstanceid AND not isexpired AND mode = \'enforce\' order by validto DESC, validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding;';
 
 # ttl not used
 #
 
 my $verbose = 0;
-$customerid = 1;
+#$customerid = 1;
 
 $dst					= "null";
 $src					= "null";
@@ -79,13 +77,15 @@ $description			= "cli rule made by user $name/$REAL_USER_ID";
 
 $ttl					= "null";
 
-my $flowspecruleid		= "null";
+my $uuid_flowspecruleid	= "null";
 my $db                  = "";
 my $dbuser              = "";
 my $dbpass              = "";
 my $newrulesdir         = "";
 my $allmynetworks		= "";
-my $sleep_time			= "";
+my $sleep_time			= "";   # daemon update / read interval
+my $loop                = 0;
+my $sleeptime           = 0;    # default sleep time for $0 active [-s sleeptime]
 
 my $inicfg  = "/opt/db2dps/etc/db.ini";
 
@@ -95,13 +95,15 @@ my $isdigit				= qr/^[[:digit:]]+$/x;
 my $assume_yes = 0;
 
 my $usage = "
-    $0 [-v] add [-h] ... | del ... | active | log
+    $0 [-v] add [-h] ... | del ... | active [-s seconds] | log
 
     active:
         Print active rules with rule id's from database
+        -s number
+        interactive print active rules in a loop sleeping number seconds
 
     del:
-	    Set expire time to now for rule matching (list of) rule id(s)
+    Set expire time to now for rule matching (list of) rule id(s)
 
     add:
         --blocktime|b    minutes
@@ -117,12 +119,13 @@ my $usage = "
         --dscp|C         DSCP flags
         --frag|f         fragments
         --action|a       action:      accept discard or 'rate-limit 9600'
-		-h               print help on add
-		-y               do not prompt before implement the rule
+
+        -h               print help on add
+        -y               do not prompt before implement the rule
 
         IP version 4 addresses only
 
-		Please quote all arguments in single quotes ''
+        Please quote all arguments in single quotes ''
 
         flowspec syntax (exabgp) is accepted for all parameters but IP addresses
         e.g.
@@ -130,7 +133,7 @@ my $usage = "
           -P '=80 =443'
         Specify length: 3 specific all more than 300 or less than 302
           -l '=205 =206 =207 >=300&<=302' 
-		 Specify fragments and TCP tcpflags
+        Specify fragments and TCP tcpflags
           -f '[not-a-fragment dont-fragment is-fragment first-fragment last-fragment]'
           -T '[fin syn rst push ack urgent]'
 
@@ -142,7 +145,6 @@ my $usage = "
 \n";
 
 ################################################################################
-# included from version.pm
 #INCLUDE_VERSION_PM
 ################################################################################
 
@@ -230,6 +232,21 @@ sub main(@) {
 	}
 	elsif ($do eq 'active')
 	{
+        if (defined $ARGV[0] && $ARGV[0] eq '-s')
+        {
+            if ( defined($ARGV[1]) && ($ARGV[1] =~ m/^\d+$/))
+            {
+                $sleeptime = $ARGV[1];
+            }
+            else
+            {
+                $sleeptime = 4;
+            }
+        }
+        else
+        {
+            $sleeptime = 0;
+        }
 		printrule();
 	}
 	elsif ($do eq 'log')
@@ -346,28 +363,35 @@ sub addrule()
 			print "action '$action' not accept, discard of rate-limit dddd\n"; exit;
 	}
 
+	my $rule_line = "$customerid;$uuid;$fastnetmoninstanceid;$administratorid;$blocktime;$dst;$src;$protocol;$sordport;$dport;$sport;$icmp_type;$icmp_code;$tcpflags;$length;$ttl;$dscp;$frag;$action;$description";
+
 	print<<"EOF";
-customerid:            $customerid
-uuid:                  $uuid
-fastnetmoninstanceid:  $fastnetmoninstanceid
-administratorid:       $administratorid
-blocktime:             $blocktime
-dst:                   $dst
-src:                   $src
-protocol:              $protocol
-sordport:              $sordport
-dport:                 $dport
-sport:                 $sport
-icmp_type:             $icmp_type
-icmp_code:             $icmp_code
-tcpflags:              $tcpflags
-length:                $length
-dscp:                  $dscp
-frag:                  $frag
-action:                $action
-description:           $description
+customerid:            ->$customerid<-
+uuid:                  ->$uuid<-
+fastnetmoninstanceid:  ->$fastnetmoninstanceid<-
+administratorid:       ->$administratorid<-
+blocktime:             ->$blocktime<-
+dst:                   ->$dst<-
+src:                   ->$src<-
+protocol:              ->$protocol<-
+sordport:              ->$sordport<-
+dport:                 ->$dport<-
+sport:                 ->$sport<-
+icmp_type:             ->$icmp_type<-
+icmp_code:             ->$icmp_code<-
+tcpflags:              ->$tcpflags<-
+length:                ->$length<-
+dscp:                  ->$dscp<-
+frag:                  ->$frag<-
+action:                ->$action<-
+description:           ->$description<-
 
 Vars with 'null' are wild charts, and will match anything by exabgp
+
+Rule:
+------
+$rule_line
+------
 
 EOF
 
@@ -384,12 +408,12 @@ EOF
 	my $tmp_fh = new File::Temp( UNLINK => 0, TEMPLATE => 'newrules_XXXXXXXX', DIR => '/tmp', SUFFIX => '.dat');
 
 	print $tmp_fh "head;fnm;noop;1;unknown\n";
-	print $tmp_fh "$customerid;$uuid;$fastnetmoninstanceid;$administratorid;$blocktime;$dst;$src;$protocol;$sordport;$dport;$sport;$icmp_type;$icmp_code;$tcpflags;$length;$ttl;$dscp;$frag;$action;$description\n";
+	print $tmp_fh "$rule_line\n";
 	print $tmp_fh "last-line\n";
 	close($tmp_fh)||die "close $tmp_fh failed: $!";
 
 	my $basename = basename($tmp_fh);
-	#print "$tmp_fh -> $newrulesdir/$basename\n";
+    #print "$tmp_fh -> $newrulesdir/$basename\n";
 	move("$tmp_fh", "$newrulesdir/$basename") || die "move failed: $!";
 	print "done\nshow result with\n$0 active or $0 log\n";
 }
@@ -400,10 +424,12 @@ sub delrule()
 	{
 		print "flowspecruleid missing\n${usage}\n" ; exit;
 	}
-	${flowspecruleid} = join(",", @ARGV);
+    my @purgeid = @ARGV;
+    foreach my $id (@purgeid) { $id = "'{$id}'"; }
+	${uuid_flowspecruleid} = join(",", @purgeid);
 
 	my $driver  = "Pg";
-	my $sql_query = "update flow.flowspecrules set validto=now() where flowspecruleid in ( ${flowspecruleid} );";
+	my $sql_query = "update flow.flowspecrules set validto=now() where uuid_flowspecruleid in ( ${uuid_flowspecruleid} );";
 
 	my $dsn = "DBI:$driver:dbname=$db;host=127.0.0.1;port=5432";
 	$dbh = DBI->connect($dsn, $dbuser, $dbpass, { RaiseError => 1 }) or die $DBI::errstr;
@@ -412,7 +438,7 @@ sub delrule()
 	$sth->execute();
 	$sth->finish();
 
-	$sql_query = "select flowspecruleid, validto from flow.flowspecrules where flowspecruleid in ( ${flowspecruleid} );";
+	$sql_query = "select uuid_flowspecruleid, validto from flow.flowspecrules where uuid_flowspecruleid in ( ${uuid_flowspecruleid} );";
 
 	$sth = $dbh->prepare($sql_query);
 	$sth->execute();
@@ -421,15 +447,15 @@ sub delrule()
 	while (my @row = $sth->fetchrow_array)
 	{	
 		$i++;
-		$flowspecruleid		= $row[0] ? $row[0] : '';
-		$validto			= $row[1] ? $row[1] : '';
+		$uuid_flowspecruleid		= $row[0] ? $row[0] : '';
+		$validto			        = $row[1] ? $row[1] : '';
 
 		my $format = '%Y-%m-%d %H:%M:%S';
 		my $expired = substr($validto, 0, -10);
 		my $now = strftime "$format", localtime(time);
 		my $diff = Time::Piece->strptime($expired, $format) - Time::Piece->strptime($now, $format);
 
-		print "flowspecruleid $flowspecruleid expires at $expired, in $diff seconds\n";
+		print "flowspecruleid $uuid_flowspecruleid expires at $expired, in $diff seconds\n";
 
 	}
 	$sth->finish();
@@ -445,14 +471,14 @@ sub printrule()
 
 	my $sql_query = "
 		select
-		flowspecruleid, direction, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport,
+		uuid_flowspecruleid, direction, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport,
 		sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding, action, validfrom,
 		validto, description
 	from
 		flow.flowspecrules,
 		flow.fastnetmoninstances
 	where
-		flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid
+		flow.flowspecrules.uuid_fastnetmoninstanceid = flow.fastnetmoninstances.uuid_fastnetmoninstanceid
 		AND not isexpired
 		AND mode = 'enforce'
 	order by
@@ -463,45 +489,95 @@ sub printrule()
 	my $dsn = "DBI:$driver:dbname=$db;host=127.0.0.1;port=5432";
 	$dbh = DBI->connect($dsn, $dbuser, $dbpass, { RaiseError => 1 }) or die $DBI::errstr;
 
-	my $sth = $dbh->prepare($sql_query);
-	$sth->execute();
-	print "-" x 133 . "\n"; 
-	printf("| %-129s |\n", "Connected to db $db as $dbuser, Active rules");
-	print "-" x 133 . "\n"; 
-	printf(" %-16s | %-16s | %-16s | %-20s | %-16s | %-30s\n", "flowspecruleid", "dest. prefix", "src. prefix", "ipprotocol", "destinationport", "validto");
-	print "-" x 17  . "+" . "-" x 18 . "+" . "-" x 18 . "+" . "-" x 22 . "+" . "-" x 18 . "+" . "-" x 35 . "\n";
+    while (1)
+    {
 
-	my $i = 0;
-	while (my @row = $sth->fetchrow_array)
-	{	
-		$i++;
+        my $sth = $dbh->prepare($sql_query);
+        $sth->execute();
 
-		$flowspecruleid = $direction = $destinationprefix = $sourceprefix = $ipprotocol = $srcordestport = $destinationport = $sourceport = $icmptype = $icmpcode = $tcpflags = $packetlength = $dscp = $fragmentencoding = $action = $validfrom = $validto = "";
+        if( $sleeptime ne 0) {
+            print "\033[2J";    #clear the screen
+            print "\033[0;0H"; #jump to 0,0
+        }
 
-		$flowspecruleid		= $row[0] ? $row[0] : '';
-		$direction			= $row[1] ? $row[1] : '';
-		$destinationprefix	= $row[2] ? $row[2] : '@Any';
-		$sourceprefix		= $row[3] ? $row[3] : '@Any';
-		$ipprotocol			= $row[4] ? $row[4] : '@Any';
-		$srcordestport		= $row[5] ? $row[5] : '@Any';
-		$destinationport	= $row[6] ? $row[6] : '@Any';
-		$sourceport			= $row[7] ? $row[7] : '@Any';
-		$icmptype			= $row[8] ? $row[8] : '@Any';
-		$icmpcode			= $row[9] ? $row[9] : '@Any';
-		$tcpflags			= $row[10] ? $row[10] : '@Any';
-		$packetlength		= $row[11] ? $row[11] : '@Any';
-		$dscp				= $row[12] ? $row[12] : '@Any';
-		$fragmentencoding	= $row[13] ? $row[13] : '@Any';
-		$action				= $row[14] ? $row[14] : '@Any';
-		$validfrom			= $row[15] ? $row[15] : '';
-		$validto			= $row[16] ? $row[16] : '';
-		$description		= $row[17] ? $row[17] : '';
+        my ($wchar, $hchar, $wpixels, $hpixels) = GetTerminalSize();
+        if ($wchar lt 154) 
+        {
+            print "Please set terminal width to 154 or greater\n";
+            exit 0;
+        }
+        my $c;
 
-		printf(" %-16s | %-16s | %-16s | %-20s | %-16s | %-30s\n", $flowspecruleid, $destinationprefix, $sourceprefix, $ipprotocol, $destinationport, $validto);
-	}
-	$sth->finish();
+        my $now = strftime "%H:%M:%S (%Y/%m/%d)", localtime(time);
+        print color('bright_white on_grey10') if( $sleeptime ne 0);
+        print "-" x $wchar . "\n"; 
+        $c = $wchar - 35;
+        printf("| %-${c}s %30s |\n", "Connected to db $db as $dbuser, Active rules", "$now" );
+        print "-" x $wchar . "\n"; 
+        $c = $wchar - 124 ; # 38 20 20 22 18 
+        printf(" %-36s | %-18s | %-18s | %-20s | %-16s | %-${c}s\n", "flowspecruleid", "dest. prefix", "src. prefix", "ipprotocol", "destinationport", "validto");
+        $c = $wchar - 123 ;
+        print "-" x 38  . "+" . "-" x 20 . "+" . "-" x 20 . "+" . "-" x 22 . "+" . "-" x 18 . "+" . "-" x ${c} . "\n";
+        print color('reset') if( $sleeptime ne 0);
+
+        my $i = 0;
+        while (my @row = $sth->fetchrow_array)
+        {	
+            $i++;
+
+            $uuid_flowspecruleid = $direction = $destinationprefix = $sourceprefix = $ipprotocol = $srcordestport = $destinationport = $sourceport = $icmptype = $icmpcode = $tcpflags = $packetlength = $dscp = $fragmentencoding = $action = $validfrom = $validto = "";
+
+            $uuid_flowspecruleid		= $row[0] ? $row[0] : '';
+            $direction			= $row[1] ? $row[1] : '';
+            $destinationprefix	= $row[2] ? $row[2] : '@Any';
+            $sourceprefix		= $row[3] ? $row[3] : '@Any';
+            $ipprotocol			= $row[4] ? $row[4] : '@Any';
+            $srcordestport		= $row[5] ? $row[5] : '@Any';
+            $destinationport	= $row[6] ? $row[6] : '@Any';
+            $sourceport			= $row[7] ? $row[7] : '@Any';
+            $icmptype			= $row[8] ? $row[8] : '@Any';
+            $icmpcode			= $row[9] ? $row[9] : '@Any';
+            $tcpflags			= $row[10] ? $row[10] : '@Any';
+            $packetlength		= $row[11] ? $row[11] : '@Any';
+            $dscp				= $row[12] ? $row[12] : '@Any';
+            $fragmentencoding	= $row[13] ? $row[13] : '@Any';
+            $action				= $row[14] ? $row[14] : '@Any';
+            $validfrom			= $row[15] ? $row[15] : '';
+            $validto			= $row[16] ? $row[16] : '';
+            $description		= $row[17] ? $row[17] : '';
+
+            if ($sourceprefix	eq '0.0.0.0/0')
+            {
+                $sourceprefix = '@Any';
+            }
+
+            if( $sleeptime ne 0) 
+            {
+                if ($i % 2)
+                {
+                    print color('black on_grey23');
+                }
+                else
+                {
+                    print color('black on_grey15');
+                }
+            }
+
+            $c = $wchar - 124 ;
+            printf(" %-36s | %-18s | %-18s | %-20s | %-16s | %-${c}s\n", $uuid_flowspecruleid, $destinationprefix, $sourceprefix, $ipprotocol, $destinationport, $validto);
+            print color('reset') if( $sleeptime ne 0);
+
+        }
+        $sth->finish();
+	    print "Read $i rules - see full rules with sudo ddpsrules log\n\n";
+        if( $sleeptime eq 0)
+        {
+	        $dbh->disconnect();
+            exit 0;
+        }
+        sleep $sleeptime;
+    }
 	$dbh->disconnect();
-	print "Read $i rules - see full rules with sudo ddpsrules log\n";
 }
 
 
@@ -543,6 +619,7 @@ sub parseini()
 	$sleep_time						= $data{'general'}{'sleep_time'};
 
 	$uuid							= $data{'ddpsrules'}{'uuid'};
+	$customerid						= $data{'ddpsrules'}{'customerid'};
 	$fastnetmoninstanceid			= $data{'ddpsrules'}{'fastnetmoninstanceid'};
 	$administratorid				= $data{'ddpsrules'}{'administratorid'};
 	$blocktime						= $data{'ddpsrules'}{'blocktime'};
