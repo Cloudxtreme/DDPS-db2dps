@@ -91,7 +91,7 @@ function assert () {
 function install_build_essential()
 {
 	# for make to work
-	apt-get -y install build-essential
+	apt-get -y install build-essential git
 
 	# for postgres backup to work:
 	/bin/cp ${DATADIR}/cfg/bin/autopgsqlbackup /usr/local/bin/autopgsqlbackup
@@ -262,81 +262,51 @@ EOF
 	logit "dummy key added to /home/sftpgroup/.ssh/authorized_keys"
 }
 
-function install_postgresql()
+function install_exabgp()
 {
-	# see https://www.postgresql.org/about/news/1432/
-	logit "Installing the latest postgres database .... "
 
-	logit "adding PPA to /etc/apt/sources.list.d/pgdg.list ... "
-	logit "adding keys ... "
-	logit "installing postgresql ... "
-	echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+    logit "installing exabgp and socat .... "
+    apt-get -y install exabgp socat
+    logit "installing configuration files ... "
+    /bin/cp /root/files/data/exabgp/* /etc/exabgp/
+    mkdir               /run/exabgp
+    chown exabgp:exabgp /run/exabgp/
+    chmod 755           /run/exabgp/
+    service exabgp stop
+    service exabgp start
+    systemctl is-active exabgp 
 
-	cat << EOF > /etc/apt/preferences.d/pgdg.pref
-Package: *
-Pin: release o=apt.postgresql.org
-Pin-Priority: 500
+    # required for access from ddps
+    mkdir /root/.ssh
+    cat << 'EOF' > /root/.ssh/authorized_keys
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/EolcoPvI67izK9wV/oyPP7iDOxUcvnYpc1DI2sBhHhDOrA19yS3FiLikrCyNfEf3nkJrVbuxMi+RjPJ4TU/VexQsVJzAdJl6hFgpBR/raZ5mBjKOZkbRFToKn9k1A1CqAroXurfQmiLi8KwG1SjDbqijts1ew4X9qxvduYdwZRKGU318W2ixkfiXn5G8BHgSR6qfdTjMJZxNYRnlstlvJ6V5cz8g2KudhntvNveDjX8CU6rTO0/aaB+R47qM5zDTgtTzk5LPguOMAHF/abYY6XsBdDybjiU6AXsayP/yhppbUkI4skqVIPe0Ey3aWZkSfIW3DU9hDF/jKK6NMQpR root@fodhost
 EOF
+    chmod -R 700 /root/.ssh
 
-	wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
-	apt-get -y update
-	#apt-get -y install postgresql postgresql-contrib libpq-dev
+    # rc.local fix for exabgp 
+    cat << EOF > /etc/rc.local
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
 
-    apt-get install postgresql-9.6 postgresql-client-9.6 postgresql-client-common postgresql-common postgresql-contrib-9.6 postgresql-server-dev-9.6 sysstat libsensors4 libpq-dev
+mkdir /run/exabgp
+chown exabgp:exabgp /run/exabgp/
+service exabgp restart
 
-    # Sæt pakkerne på hold:
-    apt-mark hold postgresql-9.6 postgresql-client-9.6 postgresql-client-common postgresql-common postgresql-contrib-9.6 postgresql-server-dev-9.6
-
-	logit "installed postgresql version: "
-	pg_config --version 2>&1 |logit
-	logit "expected output: PostgreSQL 9.6.1 or later"
-	psql --version 2>&1 |logit
-	logit "expected output: psql (PostgreSQL) 9.6.1 or later"
-
-	logit "chaning postgres config file ... "
-
-	# 9.4, 9.5, 9.6 ... pick the latest
-	PG_HBACONF=`ls -1 /etc/postgresql/*/main/pg_hba.conf|sort -n | tail -1`
-
-	logit "config file: ${PG_HBACONF}"
-	savefile "${PG_HBACONF}"
-	awk '
-	{
-		if ($1 == "local" && $2 == "all" && $3 == "postgres")
-		{
-			print $0
-			print "local all flowuser peer"
-			print "local all dbadmin md5"
-			next
-		}
-		{ print; next; }
-	}'	${PG_HBACONF}.org >	${PG_HBACONF}
-
-	chmod 0640 ${PG_HBACONF}
-	chown postgres:postgres ${PG_HBACONF}
-	service postgresql restart
-
-	logit "NOT creating database .... "
-
-	logit "EITHER restore an existing database made with"
-	echo "cd /; echo 'pg_dumpall | gzip -9 > /tmp/netflow.dmp.sql.gz' | su postgres "
-	echo "using "
-	echo "cd /; gunzip netflow.dmp.sql.gz"
-	echo "echo 'psql -d postgres -f /tmp/netflow.dmp.sql' |  su postgres"
-	logit "OR"
-	logit "execute commands from below: (should be in /root/files/data/db"
-	cat << EOF | logit
-	echo 'psql -f db/1_create_netwlow_db.sql'             | su postgres	
-	echo 'psql -f db/2_create_netflow_schema.sql'         | su postgres
-	echo 'psql netflow -f db/netflow_flow.icmp_codes.sql' | su postgres
-	echo 'psql netflow -f db/netflow_flow.icmp_types.sql' | su postgres
-	echo 'psql netflow -f db/netflow_flow.protocols.sql'  | su postgres
-	echo 'psql netflow -f db/netflow_flow.services.sql'   | su postgres
-
-	logit "connect with "
-	logit "ssh -v -L 5432:127.0.0.1:5432 sysadm@ddps-dev"
-
+exit 0
 EOF
+    chmod 555 /etc/rc.local
+    chown root /etc/rc.local
+
 }
 
 function main()
@@ -379,9 +349,7 @@ function main()
 
 	change_sshd_config
 
-	make_sftp_user
-
-	install_postgresql
+    install_exabgp
 
 	logit "all done"
 

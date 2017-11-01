@@ -10,7 +10,7 @@ apt-get -y dist-upgrade
 
 #:   2 Install local packages cmod, dailybuandupdate and grouproot.
 cd      /root/files
-dpkg -i cmod_1.1-2.deb
+dpkg -i cmod_1.2-2.deb
 dpkg -i dailybuandupdate_1.7-1.deb
 dpkg -i grouproot_1.2-1.deb
 
@@ -37,7 +37,7 @@ do
 	bash ${SHELLSCRIPT}
 done
 
-echo "all done" > ./finished
+#echo "all done" > ./finished
 logger -p mail.crig "Installation complete"
 
 # etc - loads cut

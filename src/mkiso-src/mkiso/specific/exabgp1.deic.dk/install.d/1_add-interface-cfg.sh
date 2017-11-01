@@ -5,9 +5,9 @@
 # Add static IPv4 addr to interface with no assigned IP
 # Set hostname 
 
-HOSTNAME=ddps-dev
+HOSTNAME=exabgp1.ddps
 
-IPV4ADDR=192.168.99.10
+IPV4ADDR=192.168.99.101
 IPV4MASK=255.255.255.0
 IPV4NET=192.168.99.1
 IPV4BC=192.168.99.255

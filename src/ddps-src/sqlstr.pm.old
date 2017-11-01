@@ -8,16 +8,16 @@
 $addrule = << "END_OF_QUERY";
 insert into flow.flowspecrules
 (
-   uuid_flowspecruleid, uuid_customerid, rule_name,
-   uuid_administratorid,
+   flowspecruleid, customerid, rule_name,
+   administratorid,
    direction, validfrom, validto,
-   uuid_fastnetmoninstanceid,
+   fastnetmoninstanceid,
    isactivated, isexpired, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport,
    icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding, action, description
 )
 values
 (
-   uuid_generate_v4(), '__customerid', '__uuid',
+   (select coalesce(max(flowspecruleid),0)+1 from flow.flowspecrules), '__customerid', '__uuid',
    '__administratorid',
    'in', now(), now()+interval '__blocktime minutes',
    '__fastnetmoninstanceid',
@@ -28,7 +28,7 @@ END_OF_QUERY
 
 $newrules = <<'EOF';
 SELECT
-	uuid_flowspecruleid,
+	flowspecruleid,
 	direction,
 	destinationprefix,
 	sourceprefix,
@@ -49,7 +49,7 @@ FROM
 	flow.flowspecrules,
 	flow.fastnetmoninstances
 WHERE
-	flow.flowspecrules.uuid_fastnetmoninstanceid = flow.fastnetmoninstances.uuid_fastnetmoninstanceid
+	flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid
 	AND not isexpired
 	AND not isactivated
 	AND mode = 'enforce'
@@ -64,7 +64,7 @@ EOF
 #
 $all_rules 			= <<'EOF';
 SELECT
-	uuid_flowspecruleid,
+	flowspecruleid,
 	direction,
 	destinationprefix,
 	sourceprefix,
@@ -85,7 +85,7 @@ FROM
 	flow.flowspecrules,
 	flow.fastnetmoninstances
 WHERE
-	flow.flowspecrules.uuid_fastnetmoninstanceid = flow.fastnetmoninstances.uuid_fastnetmoninstanceid
+	flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid
 	AND mode = 'enforce'
 ORDER BY
 	validto DESC,
@@ -97,7 +97,7 @@ EOF
 #
 $update_rules_when_announced	= <<'EOF';
 UPDATE
-	flow.flowspecrules set isactivated = TRUE where uuid_flowspecruleid in ( %s );
+	flow.flowspecrules set isactivated = TRUE where flowspecruleid in ( %s );
 EOF
 
 #
@@ -105,7 +105,7 @@ EOF
 #
 $remove_expired_rules = <<'EOF';
 SELECT
-	uuid_flowspecruleid,
+	flowspecruleid,
 	direction,
 	destinationprefix,
 	sourceprefix,
@@ -126,7 +126,7 @@ FROM
 	flow.flowspecrules,
 	flow.fastnetmoninstances
 WHERE
-	flow.flowspecrules.uuid_fastnetmoninstanceid = flow.fastnetmoninstances.uuid_fastnetmoninstanceid
+	flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid
 	AND isactivated
 	AND not isexpired
 	AND mode = 'enforce' AND now() >= validto order by validto DESC;
@@ -139,7 +139,7 @@ $update_rules_when_expired = <<'EOF';
 UPDATE
 	flow.flowspecrules set isexpired = TRUE, isactivated = FALSE
 WHERE
-	uuid_flowspecruleid in ( %s );
+	flowspecruleid in ( %s );
 EOF
 
 # end queries

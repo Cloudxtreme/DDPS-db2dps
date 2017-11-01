@@ -1,15 +1,17 @@
 #!/bin/sh
 #
-# NTH
+# fnm-dev
 #
-# Add static IPv4 addr to interface with no assigned IP
-# Set hostname 
+# Add static IPv4 address to interface with no assigned IP. This
+# is only required in our VirtualBox test environment, where the
+# guest has default gateway behind the NAT interface, and access
+# to that interface is not possible.
+# The address should be on the host-only adapter.
+#
 
-HOSTNAME=ddps-dev
-
-IPV4ADDR=192.168.99.10
+IPV4ADDR=192.168.99.100
 IPV4MASK=255.255.255.0
-IPV4NET=192.168.99.1
+IPV4NET=192.168.99.0
 IPV4BC=192.168.99.255
 
 # list of interfaces
@@ -23,6 +25,7 @@ do
 	IPADDR_ASSIGNED=`ifconfig $I |sed '/inet6/d; /inet/!d'|wc -l| tr -d ' '`
 	case $IPADDR_ASSIGNED in
 	0)	IFNAME=$I
+		break
 	;;
 	*)	:
 	;;
@@ -52,22 +55,8 @@ iface $IFNAME inet static
 	$ROUTE
 EOF
 
-cat << EOF > /etc/hosts
-127.0.0.1	localhost
-127.0.1.1	$HOSTNAME
-
-# The following lines are desirable for IPv6 capable hosts
-::1     localhost ip6-localhost ip6-loopback
-ff02::1 ip6-allnodes
-ff02::2 ip6-allrouters
-EOF
-
-echo $HOSTNAME > /etc/hostname
-chmod 644 /etc/network/interfaces /etc/hosts /etc/hostname
-
 # this doesnt work
 systemctl restart systemd-logind.service
-hostnamectl set-hostname $HOSTNAME
 ifdown	$IFNAME
 ifup	$IFNAME
 service networking restart
