@@ -57,7 +57,7 @@ The drawing does not show everything for version 1.0
 
   - the system is protected by a firewall / VPN gateway, and customers must
     exist in [WAYF](https://www.wayf.dk/en/about-wayf/faq), be in a local database and
-    has the right VPN credentials
+    have the right VPN credentials
   - the database is replicated
   - there is a customer and system wide _kill switch_ to withdraw some or all rules
   - there is a 24 x 7 network operator backup behind the system in case of failure
@@ -66,11 +66,11 @@ The drawing does not show everything for version 1.0
 
 ## Critic of existing systems
 
-We evaluated [firewall on demand](https://flowspy.readthedocs.io/en/latest/) made by
-[grnet.gr](https://grnet.gr/en/) and found it had some disadvantages compared to
-what we wanted. Among others they included
+We were inspired to a large degree by [firewall on demand](https://flowspy.readthedocs.io/en/latest/) initially developped by
+[grnet.gr](https://grnet.gr/en/). However, we found it had some disadvantages compared to
+what we wanted. Among others they included at the time we evaluated it:
 
-  - configuration based on netconf (see [RFC4741](http://www.rfc-editor.org/rfc/rfc4741.txt),
+  - the configuration was based on netconf (see [RFC4741](http://www.rfc-editor.org/rfc/rfc4741.txt),
 	[netconf docs](http://www.netconfcentral.org/netconf_docs)) and
 	[RFC4742](https://tools.ietf.org/html/rfc4742) Using the NETCONF Configuration
 	Protocol over Secure SHell).  All announce and withdraw would would either
@@ -86,8 +86,8 @@ what we wanted. Among others they included
 	  the code while fixing errors and tailoring it to suit our requirements
 	- freeze the code base and the dependencies and just use it as it is
 
-Firewall on demand is a GUI which does not do any detection it self; what to
-mitigate against is left to the operator.
+More importantly, Firewall-on-demand did not include detection ; what to
+mitigate against was left to the operator.
 
 We wanted a high degree of automatic mitigation, as time is critical and a
 spare resource during a DDoS attack. The need for manual rules would be to
