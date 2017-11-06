@@ -31,6 +31,7 @@ use sigtrap qw(die normal-signals);
 use POSIX;
 use Sys::Syslog;
 use Net::SSH2;
+use Path::Tiny;
 
 #
 # prototypes
@@ -69,81 +70,102 @@ sub main(@)
 
     $hostlist                       = $data{'general'}{'hostlist'};
 
-    my %exabgp_uptimes = ();
     my @hostlist = split(' ', $hostlist);
+    #------------------------------------------------------------
+    my $ok_to_connect = 0;
+    my $exabgp_restarted = 0;
+    my %exabgp_lstart = ();
+    foreach my $host (@hostlist) {
+        $exabgp_lstart{$host} = "init"; 
+    }
+    #------------------------------------------------------------
+
     while(1)
     {
+        $ok_to_connect = 0;
+        $exabgp_restarted = 0;
         foreach my $host (@hostlist) {
             my $sshuser         = $data{$host}{'sshuser'};          $sshuser =~ tr/\"//d;
             my $identity_file   = $data{$host}{'identity_file'};    $identity_file =~ tr/\"//d;
             my $public_key      = $data{$host}{'public_key'};       $public_key =~ tr/\"//d;
             my $filtertype      = $data{$host}{'filtertype'};       $filtertype =~ tr/\"//d;
             my $exabgp_pipe     = $data{$host}{'exabgp_pipe'};      $exabgp_pipe =~ tr/\"//d;
+            my $datadir         = $data{'general'}{'datadir'};
 
-
-            logit("$host of $hostlist: $sshuser | $exabgp_pipe");
+            #------------------------------------------------------------
 
             my $ssh2 = Net::SSH2->new(timeout => 100);
             if (! $ssh2->connect($host)) {
-                logit("Failed connection to $host");
+                logit("ssh connection to '$host' failed");
+                $ok_to_connect = 0;
             }
-            if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) ) {
-                logit("public/private key authentication for $sshuser to $host failed with: $!");
-                logit("Please check modes for .ssh/* for user\@host and ~/.ssh/authorized_keys too");
-                logit("Some versions of Net::SSH2 may only support rsa");
+            else {
+                if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) ) {
+                    logit("public/private key authentication for $sshuser to $host failed with: $!");
+                    logit("Check local and remote modes for keys and directory including authorized_keys config etc");
+                    logit("Notice some versions of Net::SSH2 may ONLY support rsa");
+                    $ok_to_connect = 0;
+                }
+                else {
+                    #
+                    # host up and accepts connections
+                    #
+                    # Get PID of process exabgp (ps) remove blanks (tr) and get start time in seconds (stat)
+                    #my $cmd = "stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
+                    # Use GNU date to calculate start time in seconds
+                    #my $cmd = 'echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)'
+
+                    # get start time of exabgp process as a text string, if it changes then do something
+                    # as new processes do not start earlier than old ones
+                    my $cmd = "ps -C exabgp -o lstart=";
+
+                    my $chan = $ssh2->channel();
+                    $chan->blocking(0);
+                    $chan->shell();
+
+                    my $len = 0;
+                    my $buf = 0;
+
+                    $chan->write("$cmd\n");
+                    select(undef,undef,undef,0.2);
+
+                    my $result = "";
+                    $result = $result . $buf while defined ($len = $chan->read($buf,512));
+
+                    $chan->close;
+
+                    chomp($result);
+
+                    if ($result eq '') {
+                        logit("$host: service exabgp down");
+                        $ok_to_connect = 0;
+                        #
+                        # do not attempt to contact host for update
+                        #
+                    }
+                    else {
+                        if ($exabgp_lstart{$host} eq $result) {
+                            logit("$host: service exabgp running ok");
+                            # $sql_query = $newrules;
+                            $ok_to_connect = 1;
+                            $exabgp_restarted = 0;
+                        } 
+                        else {
+                            logit("$host: service exabgp restarted: '$exabgp_lstart{$host}' != '$result'");
+                            $exabgp_lstart{$host} = "$result";
+                            # $sql_query = $all_rules;
+                            $ok_to_connect = 1;
+                            $exabgp_restarted = 1;
+                        }
+                    } # end do update
+                }
             }
-
-            # Get PID of process exabgp (ps) remove blanks (tr) and get start time in seconds (stat)
-            #my $cmd = "stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
-            # Use GNU date to calculate start time in seconds
-            #my $cmd = 'echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)'
-
-            # get start time of exabgp process as a text string, if it changes then do something
-            # as new processes do not start earlier than old ones
-            my $cmd = "ps -C exabgp -o lstart=";
-
-            my $chan = $ssh2->channel();
-            $chan->blocking(0);
-            $chan->shell();
-
-            my $len = 0;
-            my $buf = 0;
-
-            $chan->write("$cmd\n");
-            select(undef,undef,undef,0.2);
-            print $buf while defined ($len = $chan->read($buf,512));
-
-            #my @CMDS = ( 'whoami', 'umame' );
-            #foreach $cmd (@CMDS) {
-            #      #chomp $cmd;
-            #      my $command = $channel->exec("$cmd") or die $_;
-            #      my $output;
-            #      my $len = $channel->read($output,2048);
-            #      print "cmd is '$cmd', output is '$output'\n";
-            #  }
-
-
-            #--------------------------------------------------------------------------------------#
-            # TODO
-            #     Run on ddps, loop all hosts (parse ini)
-            #     loop:
-            #       connect to exabgpx, check runtime for exabgp greater than last check, next
-            #       on error:  touch  local file only if we have not pushed the big red button
-            #       sleep
-            #
-            # ssh trust must be enabled anyway, program in perl for ease of ini parsing
-            # check with shell code: 
-            #   cat << 'EOF' | ssh -qT localhost
-            #   ps -o etimes= -p `ps -C exabgp -o pid=` 2>/dev/null
-            #   EOF
-            #   stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`
-            #
-            # which will be empty if exabgp is not running or else print time since start in seconds
-            #--------------------------------------------------------------------------------------#
-
-        }
+            #------------------------------------------------------------
+            logit("ok to do something ok_to_connect = $ok_to_connect, exabgp_restarted = $exabgp_restarted");
+        } # foreach ... 
         sleep(2);
-    }
+
+    } # while(1)
 
     exit 0;
 }
