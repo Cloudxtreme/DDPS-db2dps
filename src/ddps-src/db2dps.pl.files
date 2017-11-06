@@ -231,16 +231,9 @@ my @unique_implemented_flowspecruleid;
 
 my $at_least_one_successfull_upload = 0;        # Keep track on if upload of the rulebase fails for *all* exabgp hosts
 
-# only connect to exabgp if it is running, check start-time (date string), initialize
-my %exabgp_lstart = ();
-my $ok_to_connect = 0;
-my $exabgp_restarted = 0;
-
-
 ################################################################################
 # MAIN
 ################################################################################
-
 
 main();
 
@@ -395,12 +388,6 @@ EOF
     logit("All allowed destination networks: $allmynetworks");
 
     my $first_loop = 1;
-
-    # only connect to exabgp if it is running, check start-time (date string), initialize
-    foreach my $host (split(' ', $hostlist))
-    {
-        $exabgp_lstart{$host} = "init";
-    }
 
     loop: while ($continue)
     {
@@ -582,6 +569,12 @@ sub mkrulebase($$)
     # For each bgp-host do
     my @hostlist = split(' ', $hostlist);
 
+    # only connect to exabgp if it is running, check start-time (date string), initialize
+    my %exabgp_lstart = ();
+        foreach my $host (@hostlist) {
+        $exabgp_lstart{$host} = "init";
+    }
+
     foreach my $host (@hostlist)
     {
         my $sshuser         = $data{$host}{'sshuser'};          $sshuser =~ tr/\"//d;
@@ -593,36 +586,20 @@ sub mkrulebase($$)
         #------------------------------------------------------------
 
         my $ssh2 = Net::SSH2->new(timeout => 100);
-        if (! $ssh2->connect($host))
-        {
+        if (! $ssh2->connect($host)) {
             logit("ssh connection to '$host' failed");
-            $ok_to_connect = 0;
         }
-        else
-        {
-            if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) )
-            {
+        else {
+            if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) ) {
                 logit("public/private key authentication for $sshuser to $host failed with: $!");
                 logit("Check local and remote modes for keys and directory including authorized_keys config etc");
                 logit("Notice some versions of Net::SSH2 may ONLY support rsa");
-                $ok_to_connect = 0;
             }
-            else
-            {
+            else {
                 #
-                # host up and accepts connections
+                # host up and accepts connections, get exabgp process start time
                 #
-                # Get PID of process exabgp (ps) remove blanks (tr) and get start time in seconds (stat)
-                #my $cmd = "stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
-                # Use GNU date to calculate start time in seconds
-                #my $cmd = 'echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)'
-
-                # get start time of exabgp process as a text string, if it changes then do something
-                # as new processes do not start earlier than old ones
-                #my $cmd = "ps -C exabgp -o lstart=";
-                ## avoid problems with motd etc and faileure when process not running
-                #my $cmd = "ps -C exabgp -o pid= >/dev/null && stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
-                my $cmd = '/bin/ps -C exabgp -o pid= >/dev/null && echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)';
+                my $cmd = "ps -C exabgp -o lstart=";
 
                 my $chan = $ssh2->channel();
                 $chan->blocking(0);
@@ -637,14 +614,12 @@ sub mkrulebase($$)
                 my $result = "";
                 $result = $result . $buf while defined ($len = $chan->read($buf,512));
 
-                $chan->send_eof;
                 $chan->close;
 
                 chomp($result);
 
                 if ($result eq '') {
-                    logit("$host: service exabgp down command output empty");
-                    $ok_to_connect = 0;
+                    logit("$host: service exabgp down");
                     #
                     # do not attempt to contact host for update
                     #
@@ -653,383 +628,395 @@ sub mkrulebase($$)
                     if ($exabgp_lstart{$host} eq $result) {
                         logit("$host: service exabgp running ok");
                         # $sql_query = $newrules;
-                        $ok_to_connect = 1;
-                        $exabgp_restarted = 0;
                     } 
                     else {
                         logit("$host: service exabgp restarted: '$exabgp_lstart{$host}' != '$result'");
                         $exabgp_lstart{$host} = "$result";
                         # $sql_query = $all_rules;
-                        $ok_to_connect = 1;
-                        $exabgp_restarted = 1;
                     }
-                }
+                } # end do update
             }
         }
+        #------------------------------------------------------------
 
-        if ($ok_to_connect == 1)
+
+        if ($type eq lc "announce")
         {
-            if ($type eq lc "announce")
-            {
-                # if [ a full feed is required ]
-                # only relevant for announcements
-                
-                if ($exabgp_restarted == 1)
-                {
-                    logit("querying for all rules");
-                    $sql_query = $all_rules;
-                }
-                {
-                    $sql_query = $newrules;
-                }
-            }
-            elsif($type eq lc "withdraw")
-            {
-                $sql_query = $remove_expired_rules;
-            }
-            else
-            {
-                mydie("argument type to mkrulebase must be 'announce' or 'withdraw' not '$type'");
-            }
-
-            my $sth = $dbh->prepare($sql_query);
-            $sth->execute();
-
-            # print rules to rulebase
-            open (my $fh, '>', $rulebase) || mydie "open write '$rulebase' failed: $!";
-
-            # http://www.perlmonks.org/?node_id=312625
-            # $sth->execute();
-            # my $count = 0;
-            # while (my $row = $sth->fetchrow_arrayref()) {
-            #   process_row($row);
-            #   $count++;
-            # }
-            # unless ($count) {
-            #   do_something_else();
-            # }
+            # if [ a full feed is required ]
+            # only relevant for announcements
+            
             #
-
-            while (my @row = $sth->fetchrow_array)
-            {   
-                logit("read: ",  join(",", map {$_ ? $_ : "''"} @row) );
-
-                # initialize
-                $flowspecruleid = $direction = $destinationprefix = $sourceport = $ipprotocol = $srcordestport = $destinationport = $sourceport = $sourceport = $icmptype = $icmpcode = $tcpflags = $packetlength = $dscp = $fragmentencoding = $action = $validfrom = $validto = "";
-
-                # required as some db fields are null
-                $flowspecruleid     = $row[0] ? $row[0] : '';
-                $direction          = $row[1] ? $row[1] : '';
-                $destinationprefix  = $row[2] ? $row[2] : '';
-                $sourceprefix       = $row[3] ? $row[3] : '';
-                $ipprotocol         = $row[4] ? $row[4] : '';
-                $srcordestport      = $row[5] ? $row[5] : '';
-                $destinationport    = $row[6] ? $row[6] : '';
-                $sourceport         = $row[7] ? $row[7] : '';
-                $icmptype           = $row[8] ? $row[8] : '';
-                $icmpcode           = $row[9] ? $row[9] : '';
-                $tcpflags           = $row[10] ? $row[10] : '';
-                $packetlength       = $row[11] ? $row[11] : '';
-                $dscp               = $row[12] ? $row[12] : '';
-                $fragmentencoding   = $row[13] ? $row[13] : '';
-                $action             = $row[14] ? $row[14] : '';
-                $validfrom          = $row[15] ? $row[15] : '';     # 2017-02-19 23:04:30.682073+01
-                $validto            = $row[16] ? $row[16] : '';     # 2017-02-19 23:04:30.682073+01
-                                                                    # Time::HiRes only have this 
-                                                                    # xxxx-xx-xx-xx:xx:xx.xxx
-                                                                    # so valid* must be truncated
-
-                # Prevent incomplete rules from entering the flow: if an required field fails
-                # set $ipprotocol to unknown ('')
-                $flowspecruleid         = $flowspecruleid       ? $flowspecruleid       : "";
-                $direction              = $direction            ? $direction            : "";
-                $destinationprefix      = $destinationprefix    ? $destinationprefix    : "";
-                $sourceprefix           = $sourceprefix         ? $sourceprefix         : "";
-                $ipprotocol             = $ipprotocol           ? $ipprotocol           : "";
-                $srcordestport          = $srcordestport        ? $srcordestport        : "";
-                $destinationport        = $destinationport      ? $destinationport      : "";
-                $sourceport             = $sourceport           ? $sourceport           : "";
-                $icmptype               = $icmptype             ? $icmptype             : "";
-                $icmpcode               = $icmpcode             ? $icmpcode             : "";
-                $tcpflags               = $tcpflags             ? $tcpflags             : "";
-                $packetlength           = $packetlength         ? $packetlength         : "";
-                $dscp                   = $dscp                 ? $dscp                 : "";
-                $fragmentencoding       = $fragmentencoding     ? $fragmentencoding     : "";
-                $action                 = $action               ? $action               : "discard";
-                $validfrom              = $validfrom            ? $validfrom            : "";
-                $validto                = $validto              ? $validto              : "";
-
-                logit("debug:");
-                logit("number of collums in \@row:$#row");
-                logit("flowspecruleid: $flowspecruleid");
-                logit("direction: $direction");
-                logit("destinationprefix: $destinationprefix");
-                logit("sourceprefix: $sourceprefix");
-                logit("ipprotocol: $ipprotocol");
-                logit("srcordestport: $srcordestport");
-                logit("destinationport: $destinationport");
-                logit("sourceport: $sourceport");
-                logit("icmptype: $icmptype");
-                logit("icmpcode: $icmpcode");
-                logit("tcpflags: $tcpflags");
-                logit("packetlength: $packetlength");
-                logit("dscp: $dscp");
-                logit("fragmentencoding: $fragmentencoding");
-                logit("action: $action");
-                logit("validfrom: $validfrom");
-                logit("validto: $validto");
-
-                #
-                #  2554, in, 130.226.136.242, , udp, , , , , , , , 60, , , 2017-04-26 17:05:38.492843+02, 2017-04-26 17:15:38.492843+02,   -- no validto
-                #  If no 'action' then $action = $validfrom and  $validto = "" ??????
-                #
-                logit("read from db: $flowspecruleid, $direction, $destinationprefix, $sourceport, $ipprotocol, $srcordestport, $destinationport, $sourceport, $sourceport, $icmptype, $icmpcode, $tcpflags, $packetlength, $dscp, $fragmentencoding, $action, $validfrom, $validto");
-
-                # append /32 to prefix if not cidr and assume just an IP address
-                if ($destinationprefix ne "")
-                {
-                    if ($destinationprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
-                    {
-                        $destinationprefix = $destinationprefix . "/32";
-                    }
-                }
-
-                if ($sourceprefix ne "")
-                {
-                    if ($sourceprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
-                    {
-                        $sourceprefix = $sourceprefix . "/32";
-                    }
-                }
-
-                # Last line of defence to prevent wron announcements: Do not
-                # announce / withdraw networks outside our constituency
-                my $dst_subnet = new NetAddr::IP $destinationprefix;
-
-                my $destinationprefix_is_within_my_network = 1;
-
-                logit ("testing $destinationprefix = $dst_subnet within my networks: $destinationprefix_is_within_my_network");
-                foreach my $mynetwork (split ' ', $allmynetworks)
-                {
-                    my $subnet = new NetAddr::IP $mynetwork;
-                    if ($dst_subnet->within($subnet))
-                    {
-                            logit("dst $dst_subnet is within $subnet");
-                            $destinationprefix_is_within_my_network = 0;
-                    }
-                }
-                logit ("test done destinationprefix_is_within_my_network: $destinationprefix_is_within_my_network (0 is good)");
-                if ($destinationprefix_is_within_my_network == 1)
-                {
-                    logit("program error: rule should be ignored, outside our constituency destinationprefix=$destinationprefix sourceprefix=$sourceprefix ipprotocol=$ipprotocol validfrom=$validfrom validto=$validto");
-                    # set expiretime to now for rule and change comment to rule ignored source is ourside our network
-                }
-                else
-                {
-                    # The prev. rule -- ignored the on first rule
-                    my   (  $prev_flowspecruleid, $prev_direction, $prev_destinationprefix,
-                            $prev_sourceprefix, $prev_ipprotocol, $prev_srcordestport,
-                            $prev_destinationport, $prev_sourceport, $prev_icmptype,
-                            $prev_icmpcode, $prev_tcpflags, $prev_packetlength,
-                            $prev_dscp, $prev_fragmentencoding, $prev_validfrom, $prev_validto
-                        );
-
-                    # preserve implemented_flowspecruleid - duplicates will be removed later
-                    push(@implemented_flowspecruleid, $flowspecruleid);
-
-                    my $filtertype = $data{$host}{'filtertype'};        $filtertype =~ tr/\"//d;
-                    if ($filtertype eq lc 'flowspec')
-                    {
-                        my $rule = "";
-
-                        if (length $sourceprefix)       { $sourceprefix         = "source "             . $sourceprefix         . ";" }
-                        if (length $destinationprefix)  { $destinationprefix    = "destination "        . $destinationprefix    . ";" }
-                        if (length $sourceport)         { $sourceport           = "source-port "        . $sourceport           . ";" }
-                        if (length $destinationport)    { $destinationport      = "destination-port "   . $destinationport      . ";" }
-                        if (length $ipprotocol)         { $ipprotocol           = "protocol "           . $ipprotocol           . ";" }
-                        if (length $tcpflags)           { $tcpflags             = "tcp-flags "          . $tcpflags             . ";" }
-                        if (length $packetlength)       { $packetlength         = "packet-length "      . $packetlength         . ";" }
-                        if (length $fragmentencoding)   { $fragmentencoding     = "fragment "           . $fragmentencoding     . ";" }
-                        if (length $srcordestport)      { $srcordestport        = "srcordestport "      . $srcordestport        . ";" }
-                        if (length $icmptype)           { $icmptype             = "icmptype "           . $icmptype             . ";" }
-                        if (length $icmpcode)           { $icmpcode             = "icmpcode "           . $icmpcode             . ";" }
-                        if (length $dscp)               { $dscp                 = "dscp "               . $dscp                 . ";" }
-
-                        if ($ipprotocol  !~ /(icmp|tcp|udp|1|6|17)/)            # remove any tcp/udp/icmp specific things, if any
-                        {
-                            $tcpflags           = "";
-                            $icmptype           = "";
-                            $srcordestport      = "";
-                            $sourceport         = "";
-                            $destinationport    = "";
-                            $fragmentencoding   = "";
-                        }
-
-                        if ($ipprotocol =~ /icmp/)                      # remove any tcp/udp specific things, if any
-                        {
-                            $destinationport    = "";
-                            $sourceport         = "";
-                            $tcpflags           = "";
-                        }
-
-                        if ($ipprotocol =~ /udp/)                       # remove any tcp/icmp specific things, if any
-                        {
-                            $tcpflags           = "";
-                            $icmptype           = "";
-                            $tcpflags           = "";
-                        }
-                        if ($ipprotocol     =~/null/)                   # may be set to null from the command line tool meaning discard
-                        {
-                            $ipprotocol         = "";
-                            $tcpflags           = "";
-                            $icmptype           = "";
-                            $tcpflags           = "";
-                        }
-
-                        # The syntax for $sourceport and $destinationport is one of
-                        #   $destinationport    = "=22 =80 =443";   # ok
-                        #   $destinationport    = "=0-19";          # ok but do not mix
-                        #   $destinationport    = "<19";            # ok
-                        #   $destinationport    = "<19 >1024";      # ok
-                        #   $destinationport    = "<19 =22 >1024";  # ok
-                        # 1) number between 0,65535     => =$destinationport
-                        # 2) list of numbers 0,65535    => =$d =$d =$d ...
-                        # 3) [ -<>=][0-9]+              => trust the gui and dont change anything
-                        if ($destinationport    =~ /^\d+$/)         # single port number
-                        {
-                            $destinationport    =~ s/^/=/;
-                        }
-                        elsif ($destinationport =~ /^[\d\s]+$/)     # list of port number
-                        {
-                            $destinationport    =~ s/^/=/;
-                            $destinationport    =~ s/\s+/ =/g;
-                        }
-                        if ($destinationport        =~/null/)           # may be set to null from the command line tool meaning discard
-                        {
-                            $destinationport        = "" ;
-                        }
-
-                        if ($sourceport         =~ /^\d+$/)         # single port number
-                        {
-                            $sourceport         =~ s/^/=/;
-                            $sourceport         =~ s/\s+/ =/g;
-                        }
-                        elsif ($sourceport      =~ /^[\d\s]+$/)     # list of port numbers
-                        {
-                            $sourceport         =~ s/^/=/;
-                            $sourceport         =~ s/\s+/ =/g;
-                        }
-                        if ($sourceport     =~/null/)           # may be set to null from the command line tool meaning discard
-                        {
-                            $sourceport     = "" ;
-                        }
-
-                        if ($srcordestport      =~ /^\d+$/)         # single port number
-                        {
-                            $srcordestport      =~ s/^/=/;
-                            $srcordestport      =~ s/\s+/ =/g;
-                        }
-                        elsif ($srcordestport   =~ /^[\d\s]+$/)     # list of port numbers
-                        {
-                            $srcordestport      =~ s/^/=/;
-                            $srcordestport      =~ s/\s+/ =/g;
-                        }
-                        if ($srcordestport      =~/null/)           # may be set to null from the command line tool meaning discard
-                        {
-                            $srcordestport      = "" ;
-                        }
-
-                        # packet size(s): null, number, list of numbers
-                        # or prepositioned <, > or range - -- in that case do nothing and trust the GUI
-                        if ($packetlength       =~ /^\d+$/)         # single size
-                        {
-                            $packetlength       =~ s/^/=/;
-                            $packetlength       =~ s/\s+/ =/g;
-                        }
-                        elsif ($packetlength    =~ /^[\d\s]+$/)     # list of sizes
-                        {
-                            $packetlength       =~ s/^/=/;
-                            $packetlength       =~ s/\s+/ =/g;
-                        }
-                        if ($packetlength       =~/null/)           # may be set to null from the command line tool meaning discard
-                        {
-                            $packetlength       = "" ;
-                        }
-
-                        # final rule
-                        $rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $sourceport $destinationport $ipprotocol $tcpflags $icmptype $icmpcode $packetlength $fragmentencoding $dscp } then { $action } } }";
-                        # removed '$srcordestport' -- pester exabgp!? 
-                        # $rule = "$type  ... match ... $srcordestport ...
-                        logit("rule: $rule");
-                        print $fh "$rule\n";
-                    }
-                    elsif ($filtertype eq lc 'blackhole')
-                    {
-                        logit("filtertype 'blackhole' not supported");
-                    }
-                    else
-                    {
-                        logit("unknown filtertype '$filtertype' not supported");
-                    }
-                }
-            }
-            close $fh;      # rulebase
-
-            logit("rulebase: $rulebase, size: ",  stat($rulebase)->size);
-
-            $sth->finish();
-
-            # send $rulebase to $host:exabgp_pipe if we have any rules
-            # This implementation may block everything if the scp transfer hangs
-            # Fix - in C - with https://www.libssh2.org/examples/sftp_write_sliding.html
-            # have AMD fix exabgp so we can scp to the pipe again or see
-            # https://gist.github.com/melo/2829330
-            # to do an scp (r, tmpfile) ; exec(sudo cat tmpfile > ....)
+            # TODO: change to test uptime of exabgp changed
             #
-            # TODO: Preserve rulebase if we cannot connet to at least one BGP host and try later
-            # Move to global and don't exipre if = 0;
-            # my $at_least_one_successfull_upload = 0;
-            $at_least_one_successfull_upload = 0;
-
-            my @unique_implemented_flowspecruleid = uniq @implemented_flowspecruleid;
-            if ($#unique_implemented_flowspecruleid >= 0)
+           
+            my $filepath = $datadir . "/" . $host;
+            if (-e $filepath )
             {
-                my $i = $#unique_implemented_flowspecruleid + 1;
-                logit("sending $i rules to $host");
-                my $ssh2 = Net::SSH2->new(timeout => 100);                              # connection timeout, not command timeout
-                if (! $ssh2->connect($host))
-                {
-                    logit("Failed connection to $host");
-                }
-                if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) )
-                {
-                    logit("public/private key authentication for $sshuser to $host failed with: $!");
-                    logit("Please check modes for .ssh/* for user\@host and ~/.ssh/authorized_keys too");
-                    logit("Some versions of Net::SSH2 may only support rsa");
-                }
-
-                if (! $ssh2->scp_put($rulebase, $exabgp_pipe))
-                {
-                    logit("failed transfer $type $rulebase to $host:$exabgp_pipe");
-                    $ssh2->disconnect();
-                }
-                else
-                {
-                    logit("succesfully transfered $type $rulebase to $host:$exabgp_pipe");
-                    $ssh2->disconnect();
-                    $at_least_one_successfull_upload = 1;
-                }
+                logit("file $filepath found $host require full feed");
+                unlink $filepath;
+                # query all records || continue
+                logit("querying for all rules");
+                $sql_query = $all_rules;
             }
-            else
+            #
+            # TODO end
+            #
+            else    # continue
             {
-                logit("no $type rules: update $host not needed");
+                $sql_query = $newrules;
             }
-        } # ok to connect ...
+        }
+        elsif($type eq lc "withdraw")
+        {
+            $sql_query = $remove_expired_rules;
+        }
         else
         {
-            logit("$host: host or service down");
+            mydie("argument type to mkrulebase must be 'announce' or 'withdraw' not '$type'");
         }
-    } # end for each host in hostlist announce ...
+
+        my $sth = $dbh->prepare($sql_query);
+        $sth->execute();
+
+        # print rules to rulebase
+        open (my $fh, '>', $rulebase) || mydie "open write '$rulebase' failed: $!";
+
+        # http://www.perlmonks.org/?node_id=312625
+        # $sth->execute();
+        # my $count = 0;
+        # while (my $row = $sth->fetchrow_arrayref()) {
+        #   process_row($row);
+        #   $count++;
+        # }
+        # unless ($count) {
+        #   do_something_else();
+        # }
+        #
+
+        while (my @row = $sth->fetchrow_array)
+        {   
+            logit("read: ",  join(",", map {$_ ? $_ : "''"} @row) );
+
+            # initialize
+            $flowspecruleid = $direction = $destinationprefix = $sourceport = $ipprotocol = $srcordestport = $destinationport = $sourceport = $sourceport = $icmptype = $icmpcode = $tcpflags = $packetlength = $dscp = $fragmentencoding = $action = $validfrom = $validto = "";
+
+            # required as some db fields are null
+            $flowspecruleid     = $row[0] ? $row[0] : '';
+            $direction          = $row[1] ? $row[1] : '';
+            $destinationprefix  = $row[2] ? $row[2] : '';
+            $sourceprefix       = $row[3] ? $row[3] : '';
+            $ipprotocol         = $row[4] ? $row[4] : '';
+            $srcordestport      = $row[5] ? $row[5] : '';
+            $destinationport    = $row[6] ? $row[6] : '';
+            $sourceport         = $row[7] ? $row[7] : '';
+            $icmptype           = $row[8] ? $row[8] : '';
+            $icmpcode           = $row[9] ? $row[9] : '';
+            $tcpflags           = $row[10] ? $row[10] : '';
+            $packetlength       = $row[11] ? $row[11] : '';
+            $dscp               = $row[12] ? $row[12] : '';
+            $fragmentencoding   = $row[13] ? $row[13] : '';
+            $action             = $row[14] ? $row[14] : '';
+            $validfrom          = $row[15] ? $row[15] : '';     # 2017-02-19 23:04:30.682073+01
+            $validto            = $row[16] ? $row[16] : '';     # 2017-02-19 23:04:30.682073+01
+                                                                # Time::HiRes only have this 
+                                                                # xxxx-xx-xx-xx:xx:xx.xxx
+                                                                # so valid* must be truncated
+
+            # Prevent incomplete rules from entering the flow: if an required field fails
+            # set $ipprotocol to unknown ('')
+            $flowspecruleid         = $flowspecruleid       ? $flowspecruleid       : "";
+            $direction              = $direction            ? $direction            : "";
+            $destinationprefix      = $destinationprefix    ? $destinationprefix    : "";
+            $sourceprefix           = $sourceprefix         ? $sourceprefix         : "";
+            $ipprotocol             = $ipprotocol           ? $ipprotocol           : "";
+            $srcordestport          = $srcordestport        ? $srcordestport        : "";
+            $destinationport        = $destinationport      ? $destinationport      : "";
+            $sourceport             = $sourceport           ? $sourceport           : "";
+            $icmptype               = $icmptype             ? $icmptype             : "";
+            $icmpcode               = $icmpcode             ? $icmpcode             : "";
+            $tcpflags               = $tcpflags             ? $tcpflags             : "";
+            $packetlength           = $packetlength         ? $packetlength         : "";
+            $dscp                   = $dscp                 ? $dscp                 : "";
+            $fragmentencoding       = $fragmentencoding     ? $fragmentencoding     : "";
+            $action                 = $action               ? $action               : "discard";
+            $validfrom              = $validfrom            ? $validfrom            : "";
+            $validto                = $validto              ? $validto              : "";
+
+            logit("debug:");
+            logit("number of collums in \@row:$#row");
+            logit("flowspecruleid: $flowspecruleid");
+            logit("direction: $direction");
+            logit("destinationprefix: $destinationprefix");
+            logit("sourceprefix: $sourceprefix");
+            logit("ipprotocol: $ipprotocol");
+            logit("srcordestport: $srcordestport");
+            logit("destinationport: $destinationport");
+            logit("sourceport: $sourceport");
+            logit("icmptype: $icmptype");
+            logit("icmpcode: $icmpcode");
+            logit("tcpflags: $tcpflags");
+            logit("packetlength: $packetlength");
+            logit("dscp: $dscp");
+            logit("fragmentencoding: $fragmentencoding");
+            logit("action: $action");
+            logit("validfrom: $validfrom");
+            logit("validto: $validto");
+
+            #
+            #  2554, in, 130.226.136.242, , udp, , , , , , , , 60, , , 2017-04-26 17:05:38.492843+02, 2017-04-26 17:15:38.492843+02,   -- no validto
+            #  If no 'action' then $action = $validfrom and  $validto = "" ??????
+            #
+            logit("read from db: $flowspecruleid, $direction, $destinationprefix, $sourceport, $ipprotocol, $srcordestport, $destinationport, $sourceport, $sourceport, $icmptype, $icmpcode, $tcpflags, $packetlength, $dscp, $fragmentencoding, $action, $validfrom, $validto");
+
+            # append /32 to prefix if not cidr and assume just an IP address
+            if ($destinationprefix ne "")
+            {
+                if ($destinationprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
+                {
+                    $destinationprefix = $destinationprefix . "/32";
+                }
+            }
+
+            if ($sourceprefix ne "")
+            {
+                if ($sourceprefix !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
+                {
+                    $sourceprefix = $sourceprefix . "/32";
+                }
+            }
+
+            ################################################################################
+            # TODO: re-announce all still valid rules not made by fnm
+            # Once all expired rules has been withdrawn re-announce all still valid rules
+            # which are not made by FastNetMon as the withdraw may have removed functionality
+            # added by the GUI
+            #
+            ################################################################################    
+
+            # Last line of defence to prevent wron announcements: Do not
+            # announce / withdraw networks outside our constituency
+            my $dst_subnet = new NetAddr::IP $destinationprefix;
+
+            my $destinationprefix_is_within_my_network = 1;
+
+            logit ("testing $destinationprefix = $dst_subnet within my networks: $destinationprefix_is_within_my_network");
+            foreach my $mynetwork (split ' ', $allmynetworks)
+            {
+                my $subnet = new NetAddr::IP $mynetwork;
+                if ($dst_subnet->within($subnet))
+                {
+                        logit("dst $dst_subnet is within $subnet");
+                        $destinationprefix_is_within_my_network = 0;
+                }
+            }
+            logit ("test done destinationprefix_is_within_my_network: $destinationprefix_is_within_my_network (0 is good)");
+            if ($destinationprefix_is_within_my_network == 1)
+            {
+                logit("program error: rule should be ignored, outside our constituency destinationprefix=$destinationprefix sourceprefix=$sourceprefix ipprotocol=$ipprotocol validfrom=$validfrom validto=$validto");
+                # set expiretime to now for rule and change comment to rule ignored source is ourside our network
+            }
+            else
+            {
+                # The prev. rule -- ignored the on first rule
+                my   (  $prev_flowspecruleid, $prev_direction, $prev_destinationprefix,
+                        $prev_sourceprefix, $prev_ipprotocol, $prev_srcordestport,
+                        $prev_destinationport, $prev_sourceport, $prev_icmptype,
+                        $prev_icmpcode, $prev_tcpflags, $prev_packetlength,
+                        $prev_dscp, $prev_fragmentencoding, $prev_validfrom, $prev_validto
+                    );
+
+                # preserve implemented_flowspecruleid - duplicates will be removed later
+                push(@implemented_flowspecruleid, $flowspecruleid);
+
+                my $filtertype = $data{$host}{'filtertype'};        $filtertype =~ tr/\"//d;
+                if ($filtertype eq lc 'flowspec')
+                {
+                    my $rule = "";
+
+                    if (length $sourceprefix)       { $sourceprefix         = "source "             . $sourceprefix         . ";" }
+                    if (length $destinationprefix)  { $destinationprefix    = "destination "        . $destinationprefix    . ";" }
+                    if (length $sourceport)         { $sourceport           = "source-port "        . $sourceport           . ";" }
+                    if (length $destinationport)    { $destinationport      = "destination-port "   . $destinationport      . ";" }
+                    if (length $ipprotocol)         { $ipprotocol           = "protocol "           . $ipprotocol           . ";" }
+                    if (length $tcpflags)           { $tcpflags             = "tcp-flags "          . $tcpflags             . ";" }
+                    if (length $packetlength)       { $packetlength         = "packet-length "      . $packetlength         . ";" }
+                    if (length $fragmentencoding)   { $fragmentencoding     = "fragment "           . $fragmentencoding     . ";" }
+                    if (length $srcordestport)      { $srcordestport        = "srcordestport "      . $srcordestport        . ";" }
+                    if (length $icmptype)           { $icmptype             = "icmptype "           . $icmptype             . ";" }
+                    if (length $icmpcode)           { $icmpcode             = "icmpcode "           . $icmpcode             . ";" }
+                    if (length $dscp)               { $dscp                 = "dscp "               . $dscp                 . ";" }
+
+                    if ($ipprotocol  !~ /(icmp|tcp|udp|1|6|17)/)            # remove any tcp/udp/icmp specific things, if any
+                    {
+                        $tcpflags           = "";
+                        $icmptype           = "";
+                        $srcordestport      = "";
+                        $sourceport         = "";
+                        $destinationport    = "";
+                        $fragmentencoding   = "";
+                    }
+
+                    if ($ipprotocol =~ /icmp/)                      # remove any tcp/udp specific things, if any
+                    {
+                        $destinationport    = "";
+                        $sourceport         = "";
+                        $tcpflags           = "";
+                    }
+
+                    if ($ipprotocol =~ /udp/)                       # remove any tcp/icmp specific things, if any
+                    {
+                        $tcpflags           = "";
+                        $icmptype           = "";
+                        $tcpflags           = "";
+                    }
+                    if ($ipprotocol     =~/null/)                   # may be set to null from the command line tool meaning discard
+                    {
+                        $ipprotocol         = "";
+                        $tcpflags           = "";
+                        $icmptype           = "";
+                        $tcpflags           = "";
+                    }
+
+                    # The syntax for $sourceport and $destinationport is one of
+                    #   $destinationport    = "=22 =80 =443";   # ok
+                    #   $destinationport    = "=0-19";          # ok but do not mix
+                    #   $destinationport    = "<19";            # ok
+                    #   $destinationport    = "<19 >1024";      # ok
+                    #   $destinationport    = "<19 =22 >1024";  # ok
+                    # 1) number between 0,65535     => =$destinationport
+                    # 2) list of numbers 0,65535    => =$d =$d =$d ...
+                    # 3) [ -<>=][0-9]+              => trust the gui and dont change anything
+                    if ($destinationport    =~ /^\d+$/)         # single port number
+                    {
+                        $destinationport    =~ s/^/=/;
+                    }
+                    elsif ($destinationport =~ /^[\d\s]+$/)     # list of port number
+                    {
+                        $destinationport    =~ s/^/=/;
+                        $destinationport    =~ s/\s+/ =/g;
+                    }
+                    if ($destinationport        =~/null/)           # may be set to null from the command line tool meaning discard
+                    {
+                        $destinationport        = "" ;
+                    }
+
+                    if ($sourceport         =~ /^\d+$/)         # single port number
+                    {
+                        $sourceport         =~ s/^/=/;
+                        $sourceport         =~ s/\s+/ =/g;
+                    }
+                    elsif ($sourceport      =~ /^[\d\s]+$/)     # list of port numbers
+                    {
+                        $sourceport         =~ s/^/=/;
+                        $sourceport         =~ s/\s+/ =/g;
+                    }
+                    if ($sourceport     =~/null/)           # may be set to null from the command line tool meaning discard
+                    {
+                        $sourceport     = "" ;
+                    }
+
+                    if ($srcordestport      =~ /^\d+$/)         # single port number
+                    {
+                        $srcordestport      =~ s/^/=/;
+                        $srcordestport      =~ s/\s+/ =/g;
+                    }
+                    elsif ($srcordestport   =~ /^[\d\s]+$/)     # list of port numbers
+                    {
+                        $srcordestport      =~ s/^/=/;
+                        $srcordestport      =~ s/\s+/ =/g;
+                    }
+                    if ($srcordestport      =~/null/)           # may be set to null from the command line tool meaning discard
+                    {
+                        $srcordestport      = "" ;
+                    }
+
+                    # packet size(s): null, number, list of numbers
+                    # or prepositioned <, > or range - -- in that case do nothing and trust the GUI
+                    if ($packetlength       =~ /^\d+$/)         # single size
+                    {
+                        $packetlength       =~ s/^/=/;
+                        $packetlength       =~ s/\s+/ =/g;
+                    }
+                    elsif ($packetlength    =~ /^[\d\s]+$/)     # list of sizes
+                    {
+                        $packetlength       =~ s/^/=/;
+                        $packetlength       =~ s/\s+/ =/g;
+                    }
+                    if ($packetlength       =~/null/)           # may be set to null from the command line tool meaning discard
+                    {
+                        $packetlength       = "" ;
+                    }
+
+                    # final rule
+                    # $rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $sourceport $destinationport $ipprotocol $tcpflags $icmptype $icmpcode $packetlength $fragmentencoding $dscp } then { $action } } }";
+                    # removed '$srcordestport' -- pester exabgp!?
+                    $rule = "$type flow route $flowspecruleid { match { $sourceprefix $destinationprefix $srcordestport $sourceport $destinationport $ipprotocol $tcpflags $icmptype $icmpcode $packetlength $fragmentencoding $dscp } then { $action } } }";
+                    logit("rule: $rule");
+                    print $fh "$rule\n";
+                }
+            elsif ($filtertype eq lc 'blackhole')
+            {
+                logit("filtertype 'blackhole' not supported");
+            }
+            else
+            {
+                logit("unknown filtertype '$filtertype' not supported");
+            }
+            }
+        }
+        close $fh;      # rulebase
+
+        logit("rulebase: $rulebase, size: ",  stat($rulebase)->size);
+
+        $sth->finish();
+
+        # send $rulebase to $host:exabgp_pipe if we have any rules
+        # This implementation may block everything if the scp transfer hangs
+        # Fix - in C - with https://www.libssh2.org/examples/sftp_write_sliding.html
+        # have AMD fix exabgp so we can scp to the pipe again or see
+        # https://gist.github.com/melo/2829330
+        # to do an scp (r, tmpfile) ; exec(sudo cat tmpfile > ....)
+        #
+        # TODO: Preserve rulebase if we cannot connet to at least one BGP host and try later
+        # Move to global and don't exipre if = 0;
+        # my $at_least_one_successfull_upload = 0;
+        $at_least_one_successfull_upload = 0;
+
+        my @unique_implemented_flowspecruleid = uniq @implemented_flowspecruleid;
+        if ($#unique_implemented_flowspecruleid >= 0)
+        {
+            my $i = $#unique_implemented_flowspecruleid + 1;
+            logit("sending $i rules to $host");
+            my $ssh2 = Net::SSH2->new(timeout => 100);                              # connection timeout, not command timeout
+            if (! $ssh2->connect($host))
+            {
+                logit("Failed connection to $host");
+            }
+            if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) )
+            {
+                logit("public/private key authentication for $sshuser to $host failed with: $!");
+                logit("Please check modes for .ssh/* for user\@host and ~/.ssh/authorized_keys too");
+                logit("Some versions of Net::SSH2 may only support rsa");
+            }
+
+            if (! $ssh2->scp_put($rulebase, $exabgp_pipe))
+            {
+                logit("failed transfer $type $rulebase to $host:$exabgp_pipe");
+                $ssh2->disconnect();
+            }
+            else
+            {
+                logit("succesfully transfered $type $rulebase to $host:$exabgp_pipe");
+                $ssh2->disconnect();
+                $at_least_one_successfull_upload = 1;
+            }
+        }
+        else
+        {
+            logit("no $type rules: update $host not needed");
+        }
+
+    }   # end for each host in hostlist announce ...
 }
 
 sub processnewrules()

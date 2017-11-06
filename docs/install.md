@@ -109,10 +109,6 @@ virtualbox](https://www.virtualbox.org/wiki/VirtualBox),
 
 
 
-
-
-
-
 ## Final note about creating ISO images
 
 Building the boot image for the database server takes about 30 seconds first time
