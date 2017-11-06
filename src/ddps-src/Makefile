@@ -122,6 +122,11 @@ update:
 			sudo systemctl stop $(SERVICEFILE)
 			$(MAKE) install
 			
+gitinstall: dirs $(target) $(initrc) $(dbini) bin $(sqlstr)
+			sudo cp $(SERVICEFILE) /etc/systemd/system/
+			sudo systemctl enable $(SERVICEFILE)
+			sudo systemctl start $(SERVICEFILE)
+
 install:	hostcheck dirs $(target) $(initrc) $(dbini) bin $(sqlstr)
 			sudo cp $(SERVICEFILE) /etc/systemd/system/
 			sudo systemctl enable $(SERVICEFILE)
