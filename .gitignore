@@ -26,9 +26,6 @@ libssh2-1.7.0
 libssh2_config.h
 remote.sh.log
 tests
-version.c
-version.h
-version.pm
 x.pl
 **/not-on-git
 **/obsolite
