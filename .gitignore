@@ -22,7 +22,6 @@ Makefile.proj
 db2dpsrc
 fnm2db-new.pl
 getbstrlib
-install-sh
 libssh2-1.7.0
 libssh2_config.h
 remote.sh.log
