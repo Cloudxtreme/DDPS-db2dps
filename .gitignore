@@ -19,7 +19,6 @@ dev.lst
 
 **/*.ORG
 Makefile.proj
-db2dpsrc
 fnm2db-new.pl
 getbstrlib
 libssh2-1.7.0
