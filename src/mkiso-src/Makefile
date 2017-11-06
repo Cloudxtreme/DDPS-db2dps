@@ -1,8 +1,8 @@
 # ---- Will be extracted and used by remote.sh ----
 #:REMOTE-INFO-BEGIN
 # TARGETHOST   deployment/test host or IP address, e.g. user@1.2.3.4
-TARGETHOST      = root@ddps-dev
-#TARGETHOST      = uninth@ddps.deic.dk
+#TARGETHOST      = root@ddps-dev
+TARGETHOST      = uninth@ddps.deic.dk
 #TARGETHOST      = uninth@ww1.ddps.deic.dk
 #TARGETHOST      = uninth@ww2.ddps.deic.dk
 # UPLOADDIR    top directory for the source; everything from '.' will be synced
@@ -42,6 +42,14 @@ UID			= root
 EXCLUDE_INSTALL	= exclude_from_install.txt
 
 pkgs		= mkisofs curl libdata-dumper-simple-perl
+
+gitinstall:	install_pkgs
+	# should be made more generic
+	sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  $(PROJECT)/bin/fnmconfig > /tmp/fnmconfig
+	sudo /bin/mv /tmp/fnmconfig $(PROJECT)/bin/fnmconfig
+	sudo chown -R $(UID):$(GID) $(PROJECT)
+	sudo chmod -R 555 $(PROJECT)/bin/*
+	sudo rsync -avzH --delete-before --exclude-from=$(EXCLUDE_INSTALL) $(PROJECT) $(PREFIX)
 
 install:	hostcheck install_pkgs
 	# should be made more generic
