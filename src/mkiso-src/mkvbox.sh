@@ -69,11 +69,9 @@ VBoxManage modifyvm ${VM} --ostype Ubuntu_64
 VBoxManage createhd --filename "$HOME/VirtualBox VMs/${VM}/${VM}.vdi" --size 10000
 VBoxManage storagectl ${VM} --name "IDE Controller" --add ide
  
-VBoxManage storageattach ${VM} --storagectl "IDE Controller"  \
-    --port 0 --device 0 --type hdd --medium "$HOME/VirtualBox VMs/${VM}/${VM}.vdi"
+VBoxManage storageattach ${VM} --storagectl "IDE Controller"  --port 0 --device 0 --type hdd --medium "$HOME/VirtualBox VMs/${VM}/${VM}.vdi"
  
-VBoxManage storageattach "${VM}" --storagectl "IDE Controller" \
-	--port 1 --device 0 --type dvddrive --medium "${ISO}"
+VBoxManage storageattach "${VM}" --storagectl "IDE Controller" --port 1 --device 0 --type dvddrive --medium "${ISO}"
 
 VBoxManage modifyvm ${VM} --description "scratch host made `date` booted from ${ISO}"
  
