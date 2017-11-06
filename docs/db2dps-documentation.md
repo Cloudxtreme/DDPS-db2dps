@@ -202,7 +202,7 @@ Example:
 	0;00:25:90:47:2b:48;1;42;10;130.226.136.242;161.185.77.224;tcp;14374;80;80;null;null;syn;60;63;null;0
 	last-line
 
-*Note*: the example is old and the two last fields are missing.
+*Note*: the example is old and the two last fields is missing.
 
 Some fields are read by `fnm2db` from its configuration file. The configuration file is written based
 on information from the database:

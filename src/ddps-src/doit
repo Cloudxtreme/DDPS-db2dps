@@ -1,0 +1,18 @@
+#
+# apply rules to mitigate icmp flooding of antispam networks for nearly one year 31536000 (60 * 60 * 24 * 365)
+#
+
+	ddpsrules add -y --blocktime '31536000' --dst '130.225.242.144/28' --protocol 'icmp' --action 'rate-limit 9600' 
+	ddpsrules add -y --blocktime '31536000' --dst '130.226.249.32/29'  --protocol 'icmp' --action 'rate-limit 9600'
+	ddpsrules add -y --blocktime '31536000' --dst '130.226.249.48/29'  --protocol 'icmp' --action 'rate-limit 9600'
+
+#
+# View result interactively, exit with ctrl-c
+#
+
+	watch ddpsrules active
+
+#
+# Remove all active rules
+#
+	ddpsrules del `ddpsrules active|awk '$1 ~ /[0-9]/ { print $1}'`

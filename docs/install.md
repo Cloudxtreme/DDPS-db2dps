@@ -2,7 +2,7 @@
 # Installation
 
 Installation of DDPS is based on CD images: one for the database server and an
-other for the fastnetmon instances. The CD images do an unattended boot based
+other for the fastnetmon instances. The CD images does an unattended boot based
 on an answer file (`preseed.cfg`) and with added software.
 
 ## Introduction 
@@ -12,9 +12,9 @@ hardware. The hosts are created unattended by booting from an ISO image.
 
 The image has to be created ahead of the installation and is described below.
 
-Working with ISO images enables the installation of FastNetMon on off-site
-equipment and does not require infrastructure systems like Ansible or Chef.  The
-ISO images enabls installation on most hypervisors like esx and Virtual Box.
+Working with ISO images enables the installation of FastNetMon on off site
+equipment and doesn't require infrastructure systems like Ansible or Chef.  The
+ISO images enables installation on most hyper visors like esx and Virtual Box.
 
 All DDPS hosts are currently based on Ubuntu 16.04, the development environment is
 [virtualbox](https://www.virtualbox.org/wiki/VirtualBox), while the production
@@ -31,7 +31,7 @@ The ISO images are made with an modified version of
 The following procedure is written for
 [virtualbox](https://www.virtualbox.org/wiki/VirtualBox) on OS X or Linux. 
 
-Notice that in a virtual box environment where the guest OS should be both
+Notice, that in a virtual box environment where the guest OS should be both
 behind NAT and be accessible with SSH from the host OS the Virtual machine must
 have two NIC's. Also notice that internet access is required from the guest OS
 for software installation and updates.
@@ -109,13 +109,9 @@ virtualbox](https://www.virtualbox.org/wiki/VirtualBox),
 
 
 
-
-
-
-
 ## Final note about creating ISO images
 
-Building the boot image for the database server takes about 30 seconds the first time
+Building the boot image for the database server takes about 30 seconds first time
 mainly download time of the Ubuntu 16.04 image. Creating the boot image after
 download takes just less than 10 seconds.
 
