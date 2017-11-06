@@ -24,7 +24,7 @@ esac
 
 
 ISODIR="${HOME}/VirtualBox VMs/iso/"
-ISO="${ISODIR}/${GUEST}.iso"
+ISO="${ISODIR}/ubuntu-16.04.3-server-amd64-auto-install.${GUEST}.iso"
 #ISO="./ubuntu-16.04.3-server-amd64-auto-install.${GUEST}.iso"
 #ISO="${ISODIR}/${GUEST}.iso"
 

@@ -159,7 +159,7 @@ EOF
 		d-i partman/confirm_nooverwrite                          boolean     true
 		d-i pkgsel/include string
 		d-i pkgsel/include string openssh-server wget
-		d-i preseed/late_command                                 string cp -r /cdrom/files/ /target/root; sed -i 's_exit 0_bash /root/files/install.sh_' /target/etc/rc.local; 
+		d-i preseed/late_command                                 string cp -r /cdrom/files/ /target/root; sed -i 's_exit 0_sh /root/files/install.sh_' /target/etc/rc.local; 
 
 	EOF
 }

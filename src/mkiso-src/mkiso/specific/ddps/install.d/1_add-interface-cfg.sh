@@ -30,10 +30,10 @@ do
 done
 
 if [ -z "${IFNAME}" ]; then
-	echo "$0: failed to find free interface, bye"
+	echo "failed to find free interface, bye"
 	exit 0
 else
-	echo "$0: using interface name ${IFNAME} ... "
+	echo "using interface name ${IFNAME} ... "
 fi
 
 cat << EOF > /etc/network/interfaces.d/$IFNAME
