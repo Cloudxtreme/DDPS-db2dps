@@ -3,6 +3,7 @@
 # Install the latest version of pgpool2
 #
 
+echo "$0: installing pgpool2 from git ... "
 apt -y install git autoconf bison byacc
 
 cd /usr/local/src/

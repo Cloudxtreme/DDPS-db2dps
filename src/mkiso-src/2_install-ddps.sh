@@ -251,8 +251,7 @@ EOF
 	wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 	apt-get -y update
 	#apt-get -y install postgresql postgresql-contrib libpq-dev
-
-    apt-get -y install postgresql-9.6 postgresql-client-9.6 postgresql-client-common postgresql-common postgresql-contrib-9.6 postgresql-server-dev-9.6 sysstat libsensors4 libpq-dev
+    apt-get -y install postgresql-9.6 postgresql-contrib-9.6 postgresql-client-9.6 postgresql-client-common postgresql-common postgresql-server-dev-9.6 sysstat libsensors4 libpq-dev
 
     # Sæt pakkerne på hold:
     apt-mark hold postgresql-9.6 postgresql-client-9.6 postgresql-client-common postgresql-common postgresql-contrib-9.6 postgresql-server-dev-9.6
