@@ -49,6 +49,7 @@ require '/opt/db2dps/lib/sqlstr.pm';
 #
 
 my ($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sordport,$dport,$sport,$icmp_type,$icmp_code,$tcpflags,$length,$ttl,$dscp,$frag,$action,$description);
+my $add_description = "";
 
 # my $q_withdraw_rule	= 'update flow.flowspecrules set validto=now() where uuid_flowspecruleid in ( \'${uuid_flowspecruleid}\' );';
 # my $q_active_rules	= 'select uuid_flowspecruleid, destinationprefix, sourceprefix, ipprotocol from flow.flowspecrules, flow.fastnetmoninstances where flow.flowspecrules.uuid_fastnetmoninstanceid = flow.fastnetmoninstances.uuid_fastnetmoninstanceid AND not isexpired AND mode = \'enforce\' order by validto DESC, validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding;';
@@ -119,6 +120,7 @@ my $usage = "
         --dscp|C         DSCP flags
         --frag|f         fragments
         --action|a       action:      accept discard or 'rate-limit 9600'
+        --comment|c     comment
 
         -h               print help on add
         -y               do not prompt before implement the rule
@@ -206,20 +208,21 @@ sub main(@) {
 		}
 
 		if (!GetOptions(
-			'blocktime|b=s'		=> \$blocktime,
-			'dst|D=s'			=> \$dst,
-			'src|S=s'			=> \$src,
-			'protocol|P=s'		=> \$protocol,
-			'sordport|p=s'		=> \$sordport,
-			'dport|d=s'			=> \$dport,
-			'sport|s=s'			=> \$sport,
-			'icmp_type|t=s'		=> \$icmp_type,
-			'icmp_code|c=s'		=> \$icmp_code,
-			'tcpflags|T=s'		=> \$tcpflags,
-			'length|l=s'		=> \$length,
-			'dscp|C=s'			=> \$dscp,
-			'frag|f=s'			=> \$frag,
-			'action|a=s'		=> \$action
+			'blocktime|b=s'         => \$blocktime,
+			'dst|D=s'               => \$dst,
+			'src|S=s'               => \$src,
+			'protocol|P=s'          => \$protocol,
+			'sordport|p=s'          => \$sordport,
+			'dport|d=s'             => \$dport,
+			'sport|s=s'             => \$sport,
+			'icmp_type|t=s'         => \$icmp_type,
+			'icmp_code|c=s'         => \$icmp_code,
+			'tcpflags|T=s'          => \$tcpflags,
+			'length|l=s'            => \$length,
+			'dscp|C=s'              => \$dscp,
+			'frag|f=s'              => \$frag,
+			'action|a=s'            => \$action,
+			'explanation|e=s'		=> \$add_description
 		))
 		{
 			print $usage;
@@ -289,6 +292,8 @@ sub addrule()
 
 	if (! is_flowspec("flow", $icmp_code))		{ print "icmp_code $icmp_code is not flowspec\n";			exit 0; }
 	if (! is_flowspec("flow", $icmp_type))		{ print "icmp_type $icmp_type is not flowspec\n";			exit 0; }
+
+    if ($add_description ne '')                 { $description = $add_description . "/ made by $name/$REAL_USER_ID"; };
 
 	if ($frag ne 'null')
 	{
@@ -362,6 +367,7 @@ sub addrule()
 	{
 			print "action '$action' not accept, discard of rate-limit dddd\n"; exit;
 	}
+
 
 	my $rule_line = "$customerid;$uuid;$fastnetmoninstanceid;$administratorid;$blocktime;$dst;$src;$protocol;$sordport;$dport;$sport;$icmp_type;$icmp_code;$tcpflags;$length;$ttl;$dscp;$frag;$action;$description";
 

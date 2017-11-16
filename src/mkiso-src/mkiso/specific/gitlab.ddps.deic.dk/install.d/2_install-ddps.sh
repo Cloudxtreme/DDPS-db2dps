@@ -1,12 +1,19 @@
 #!/bin/bash
 #
-# DeIC DPS: development database server installation 
+#    Copyright 2017, DeiC, Niels Thomas Haugård
+# 
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+# 
+#        http://www.apache.org/licenses/LICENSE-2.0
+# 
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
 #
-# Pre-requisite for the development environment:
-# virtualbox or similar
-# Ubuntu server 16.04 with an sshd server, no automatic update
-# preferably two net cards, one with internet access for updates etc.
-# and one for (static) connecting from the development environment
 
 DATADIR=/root/files/data/
 
@@ -61,7 +68,7 @@ function assert () {
 function install_build_essential()
 {
 	# for make to work
-	apt-get -y install build-essential autoconf
+	apt-get -y install build-essential autoconf git
 
 	# for postgres backup to work:
 	/bin/cp ${DATADIR}/cfg/bin/autopgsqlbackup /usr/local/bin/autopgsqlbackup
@@ -110,6 +117,8 @@ function add_developers()
 			getent passwd ${USR} >/dev/null 2>&1 >/dev/null || adduser --uid ${ID} --home /home/${USR} --shell /bin/bash --gecos "${GCOS}" --ingroup staff --disabled-password ${USR}
 			usermod -a -G sudo	${USR}
 			sudo chage -d 0		${USR}
+            # hmm.
+            sudo chage -E -1 -d -1 -M -1 -m -1 -W -1  ${USR}
 			mkdir -p /home/${USR}/.ssh
 			echo "$KEY" > /home/${USR}/.ssh/authorized_keys
 			chown -R ${USR} /home/${USR}/.ssh/
@@ -163,7 +172,7 @@ function change_sshd_config()
 	  s/^PasswordAuthentication.*/PasswordAuthentication no/;
 	  s/^UsePAM.*/UsePAM no/;
 	  s/\(X11Forwarding.*\)/AllowTcpForwarding yes\n\1/' < /etc/ssh/sshd_config.org
-	cat << EOF
+	cat <<-EOF
 	Match Group sftpgroup
 		# Force the connection to use SFTP and chroot to the required directory.
 		ForceCommand internal-sftp
@@ -178,135 +187,6 @@ EOF
 	chmod 0644 /etc/ssh/sshd_config
 	chown root:root /etc/ssh/sshd_config
 	service ssh restart
-}
-
-function make_sftp_user()
-{
-	echo "$0: installing ddpsadm user .... "
-	getent passwd ddpsadm > /dev/null 2>&1  >/dev/null || adduser --home /home/ddpsadm --shell /bin/bash --gecos "DDPS admin" --ingroup staff --disabled-password ddpsadm
-
-	echo "$0: adding sftpgroup .... "
-	if grep -q sftpgroup /etc/group
-    then
-         :
-    else
-		addgroup --system sftpgroup
-    fi
-
-	if [ -f /home/sftpgroup/newrules/.ssh/authorized_keys ]; then
-		chattr -i /home/sftpgroup/newrules/.ssh/authorized_keys /home/sftpgroup/newrules/.ssh/	>/dev/null 2>&1
-		rm -fr /home/sftpgroup/																	>/dev/null 2>&1
-		userdel -r newrules																		>/dev/null 2>&1
-		echo "$0: removed existing user newrules"
-	fi
-
-	mkdir /home/sftpgroup; chown root:root /home/sftpgroup
-
-	echo "$0: setting up sftp user for fastnetmon .... "
-	getent passwd newrules >/dev/null 2>&1 >/dev/null || useradd -m -c "DDPS rules upload" -d /home/sftpgroup/newrules/ -s /sbin/nologin newrules
-	usermod -G sftpgroup newrules
-
-	chmod 755          /home/sftpgroup /home/sftpgroup/newrules/
-	mkdir -p           /home/sftpgroup/newrules/.ssh
-	chmod 700          /home/sftpgroup/newrules/.ssh
-	chown -R root:root /home/sftpgroup /home/sftpgroup/newrules/
-
-	test -d /home/sftpgroup/newrules/upload || mkdir /home/sftpgroup/newrules/upload
-	chown newrules:newrules /home/sftpgroup/newrules/upload
-	chmod 777 /home/sftpgroup/newrules/upload
-
-	echo "$0: permissions for /home/sftpgroup has been set carefully, dont change"
-	echo "$0: use chattr to lock / unlock /home/sftpgroup/newrules/.ssh/authorized_keys"
-
-	chattr -i /home/sftpgroup/newrules/.ssh/
-	if [ -f /home/sftpgroup/newrules/.ssh/authorized_keys ]; then
-		chattr -i /home/sftpgroup/newrules/.ssh/authorized_keys
-	fi
-	# this is a dummy key
-	cat << EOF | tr -d '\n' > /home/sftpgroup/newrules/.ssh/authorized_keys
-ssh-ed25519 AAAAC3NIamAdummyKeyJustToSeIfaScriptWorkspeRsmMT6zzZ154ligQXBF8zHsgS root@00:25:90:46:c2:fe-fastnetmon2.deic.dk
-EOF
-	chown -R newrules:newrules /home/sftpgroup/newrules/.ssh
-	chattr +i /home/sftpgroup/newrules/.ssh   /home/sftpgroup/newrules/.ssh/*
-
-	echo "$0: dummy key added to /home/sftpgroup/.ssh/authorized_keys"
-}
-
-function install_postgresql()
-{
-	# see https://www.postgresql.org/about/news/1432/
-	echo "$0: Installing the latest postgres database .... "
-
-	echo "$0: adding PPA to /etc/apt/sources.list.d/pgdg.list ... "
-	echo "$0: adding keys ... "
-	echo "$0: installing postgresql ... "
-	echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-
-	cat << EOF > /etc/apt/preferences.d/pgdg.pref
-Package: *
-Pin: release o=apt.postgresql.org
-Pin-Priority: 500
-EOF
-
-	wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
-	apt-get -y update
-	#apt-get -y install postgresql postgresql-contrib libpq-dev
-
-    apt-get -y install postgresql-9.6 postgresql-client-9.6 postgresql-client-common postgresql-common postgresql-contrib-9.6 postgresql-server-dev-9.6 sysstat libsensors4 libpq-dev
-
-    # Sæt pakkerne på hold:
-    apt-mark hold postgresql-9.6 postgresql-client-9.6 postgresql-client-common postgresql-common postgresql-contrib-9.6 postgresql-server-dev-9.6
-
-	echo "$0: installed postgresql version: "
-	pg_config --version 2>&1 
-	echo "$0: expected output: PostgreSQL 9.6.1 or later"
-	psql --version 2>&1 
-	echo "$0: expected output: psql (PostgreSQL) 9.6.1 or later"
-
-	echo "$0: chaning postgres config file ... "
-
-	# 9.4, 9.5, 9.6 ... pick the latest
-	PG_HBACONF=`ls -1 /etc/postgresql/*/main/pg_hba.conf|sort -n | tail -1`
-
-	echo "$0: config file: ${PG_HBACONF}"
-	savefile "${PG_HBACONF}"
-	awk '
-	{
-		if ($1 == "local" && $2 == "all" && $3 == "postgres")
-		{
-			print $0
-			print "local all flowuser peer"
-			print "local all dbadmin md5"
-			next
-		}
-		{ print; next; }
-	}'	${PG_HBACONF}.org >	${PG_HBACONF}
-
-	chmod 0640 ${PG_HBACONF}
-	chown postgres:postgres ${PG_HBACONF}
-	service postgresql restart
-
-	echo "$0: NOT creating database .... "
-
-	echo "$0: EITHER restore an existing database made with"
-	echo "cd /; echo 'pg_dumpall | gzip -9 > /tmp/netflow.dmp.sql.gz' | su postgres "
-	echo "using "
-	echo "cd /; gunzip netflow.dmp.sql.gz"
-	echo "echo 'psql -d postgres -f /tmp/netflow.dmp.sql' |  su postgres"
-	echo "$0: OR"
-	echo "$0: execute commands from below: (should be in /root/files/data/db"
-	cat << EOF 
-	echo 'psql -f db/1_create_netwlow_db.sql'             | su postgres	
-	echo 'psql -f db/2_create_netflow_schema.sql'         | su postgres
-	echo 'psql netflow -f db/netflow_flow.icmp_codes.sql' | su postgres
-	echo 'psql netflow -f db/netflow_flow.icmp_types.sql' | su postgres
-	echo 'psql netflow -f db/netflow_flow.protocols.sql'  | su postgres
-	echo 'psql netflow -f db/netflow_flow.services.sql'   | su postgres
-
-	echo "$0: connect with "
-	echo "$0: ssh -v -L 5432:127.0.0.1:5432 sysadm@ddps-dev"
-
-EOF
 }
 
 function main()
