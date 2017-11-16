@@ -1,19 +1,5 @@
 #!/usr/bin/perl -w
 #
-#   Copyright 2017, DeiC, Niels Thomas Haugård
-#
-#   Licensed under the Apache License, Version 2.0 (the "License");
-#   you may not use this file except in compliance with the License.
-#   You may obtain a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#   Unless required by applicable law or agreed to in writing, software
-#   distributed under the License is distributed on an "AS IS" BASIS,
-#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#   See the License for the specific language governing permissions and
-#   limitations under the License.
-#
 # $Header$
 #
 #++
@@ -146,7 +132,7 @@ use DBI;                # database
 use Sys::Syslog;        # only needed for logit
 use POSIX;              # only needed for logit
 use Getopt::Long qw(:config no_ignore_case);
-use Net::OpenSSH;
+use Net::SSH2;          # ssh v2 access to postgres db
 use List::MoreUtils qw(uniq);
 use Proc::Daemon;
 use Socket qw( inet_aton );
@@ -154,9 +140,6 @@ use NetAddr::IP;
 use Path::Tiny;
 use File::stat;
 use File::Temp qw(tempfile);
-use IO::Socket::INET;
-use Sys::Hostname;
-
 
 require '/opt/db2dps/lib/sqlstr.pm';
 
@@ -172,9 +155,7 @@ sub parse_v4(@);
 sub mkrulebase($$);
 sub ip2long($);
 sub in_subnet($$);
-sub moverulestomaster();
 sub processnewrules();
-sub getlocalipv4addr();
 
 # URL's with useful information
 # http://www.microhowto.info/howto/connect_to_a_postgresql_database_using_perl_dbi.html
@@ -229,9 +210,6 @@ my $db                          = "";
 my $rulebase                    = "";
 my $dbuser                      = "";
 my $dbpass                      = "";
-my $clustermembers              = "";
-my $localipv4addr               = "";
-my $remotemember                = "";
 
 my $allmynetworks               = "";
 my $newrulesdir                 = "";
@@ -352,7 +330,6 @@ EOF
     $rulebase                       = $data{'general'}{'rulebase'};
     $dbuser                         = $data{'general'}{'dbuser'};
     $dbpass                         = $data{'general'}{'dbpassword'};
-    $clustermembers                 = $data{'general'}{'clustermembers'};
 
     $newrulesdir                    = $data{'general'}{'newrulesdir'};      # dir where new rules are uploaded. P.t. only one dir
 
@@ -369,31 +346,10 @@ EOF
 
     close ($fh);
 
-    $localipv4addr = getlocalipv4addr();
-    my $host = hostname();
-
     logit("database = $db");
     logit("dbadmin  = $dbuser");
-    logit("clustermembers = $clustermembers");
-    logit("localipv4addr = $localipv4addr");
 
-    # pgpoop2 - two or more members or one only if not using pgpoop2
-    $remotemember = $clustermembers;
-    for ($remotemember) {
-        s/$localipv4addr//;
-        s/$host//;
-        s/\s+//g;
-    };
-
-    # https://stackoverflow.com/questions/6063605/whats-the-fastest-way-to-count-the-number-of-words-in-a-string-in-perl
-    my $num;
-    $num++ while $remotemember =~ /\S+/g;
-    if ($num gt 1)
-    {
-        die ("configuration error: $clustermembers - only 2 allowed");
-    }
-    logit("my hostname: $host, second cluster node = $remotemember");
-
+    # from http://stackoverflow.com/questions/766397/how-can-i-run-a-perl-script-as-a-system-daemon-in-linux
     if ($rundaemon eq 1)
     {
         logit("daemonizing ...");
@@ -411,44 +367,41 @@ EOF
 
     logit("database connected successfully");
 
-    loop: while ($continue)
-    {
-        if (-e $shutdown)
-        {
-            logit("shutdown file $shutdown found, exiting");
-            unlink $shutdown;
-            $dbh->disconnect();
-            exit(0);
-        }
 
-        logit("quering for recovery mode / test if passive or active db");
-        $sql_query = "select pg_is_in_recovery();";
-        # https://github.com/DataDog/dd-agent/issues/1182
-        # node is in active replication state is to evaluate whether the
-        # node is in "recovery mode" - a state in which streaming replicas
-        # are persistently in until they are promoted to accept writes from
-        # anyone other than their replication master.
-        # Once a replica is promoted to master, the call to
-        # pg_is_in_recovery will return false without any config changes or
-        # server restarts.
-        my $sth = $dbh->prepare($sql_query);
-        $sth->execute();
-        my @tmparr;
-        while (my @row = $sth->fetchrow_array)
-        {
-            if ($row[0] eq 1) {
-                logit("db is passive / in recovery mode");
-                # check rulefiles, if any send to master
-                moverulestomaster();
-                sleep $sleeptime;
+    # 
+    # Start normalt lav DB forbindelse og hæng i et loop så længe pg_is_in_recovery, når den ikke længere er det så fortsæt
+    # men vend tilbage for hver iteration, dvs først i loopet
+    # 
+    # psql -hlocalhost -d netflow -p 5432 -U postgres -c "select pg_is_in_recovery()"
+    # pg_is_in_recovery
+    # -------------------
+    # f
+    # (1 row)
+    # 
 
-            } elsif ($row[0] eq 0) {
-                logit("db is master / not in recovery mode");
-                last loop;
-            }
-
-        }
-    }
+    # Not sure this is good: all our network (forskningsnet) kept as userid 0; has placed it in
+    # the db.ini instead
+    #
+    # fetch list of all my neworks
+    #$sql_query = $data{'general'}{'allmynetworks'};
+    # logit("query general::allmynetworks ... ");
+    # my $sth = $dbh->prepare($sql_query);
+    # $sth->execute();
+    # {
+    #   my @tmparr;
+    #   while (my @row = $sth->fetchrow_array)
+    #   {
+    #       #my $customernetworkid  = $row[0] ? $row[0] : '';
+    #       #my $customerid         = $row[1] ? $row[1] : '';
+    #       #my $name               = $row[2] ? $row[2] : '';
+    #       #my $kind               = $row[3] ? $row[3] : '';
+    #       #my $net_cidr           = $row[4] ? $row[4] : '';
+    #       #my $description        = $row[5] ? $row[5] : '';
+    #       push ($allmynetworks, $row[4]);
+    #   }
+    #   $sth->finish();
+    #   #$allmynetworks = join(', ', $allmynetworks);
+    # }
 
     $allmynetworks = $data{'general'}{'ournetworks'};
     logit("All allowed destination networks: $allmynetworks");
@@ -649,65 +602,82 @@ sub mkrulebase($$)
         my $filtertype      = $data{$host}{'filtertype'};       $filtertype =~ tr/\"//d;
         my $exabgp_pipe     = $data{$host}{'exabgp_pipe'};      $exabgp_pipe =~ tr/\"//d;
 
-        my ($pid, $out, $rin, $rout, $err, $in, $pty);
+        #------------------------------------------------------------
 
-        my $timeout = 10;
-        my %ssh_opts = (user => $sshuser, key_path => $identity_file, timeout => $timeout);
-
-        my $ssh = Net::OpenSSH->new($host, %ssh_opts);
-        if ($ssh->error) {
+        my $ssh2 = Net::SSH2->new(timeout => 100);
+        if (! $ssh2->connect($host))
+        {
             logit("ssh connection to '$host' failed");
             $ok_to_connect = 0;
         }
-        else {
-            #
-            # host up and accepts connections
-            #
-            # Get PID of process exabgp (ps) remove blanks (tr) and get start time in seconds (stat)
-            #my $cmd = "stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
-            # Use GNU date to calculate start time in seconds
-            #my $cmd = 'echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)'
+        else
+        {
+            if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) )
+            {
+                logit("public/private key authentication for $sshuser to $host failed with: $!");
+                logit("Check local and remote modes for keys and directory including authorized_keys config etc");
+                logit("Notice some versions of Net::SSH2 may ONLY support rsa");
+                $ok_to_connect = 0;
+            }
+            else
+            {
+                #
+                # host up and accepts connections
+                #
+                # Get PID of process exabgp (ps) remove blanks (tr) and get start time in seconds (stat)
+                #my $cmd = "stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
+                # Use GNU date to calculate start time in seconds
+                #my $cmd = 'echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)'
 
-            # get start time of exabgp process as a text string, if it changes then do something
-            # as new processes do not start earlier than old ones
-            my $cmd = '/bin/ps -C exabgp -o pid= >/dev/null && echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)';
+                # get start time of exabgp process as a text string, if it changes then do something
+                # as new processes do not start earlier than old ones
+                #my $cmd = "ps -C exabgp -o lstart=";
+                ## avoid problems with motd etc and faileure when process not running
+                #my $cmd = "ps -C exabgp -o pid= >/dev/null && stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
+                my $cmd = '/bin/ps -C exabgp -o pid= >/dev/null && echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)';
 
-            ($out, $err) = $ssh->capture2($cmd);
-            if ($ssh->error) {
-                my $msg = "";
-                if    ($? == -1) { warn "Failed to execute -- " }
-                elsif ($? & 127) {
-                    $msg = sprintf("\tChild died with signal %d, %s coredump -- ",
-                        ($? & 127),  ($? & 128) ? 'with' : 'without');
-                } else {
-                    $msg = sprintf("\tChild exited with value %d -- ", $? >> 8);
-                    # cmd is ps ... && date ..., as ps fails the whole command fails and exit is 1
+                my $chan = $ssh2->channel();
+                $chan->blocking(0);
+                $chan->shell();
+
+                my $len = 0;
+                my $buf = 0;
+
+                $chan->write("$cmd\n");
+                select(undef,undef,undef,0.2);
+
+                my $result = "";
+                $result = $result . $buf while defined ($len = $chan->read($buf,512));
+
+                $chan->send_eof;
+                $chan->close;
+
+                chomp($result);
+
+                if ($result eq '') {
+                    logit("$host: service exabgp down command output empty");
+                    $ok_to_connect = 0;
+                    #
+                    # do not attempt to contact host for update
+                    #
                 }
-                $ok_to_connect = 0;
-                logit("$host: service exabgp not running");
-            }
-            chomp($out); chomp($err);
-
-            if ($out eq '') {
-                logit("$host: service exabgp down");
-                $ok_to_connect = 0;
-            }
-            else {
-                if ($exabgp_lstart{$host} eq $out) {
-                    logit("$host: service exabgp running ok");
-                    # $sql_query = $newrules;
-                    $ok_to_connect = 1;
-                    $exabgp_restarted = 0;
-                } 
                 else {
-                    logit("$host: service exabgp restarted: '$exabgp_lstart{$host}' != '$out'");
-                    $exabgp_lstart{$host} = "$out";
-                    # $sql_query = $all_rules;
-                    $ok_to_connect = 1;
-                    $exabgp_restarted = 1;
+                    if ($exabgp_lstart{$host} eq $result) {
+                        logit("$host: service exabgp running ok");
+                        # $sql_query = $newrules;
+                        $ok_to_connect = 1;
+                        $exabgp_restarted = 0;
+                    } 
+                    else {
+                        logit("$host: service exabgp restarted: '$exabgp_lstart{$host}' != '$result'");
+                        $exabgp_lstart{$host} = "$result";
+                        # $sql_query = $all_rules;
+                        $ok_to_connect = 1;
+                        $exabgp_restarted = 1;
+                    }
                 }
-            } # service exabgp running ok
-        } # host up and accepts connections
+            }
+        }
 
         if ($ok_to_connect == 1)
         {
@@ -1038,26 +1008,28 @@ sub mkrulebase($$)
             {
                 my $i = $#unique_implemented_flowspecruleid + 1;
                 logit("sending $i rules to $host");
-
-                my ($pid, $out, $rin, $rout, $err, $in, $pty);
-
-                my $timeout = 10;
-                my %ssh_opts = (user => $sshuser, key_path => $identity_file, timeout => $timeout);
-
-                my $ssh = Net::OpenSSH->new($remotemember, %ssh_opts);
-                if ($ssh->error) {
-                    logit("ssh/scp connection to '$remotemember' failed");
-                    $ok_to_connect = 0;
+                my $ssh2 = Net::SSH2->new(timeout => 100);                              # connection timeout, not command timeout
+                if (! $ssh2->connect($host))
+                {
+                    logit("Failed connection to $host");
+                }
+                if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) )
+                {
+                    logit("public/private key authentication for $sshuser to $host failed with: $!");
+                    logit("Please check modes for .ssh/* for user\@host and ~/.ssh/authorized_keys too");
+                    logit("Some versions of Net::SSH2 may only support rsa");
                 }
 
-                if ($ssh->scp_put($rulebase, $exabgp_pipe))
+                if (! $ssh2->scp_put($rulebase, $exabgp_pipe))
                 {
-                    logit("succesfully transfered $type $rulebase to $host:$exabgp_pipe");
-                    $at_least_one_successfull_upload = 1;
+                    logit("failed transfer $type $rulebase to $host:$exabgp_pipe");
+                    $ssh2->disconnect();
                 }
                 else
                 {
-                    logit("failed transfer $type $rulebase to $host:$exabgp_pipe: $!");
+                    logit("succesfully transfered $type $rulebase to $host:$exabgp_pipe");
+                    $ssh2->disconnect();
+                    $at_least_one_successfull_upload = 1;
                 }
             }
             else
@@ -1070,47 +1042,6 @@ sub mkrulebase($$)
             logit("$host: host or service down");
         }
     } # end for each host in hostlist announce ...
-}
-
-sub moverulestomaster()
-{
-    my @rulefiles = ();
-    opendir (DIR, $newrulesdir) or mydie "Could not open '$newrulesdir' $!";
-    while ( my $node = readdir(DIR) )
-    {
-        next if ($node =~ /^\./);
-        push (@rulefiles, $node);
-    }
-    closedir DIR;
-    my $i = $#rulefiles + 1;
-    logit("found $i files in '$newrulesdir'");
-    my $sshuser         = $data{$remotemember}{'sshuser'};          $sshuser =~ tr/\"//d;
-    my $identity_file   = $data{$remotemember}{'identity_file'};    $identity_file =~ tr/\"//d;
-    my $public_key      = $data{$remotemember}{'public_key'};       $public_key =~ tr/\"//d;
-
-    logit("remotemember: '$remotemember', '$sshuser', $identity_file");
-    my ($pid, $out, $rin, $rout, $err, $in, $pty);
-
-    my $timeout = 10;
-    my %ssh_opts = (user => $sshuser, key_path => $identity_file, timeout => $timeout);
-
-    my $ssh = Net::OpenSSH->new($remotemember, %ssh_opts);
-    if ($ssh->error) {
-        logit("ssh/scp connection to '$remotemember' failed");
-        $ok_to_connect = 0;
-    }
-    else {
-        foreach my $r (@rulefiles)
-        {
-            my $file    = path($newrulesdir . "/" . $r);
-            if ($ssh->scp_put("$file", "/tmp")) {
-                unlink $file or logit("Could not unlink $file: $!");
-            }
-            else {
-                 logit("scp failed: $!");
-            }
-        }
-    }
 }
 
 sub processnewrules()
@@ -1584,22 +1515,6 @@ sub processnewrules()
 sub max ($$) { $_[$_[0] < $_[1]] }
 sub min ($$) { $_[$_[0] > $_[1]] }
 
-sub getlocalipv4addr() {
-# This idea was stolen from Net::Address::IP::Local::connected_to()
-    my $socket = IO::Socket::INET->new(
-        Proto       => 'udp',
-        PeerAddr    => '8.8.8.8',
-        PeerPort    => '53',
-    );
-
-    # A side-effect of making a socket connection is that our IP address
-    # is available from the 'sockhost' method
-    my $local_ip_address = $socket->sockhost;
-
-    return ( $local_ip_address );
-}
-
-
 __DATA__
 
 ################################################################################
@@ -1720,5 +1635,21 @@ sub ip2long($)
     return( unpack( 'N', inet_aton(shift) ) );
 }
 
+
 __DATA__
 
+#
+#   Copyright 2017, DeiC, Niels Thomas Haugård
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+#

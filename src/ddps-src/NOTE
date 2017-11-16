@@ -1,12 +1,27 @@
 
 TODO:
 
-  - apply-default-rules.sh får db2dps til at fejle
-    - fix db2dps så der testes for om første felt er validt + de andre !!!
-    - hvis db insert fejler så må db2dps ikke gå ned, men slette/flytte regelfilen til senere analyse
-    - skriv apply-default-rules om, så den anvender ddpsrules
+  - fix db2dps så der testes for om første felt er validt + de andre !!!
+
+  - hvis db insert fejler så må db2dps ikke gå ned, men slette/flytte regelfilen til senere analyse
+    db2dps and db error handling, see https://docstore.mik.ua/orelly/linux/dbi/ch04_05.htm afsnit 4.5.1.3. Mixed error checking
 
   - fix db2dps så det undersøges om $admin / $fastnetmon har lov til at lave regler for $dst
 
-db2dps and db error handling, see https://docstore.mik.ua/orelly/linux/dbi/ch04_05.htm afsnit 4.5.1.3. Mixed error checking
+  - skriv apply-default-rules om, så den anvender ddpsrules
 
+  - DB replikering vil påvirke db2dps. Check.
+    - firewalls: test om process findes / findes på active/passive www.ddps og send scp til aktive
+
+DONE
+
+  X db2dps og replikering
+    -  ca linie 370: Start normalt lav DB forbindelse og hæng i et loop så længe
+       pg_is_in_recovery, når den ikke længere er det så fortsæt men vend tilbage for
+       hver iteration, dvs først i loopet
+    -  test i loop om der ligger regelfiler && flyt dem til aktive server
+    - read clmembers = xxxx yyyy from db.ini; check own IP address and connect to remote ok
+
+  X replace buggy ssh2 code with openssh check on exabgp
+
+  X apply-default-rules.sh får db2dps til at fejle

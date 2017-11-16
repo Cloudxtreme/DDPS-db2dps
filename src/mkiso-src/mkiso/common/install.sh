@@ -119,9 +119,9 @@ function main()
     logit "   5 Run each each script in install.d. This is where different hosts are being produced"
     cd install.d
 
-    find . -type f | while read SHELLSCRIPT
+    find . -type f | sort -n | while read SHELLSCRIPT
     do
-        bash ${SHELLSCRIPT} >> $MY_LOGFILE
+        bash ${SHELLSCRIPT} | tee -a $MY_LOGFILE
     done
 
     logit "Installation complete, fixing rc.local ... "

@@ -1,138 +1,50 @@
-#! /bin/bash
+#!/bin/bash
 #
-# This static BGP flowspec filter will deny the following traffic passing the core routers:
-# 	- UDP Fragments
-#	- DNS replies larger than 512 bytes
-#	- NTP monlist reply packets with the maximum 6 IP addresses populated in the payload
-#	- CHARGEN
-#	- SSDP (Simple Service Discovery Protocol on UDP port 1900)
-#	- SNMP
-#
-# idea from http://nabcop.org/index.php/DDoS-DoS-attack-BCOP, conversation with Nordunet and
-# https://www.akamai.com/us/en/multimedia/documents/state-of-the-internet/q4-2016-state-of-the-internet-security-report.pdf
-
-function printrule()
-{
-	echo "$customerid;$uuid;$fastnetmoninstanceid;$administratorid;$blocktime;$dst;$src;$proto;$sport;$dport;$dport;$icmptype;$icmpcode;$tcpflags;$length;$ttl;$dscp;$fragmentencoding;$action;$description"
-	src="null"
-	proto="null"
-	sport="null"
-	dport="null"
-	dport="null"
-	icmptype="null"
-	icmpcode="null"
-	tcpflags="null"
-	length="null"
-	ttl="null"
-	dscp="null"
-	fragmentencoding="null"
-	action="null"
-	description="null"
-
-}
 
 INI=/opt/db2dps/etc/db.ini
-
-################################################################################
-#INCLUDE_VERSION_SH
-################################################################################
-
-# default values
-customerid="1"
-uuid="00:25:90:47:2b:48"        # <-- should be changed
-fastnetmoninstanceid="1"        # <-- should be changed
-administratorid="42"            # <-- should be changed
-ttl="null"
-sport="null"
-dport="null"
-dport="null"
-icmptype="null"
-icmpcode="null"
-tcpflags="null"
-length="null"
-dscp="null"
-fragmentencoding="null"
-src="null"
-action="discard"
-description="Default rule"
-
-blocktime=10
-
 ournetworks=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
-#ournetworks="130.226.136.242/32"
-sleeptime=`sed '/^sleep_time/!d; s/^sleep_time.*=[\t ]*//'	${INI}`
 
-now=`/bin/date +%s`
-randomstr=`tr -dc A-Za-z0-9_ < /dev/urandom | head -c 8 | xargs`
+YEAR=365
+MIN=60
+DAY=24
+BLKTME=`echo "$YEAR * $DAY * $MIN"| bc`
 
-rulefile="/home/sftpgroup/newrules/upload/newrules-${uuid}-${now}-${randomstr}.dat"
-tmprules="/tmp/$$.dat"
-
-
-# begin
-(
-echo "head;fnm;noop;1;${proto}_flood"
-
-for dst in $ournetworks;
+for DST in $ournetworks
 do
-	description="Default block all udp fragments"
-	fragmentencoding="[is-fragment first-fragment last-fragment]"
-	proto=udp
-	#fragmentencoding="is-fragment"
-	printrule
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol 'udp' --frag '[is-fragment first-fragment last-fragment]' --action 'discard' -e 'block all UDP fragments' >/dev/null
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol 'udp' --sport '=123' --length='=468'--action 'discard' -e 'Discard NTP amplification' >/dev/null >/dev/null
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol 'udp' --sport '=53' --length='=512'--action 'discard' -e 'Discard DNS amplification' >/dev/null
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol '=tcp =udp' --sport '=19' --action 'discard' -e 'Discard TCP and UDP chargen' >/dev/null
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol '=tcp =udp' --sport '=17' --action 'discard' -e 'Discard TCP and UDP QOTD' >/dev/null
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol '=47' --action 'discard' -e 'Discard IP protocol 47, GRE' >/dev/null
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol '=udp' --sport '=1900' --action 'rate-limit 9600' -e 'ratelimit SSDP' >/dev/null
+    ddpsrules add -y --blocktime $BLKTME --dst $DST --protocol '=udp' --sport '=161&=162' --action 'rate-limit 9600' -e 'ratelimit SNMP' >/dev/null
 
-	description="Default discard NTP amplification"
-	proto="udp"
-	sport="=123"
-	length="=468"
-	printrule
+    sleep 3
+	ddpsrules active
 
-	description="Default discard DNS amplification"
-	proto="udp"
-	sport="=53"
-	length="=512"
-	printrule
-
-	description="Default discard TCP and UDP chargen"
-	proto="=tcp =udp"
-	sport="=19"
-	length="null"
-	printrule
-
-	description="Default discard TCP and UDP QOTD"
-	proto="=tcp =udp"
-	sport="=17"
-	length="null"
-	printrule
-
-	description="Default discard IP protocol 47, GRE"
-	proto="=47"
-	sport="null"
-	length="null"
-	printrule
-
-
-	description="Default ratelimit SSDP"
-	action="rate-limit 9600"
-	proto="=udp"
-	sport="1900"
-	printrule
-
-	description="Default ratelimit SNMP"
-	action="rate-limit 9600"
-	proto="=udp"
-	sport="=161&=162"
-	printrule
 done
 
-# end
-echo "last-line"
-) > $tmprules
+exit
 
-/bin/mv $tmprules $rulefile
-echo "rules prepared and will be applied within ${sleeptime} seconds"
+#
+# apply rules to mitigate icmp flooding of antispam networks for nearly one year 31536000 (60 * 60 * 24 * 365)
+#
 
-exit 
+	ddpsrules add -y --blocktime '31536000' --dst '130.225.242.144/28' --protocol 'icmp' --action 'rate-limit 9600' 
+	ddpsrules add -y --blocktime '31536000' --dst '130.226.249.32/29'  --protocol 'icmp' --action 'rate-limit 9600'
+	ddpsrules add -y --blocktime '31536000' --dst '130.226.249.48/29'  --protocol 'icmp' --action 'rate-limit 9600'
+
+#
+# View result interactively, exit with ctrl-c
+#
+
+	watch ddpsrules active
+
+#
+# Remove all active rules
+#
+	ddpsrules del `ddpsrules active|awk '$1 ~ /[0-9]/ { print $1}'`
 
 #
 #   Copyright 2017, DeiC, Niels Thomas Haugård

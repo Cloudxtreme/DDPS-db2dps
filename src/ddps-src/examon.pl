@@ -30,7 +30,7 @@ use Digest::MD5;
 use sigtrap qw(die normal-signals);
 use POSIX;
 use Sys::Syslog;
-use Net::SSH2;
+use Net::OpenSSH;
 use Path::Tiny;
 
 #
@@ -93,75 +93,67 @@ sub main(@)
             my $datadir         = $data{'general'}{'datadir'};
 
             #------------------------------------------------------------
+            my ($pid, $out, $rin, $rout, $err, $in, $pty);
 
-            my $ssh2 = Net::SSH2->new(timeout => 100);
-            if (! $ssh2->connect($host)) {
+            my $timeout = 10;
+            my %ssh_opts = (user => $sshuser, key_path => $identity_file, timeout => $timeout);
+
+            my $ssh = Net::OpenSSH->new($host, %ssh_opts);
+            if ($ssh->error) {
                 logit("ssh connection to '$host' failed");
                 $ok_to_connect = 0;
             }
             else {
-                if (! $ssh2->auth_publickey($sshuser,$public_key,$identity_file) ) {
-                    logit("public/private key authentication for $sshuser to $host failed with: $!");
-                    logit("Check local and remote modes for keys and directory including authorized_keys config etc");
-                    logit("Notice some versions of Net::SSH2 may ONLY support rsa");
+                #
+                # host up and accepts connections
+                #
+                # Get PID of process exabgp (ps) remove blanks (tr) and get start time in seconds (stat)
+                #my $cmd = "stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
+                # Use GNU date to calculate start time in seconds
+                #my $cmd = 'echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)'
+
+                # get start time of exabgp process as a text string, if it changes then do something
+                # as new processes do not start earlier than old ones
+                my $cmd = '/bin/ps -C exabgp -o pid= >/dev/null && echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)';
+
+                ($out, $err) = $ssh->capture2($cmd);
+                if ($ssh->error) {
+                    my $msg = "";
+                    if    ($? == -1) { warn "Failed to execute -- " }
+                    elsif ($? & 127) {
+                        $msg = sprintf("\tChild died with signal %d, %s coredump -- ",
+                            ($? & 127),  ($? & 128) ? 'with' : 'without');
+                    } else {
+                        $msg = sprintf("\tChild exited with value %d -- ", $? >> 8);
+                        # cmd is ps ... && date ..., as ps fails the whole command fails and exit is 1
+                    }
+                    $ok_to_connect = 0;
+                    logit("$host: service exabgp not running");
+                }
+                chomp($out); chomp($err);
+
+                if ($out eq '') {
+                    logit("$host: service exabgp down");
                     $ok_to_connect = 0;
                 }
                 else {
-                    #
-                    # host up and accepts connections
-                    #
-                    # Get PID of process exabgp (ps) remove blanks (tr) and get start time in seconds (stat)
-                    #my $cmd = "stat -c%X /proc/`ps -C exabgp -o pid=|tr -d ' '`";
-                    # Use GNU date to calculate start time in seconds
-                    #my $cmd = 'echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)'
-
-                    # get start time of exabgp process as a text string, if it changes then do something
-                    # as new processes do not start earlier than old ones
-                    my $cmd = "ps -C exabgp -o lstart=";
-
-                    my $chan = $ssh2->channel();
-                    $chan->blocking(0);
-                    $chan->shell();
-
-                    my $len = 0;
-                    my $buf = 0;
-
-                    $chan->write("$cmd\n");
-                    select(undef,undef,undef,0.2);
-
-                    my $result = "";
-                    $result = $result . $buf while defined ($len = $chan->read($buf,512));
-
-                    $chan->close;
-
-                    chomp($result);
-
-                    if ($result eq '') {
-                        logit("$host: service exabgp down");
-                        $ok_to_connect = 0;
-                        #
-                        # do not attempt to contact host for update
-                        #
-                    }
+                    if ($exabgp_lstart{$host} eq $out) {
+                        logit("$host: service exabgp running ok");
+                        # $sql_query = $newrules;
+                        $ok_to_connect = 1;
+                        $exabgp_restarted = 0;
+                    } 
                     else {
-                        if ($exabgp_lstart{$host} eq $result) {
-                            logit("$host: service exabgp running ok");
-                            # $sql_query = $newrules;
-                            $ok_to_connect = 1;
-                            $exabgp_restarted = 0;
-                        } 
-                        else {
-                            logit("$host: service exabgp restarted: '$exabgp_lstart{$host}' != '$result'");
-                            $exabgp_lstart{$host} = "$result";
-                            # $sql_query = $all_rules;
-                            $ok_to_connect = 1;
-                            $exabgp_restarted = 1;
-                        }
-                    } # end do update
-                }
-            }
+                        logit("$host: service exabgp restarted: '$exabgp_lstart{$host}' != '$out'");
+                        $exabgp_lstart{$host} = "$out";
+                        # $sql_query = $all_rules;
+                        $ok_to_connect = 1;
+                        $exabgp_restarted = 1;
+                    }
+                } # service exabgp running ok
+            } # host up and accepts connections
             #------------------------------------------------------------
-            logit("ok to do something ok_to_connect = $ok_to_connect, exabgp_restarted = $exabgp_restarted");
+            # logit("ok to do something ok_to_connect = $ok_to_connect, exabgp_restarted = $exabgp_restarted");
         } # foreach ... 
         sleep(2);
 
@@ -223,73 +215,33 @@ main();
 
 exit 0;
 
-#
-# Documentation and  standard disclaimar
-#
-# Copyright (C) 2001 Niels Thomas Haugård
-# UNI-C
-# http://www.uni-c.dk/
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License 
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-#
-#++
-# NAME
-#   template.pl 1
-# SUMMARY
-#   Short description
-# PACKAGE
-#   file archive exercicer
-# SYNOPSIS
-#   template.pl options
-# DESCRIPTION
-#   \fItemplate.pl\fR is used for ...
-#   Bla bla.
-#   More bla bla.
-# OPTIONS
-# .IP o
-#   I'm a bullet.
-# .IP o
-#   So am I.
-# COMMANDS
-#   
-# SEE ALSO
-#   
-# DIAGNOSTICS
-#   Whatever.
-# BUGS
-#   Probably. Please report them to the call-desk or the author.
-# VERSION
-#      $Date$
-# .br
-#      $Revision$
-# .br
-#      $Source$
-# .br
-#      $State$
-# HISTORY
-#   $Log$
-# AUTHOR(S)
-#   Niels Thomas Haugård
-# .br
-#   E-mail: thomas@haugaard.net
-# .br
-#   UNI-C
-# .br
-#   DTU, Building 304
-# .br
-#   DK-2800 Kgs. Lyngby
-# .br
-#   Denmark
-#--
+################################################################################
+
+
+
+__DATA__
+
+#my @hosts = ("exabgp1", "exabgp2");
+my @hosts = ("localhost");
+
+foreach my $host (@hosts)
+{
+    print "start ...\n\n";
+    my $ssh = Net::OpenSSH->new($host, %ssh_opts);
+    if ($ssh->error) { die "Couldn't establish SSH connection: ". $ssh->error; }
+
+    my $cmd = 'ps -C exabgp -o pid= >/dev/null && echo prut >&2; echo $(export TZ=UTC0 LC_ALL=C; date -d "$(ps -o lstart= -C exabgp )" +%s)';
+    ($out, $err) = $ssh->capture2($cmd);
+    $ssh->error and die "remote command failed: " . $ssh->error;
+
+    chomp($out); chomp($err);
+    print "---->$out / $err\n";
+
+    $ssh->scp_put("/home/uninth/x.pl", "/tmp")
+                       or die "scp failed: " . $ssh->error;
+
+    print "finish\n\n";
+
+}
+
+exit 0;
