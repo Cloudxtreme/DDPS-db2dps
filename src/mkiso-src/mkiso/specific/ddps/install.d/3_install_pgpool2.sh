@@ -25,6 +25,8 @@ echo 'PATH=$PATH:/opt/pgpool2/bin' > /etc/profile.d/pgpool2.sh
 chmod 644 /etc/profile.d/pgpool2.sh
 chown root:root /etc/profile.d/pgpool2.sh
 
+echo 'd /var/run/pgpool/ 0755 postgres postgres - ' > /etc/tmpfiles.d/pgpool.conf
+
 # cat << EOF > /opt/pgpool2/etc/pgpool.conf
 # EOF
 

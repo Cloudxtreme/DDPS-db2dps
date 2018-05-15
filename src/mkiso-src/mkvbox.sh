@@ -25,6 +25,7 @@ esac
 
 ISODIR="${HOME}/VirtualBox VMs/iso/"
 ISO="${ISODIR}/ubuntu-16.04.3-server-amd64-auto-install.${GUEST}.iso"
+ISO="${ISODIR}/fnm.deic.dk.iso"
 
 VM="ubuntu-16.04-${GUEST}-test"
 
@@ -49,6 +50,7 @@ VBoxManage modifyvm ${VM} --vram 128
  
 VBoxManage modifyvm ${VM} --nic1 NAT --bridgeadapter1 en0
 VBoxManage modifyvm ${VM} --nic2 hostonly --hostonlyadapter2 vboxnet0
+VBoxManage modifyvm ${VM} --nic3 hostonly --hostonlyadapter3 vboxnet0
  
 # AMD PCNet PCI II = Am79C970A
 # AMD PCNet FAST III = Am79C973 (the default)
@@ -59,9 +61,11 @@ VBoxManage modifyvm ${VM} --nic2 hostonly --hostonlyadapter2 vboxnet0
  
 VBoxManage modifyvm ${VM} --nictype1 82545EM
 VBoxManage modifyvm ${VM} --nictype2 82545EM
+VBoxManage modifyvm ${VM} --nictype3 82545EM
  
 VBoxManage modifyvm ${VM} --cableconnected1 on
 VBoxManage modifyvm ${VM} --cableconnected2 on
+VBoxManage modifyvm ${VM} --cableconnected3 on
  
 VBoxManage modifyvm ${VM} --macaddress1 "0800276398d2"
 VBoxManage modifyvm ${VM} --ostype Ubuntu_64

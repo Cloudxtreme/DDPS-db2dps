@@ -1,0 +1,10 @@
+hostname=__HOSTNAME__
+domainname=__DOMAINNAME__
+loginuser="sysadm"
+password="Change_me_too"
+root_password="D0_change_me"
+# first attempt dhcp then fall back to static ipv4
+netcfg_get_ipaddress=172.16.70.42
+netcfg_get_netmask=255.255.255.0
+netcfg_get_gateway=172.16.70.1
+netcfg_get_nameservers=8.8.8.8

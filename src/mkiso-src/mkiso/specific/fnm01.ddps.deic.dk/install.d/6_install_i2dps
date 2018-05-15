@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# muchup
+#
+
+dpkg -i /root/files/data/notify_script/i2dps_1.0-18.deb
+apt-get -y -f install
+
+cp /root/files/data/config_files/opt/i2dps/etc/ssh/*		/opt/i2dps/etc/ssh
+cp /root/files/data/config_files/opt/i2dps/etc/fnm2db.ini	/opt/i2dps/etc/fnm2db.ini
+
+# apt-get -y remove i2dps; apt-get -y autoremove

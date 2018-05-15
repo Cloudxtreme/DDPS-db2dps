@@ -43,35 +43,26 @@ function valid_cidr()
 
 function print_active_rules()
 {
-	q_active_rules="select
-		flowspecruleid,
-		--direction,
+	q_active_rules="SELECT distinct uuid_flowspecruleid
+		uuid_flowspecruleid,
 		destinationprefix,
 		sourceprefix,
 		ipprotocol,
-		--srcordestport,
 		destinationport,
-		--sourceport,
-		--icmptype,
-		--icmpcode,
-		--tcpflags,
-		--packetlength,
-		--dscp,
-		--fragmentencoding,
-		--action,
-		--validfrom,
 		validto
 	from
 		flow.flowspecrules,
 		flow.fastnetmoninstances
 	where
-		flow.flowspecrules.fastnetmoninstanceid = flow.fastnetmoninstances.fastnetmoninstanceid
-		AND not isexpired
-		--AND not isactivated
-		AND mode = 'enforce'
+		not isexpired
 	order by
-		validto DESC,
-		validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding
+		uuid_flowspecruleid,
+    validto DESC,
+		validto, 
+		destinationprefix, 
+		sourceprefix, 
+		ipprotocol, 
+		destinationport
 		;
 	"
 	echo "---------------------------------------------------------------------------------------------------------------------"

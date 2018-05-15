@@ -1,0 +1,7 @@
+while :;
+do
+echo show route table deic-dps-production.inetflow.0 | cli
+echo show route table deic-dps-production.inet.0 | cli
+sleep 10
+done
+
