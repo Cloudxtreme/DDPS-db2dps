@@ -205,6 +205,7 @@ function make_sftp_user()
 	echo "$0: setting up sftp user for fastnetmon .... "
 	getent passwd newrules >/dev/null 2>&1 >/dev/null || useradd -m -c "DDPS rules upload" -d /home/sftpgroup/newrules/ -s /sbin/nologin newrules
 	usermod -G sftpgroup newrules
+    usermod -p '*'       newrules
 
 	chmod 755          /home/sftpgroup /home/sftpgroup/newrules/
 	mkdir -p           /home/sftpgroup/newrules/.ssh

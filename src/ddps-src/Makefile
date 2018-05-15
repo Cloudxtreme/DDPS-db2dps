@@ -3,8 +3,8 @@
 # TARGETHOST   deployment/test host or IP address, e.g. user@1.2.3.4
 #TARGETHOST      = uninth@ddps.deic.dk
 #TARGETHOST      = uninth@ww1.ddps.deic.dk
-#TARGETHOST      = uninth@ww2.ddps.deic.dk
-TARGETHOST      = uninth@ddps-dev
+TARGETHOST      = uninth@ww2.ddps.deic.dk
+#TARGETHOST      = uninth@ddps-dev
 # UPLOADDIR    top directory for the source; everything from '.' will be synced
 #              with rsync to there! The directory must exist
 UPLOADDIR       = ddps-src/
@@ -95,7 +95,7 @@ $(prog):	hostcheck db2dps.pl version.pm install_perl_modules $(sqlstr)
 			@sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}'  db2dps.pl > db2dps
 			@chmod 555 db2dps
 
-perlfiles	= kill_switch_restart_all_exabgp.pl ddpsrules.pl examon.pl
+perlfiles	= kill_switch_restart_all_exabgp.pl ddpsrules.pl 
 shellfiles	= default-rules.sh apply-default-rules.sh
 
 # target assumes everything is perl

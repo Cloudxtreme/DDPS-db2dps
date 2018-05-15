@@ -1,0 +1,221 @@
+#!/bin/sh
+#
+# $Header$
+#
+#--------------------------------------------------------------------------------------#
+# TODO
+#
+#--------------------------------------------------------------------------------------#
+
+
+#
+# Vars
+#
+MYDIR=/opt/mkiso
+SPECIFIC=${MYDIR}/specific
+MYNAME=`basename $0`
+MY_LOGFILE=/var/log/somelogfile
+VERBOSE=FALSE
+TMPFILE=/tmp/${MYNAME}.tmp
+TEMPLATEDIR=${MYDIR}/fnm-template
+
+#
+# Functions
+#
+logit() {
+# purpose     : Timestamp output
+# arguments   : Line og stream
+# return value: None
+# see also    :
+	LOGIT_NOW="`date '+%H:%M:%S (%d/%m)'`"
+	STRING="$*"
+
+	if [ -n "${STRING}" ]; then
+		$echo "${LOGIT_NOW} ${STRING}" >> ${MY_LOGFILE}
+		if [ "${VERBOSE}" = "TRUE" ]; then
+			$echo "${LOGIT_NOW} ${STRING}"
+		fi
+	else
+		while read LINE
+		do
+			if [ -n "${LINE}" ]; then
+				$echo "${LOGIT_NOW} ${LINE}" >> ${MY_LOGFILE}
+				if [ "${VERBOSE}" = "TRUE" ]; then
+					$echo "${LOGIT_NOW} ${LINE}"
+				fi
+			else
+				$echo "" >> ${MY_LOGFILE}
+			fi
+		done
+	fi
+}
+usage() {
+# purpose     : Script usage
+# arguments   : none
+# return value: none
+# see also    :
+echo $*
+cat << EOF
+	Usage: `basename $0` [-n][-v] newfqdn
+	See man pages for more info.
+EOF
+	exit 2
+}
+
+clean_f () {
+# purpose     : Clean-up on trapping (signal)
+# arguments   : None
+# return value: None
+# see also    :
+	$echo trapped
+	/bin/rm -f $TMPFILE $MAILFILE
+}
+
+#
+# clean up on trap(s)
+#
+trap clean_f 1 2 3 13 15
+
+################################################################################
+# Main
+################################################################################
+
+echo=/bin/echo
+case ${N}$C in
+	"") if $echo "\c" | grep c >/dev/null 2>&1; then
+		N='-n'
+	else
+		C='\c'
+	fi ;;
+esac
+
+DOIT=1
+
+#
+# Process arguments
+#
+while getopts vn opt
+do
+case $opt in
+    v)  VERBOSE=TRUE
+	;;
+	n)	DOIT=0
+	;;
+	*)	usage
+		exit
+	;;
+esac
+done
+shift `expr $OPTIND - 1`
+
+NEWHOST="$1"
+test -n "$NEWHOST"	|| usage "Error: no fqdn !"
+
+logit "$0 starting"
+logit "New fastnetmon host: $NEWHOST"
+
+if [ -e "${SPECIFIC}/$NEWHOST" ]; then
+    echo "dir ${SPECIFIC}/$NEWHOST exists"
+    exit
+fi
+
+test -d ${TEMPLATEDIR} || {
+    echo "template dir ${TEMPLATEDIR} does not exist"
+    exit 1
+}
+
+HOSTNAME=`echo $NEWHOST | awk -F. '{ print $1 }'`
+DOMAINNAME=`echo $NEWHOST | awk -F. '{$1="" ;OFS="." ; print $0}' | sed 's/^.//; s/\ /\./g'`
+
+cp -r ${TEMPLATEDIR} ${SPECIFIC}/${NEWHOST}/
+cd ${SPECIFIC}/${NEWHOST}/
+
+sed "
+    s/__HOSTNAME__/$HOSTNAME/g
+    s/__DOMAINNAME__/$DOMAINNAME/g
+    " < host.config.template > host.config && /bin/rm -f host.config.template
+logit "made host.config"
+cat host.config | logit
+
+ssh-keygen  -t ED25519  -C "${NEWHOST}-`date +%D_%T`" -f data/config_files/opt/i2dps/etc/ssh/ed25519 -N "" |logit
+
+logit "made ssh keys ed25519"
+
+authorized_keys=/home/sftpgroup/newrules/.ssh/authorized_keys
+logit "adding pub keys to $authorized_keys ... "
+# add the keys to DDPS
+chattr -i $authorized_keys
+cat data/config_files/opt/i2dps/etc/ssh/ed25519.pub >> $authorized_keys
+chattr +i $authorized_keys
+
+logit "You can only ddit $authorized_keys"
+logit "the command edit_authorized_keys.sh"
+
+#
+# The following files will be altered later
+#
+# data/config_files/opt/i2dps/etc/fnm2db.ini
+# data/config_files/etc/fastnetmon.conf
+# data/config_files/etc/networks_whitelist
+# data/config_files/etc/networks_list
+
+cat << EOF
+
+Now create an OpenVPN key on fw1.ddps.deic.dk as root with
+
+/root/bin/openvpn_add_client ${NEWHOST}
+
+Copy the key to 
+
+${SPECIFIC}/$NEWHOST/data/openvpn/
+
+EOF
+
+cat << EOF
+Next run 
+
+mkfnm -s ${NEWHOST}
+
+which will make an ISO in /tmp/${NEWHOST}.iso
+
+Eventually convert it to USB on a Mac this way:
+
+hdiutil convert -format UDRW -o <target> <source>
+
+and install it on an USB stik this way:
+
+  Format the USB as FAT, GUID Partition Map
+  List mount point with 
+    diskutil list
+  Assume disk is mounted on /dev/disk2 do
+    diskutil unmountDisk /dev/disk2
+  followed by
+    dd bs=1m if=fnm.deic.dk.img.dmg of=/dev/rdisk2
+
+EOF
+
+exit 0
+
+#
+# Documentation and  standard disclaimar
+#
+# Copyright (C) 2018 Niels Thomas Haugård
+# DEiC
+# http://www.deic.dk/
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the 
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License 
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+#++
+#--

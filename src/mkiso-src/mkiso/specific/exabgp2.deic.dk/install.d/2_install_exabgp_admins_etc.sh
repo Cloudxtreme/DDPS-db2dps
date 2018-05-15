@@ -272,7 +272,10 @@ function install_exabgp()
     mkdir               /run/exabgp
     chown exabgp:exabgp /run/exabgp/
     chmod 755           /run/exabgp/
+    echo 'd /var/run/exabgp 0755 exabgp exabgp -' > /usr/lib/tmpfiles.d/exabgp.conf
+    echo 'd /var/run/exabgp 0755 exabgp exabgp -' > /etc/tmpfiles.d/exabgp.conf
     service exabgp stop
+    systemctl enable exabgp
     service exabgp start
     systemctl is-active exabgp 
 
@@ -283,29 +286,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/EolcoPvI67izK9wV/oyPP7iDOxUcvnYpc1DI2sBh
 EOF
     chmod -R 700 /root/.ssh
 
-    # rc.local fix for exabgp 
-    cat << EOF > /etc/rc.local
-#!/bin/sh -e
-#
-# rc.local
-#
-# This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
-# value on error.
-#
-# In order to enable or disable this script just change the execution
-# bits.
-#
-# By default this script does nothing.
-
-mkdir /run/exabgp
-chown exabgp:exabgp /run/exabgp/
-service exabgp restart
-
-exit 0
-EOF
-    chmod 555 /etc/rc.local
-    chown root /etc/rc.local
+    echo 'd /var/run/exabgp 0755 exabgp exabgp -' > /usr/lib/tmpfiles.d/exabgp.conf
 
 }
 

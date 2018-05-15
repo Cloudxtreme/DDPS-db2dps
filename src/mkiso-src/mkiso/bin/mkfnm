@@ -77,7 +77,9 @@ function apply_precedefile()
 	/bin/rm -f ${TMPFILE}
 
 	envsubst < ${PRESEED} > ${TMP}/preseed.cfg
-	#diff ${PRESEED} ${TMP}/preseed.cfg
+    echo "---------"
+	diff ${PRESEED} ${TMP}/preseed.cfg
+    echo "---------"
 }
 
 function update_isolinux()
@@ -91,6 +93,15 @@ function add_files()
 	echo adding files ... 
 	mkdir -p ${TMP}/files/install.d ${TMP}/files/data
 	cp -rv /opt/mkiso/common/* ${TMP}/files/
+
+    cat << EOF > "${TMP}/files/rc.local"
+#!/bin/sh
+
+/bin/bash /root/files/install.sh
+
+touch /var/tmp/installation-from-rc.local-done
+
+EOF
 
 	if [ -d "${SPECIFIC_HOSTDIR}/data" ]; then
          cp -r ${SPECIFIC_HOSTDIR}/data/* ${TMP}/files/data
@@ -175,8 +186,38 @@ function main()
 	update_checksums
 
 	echo "Generate the iso..."
-	genisoimage -o "$DEST" -r -J -quiet -no-emul-boot -boot-load-size 4 \
-		-boot-info-table -b isolinux/isolinux.bin -c isolinux/boot.cat "$TMP"
+	#genisoimage -o "$DEST" -r -J -quiet -no-emul-boot -boot-load-size 4 \
+	#	-boot-info-table -b isolinux/isolinux.bin -c isolinux/boot.cat "$TMP"
+
+    #
+    # google:  genisoimage create partition table
+    # https://ubuntuforums.org/showthread.php?t=1980215
+    #
+    # google: how to create a valid partition table with  mkisofs
+    # https://linuxconfig.org/legacy-bios-uefi-and-secureboot-ready-ubuntu-live-image-customization
+    # https://askubuntu.com/questions/625286/how-to-create-uefi-bootable-iso
+    # http://www.syslinux.org/wiki/index.php?title=Isohybrid
+    # http://lukeluo.blogspot.dk/2013/06/grub-how-to-2-make-boot-able-iso-with.html
+    # https://unix.stackexchange.com/questions/44466/how-do-i-create-a-usb-image-with-a-partition-table
+
+    # apt-get -y install syslinux-common isolinux xorriso
+
+    xorriso -as mkisofs \
+    -D -r -J -joliet-long -l -V "Custom Install CD" \
+    -b isolinux/isolinux.bin \
+    -c isolinux/boot.cat \
+    -iso-level 3 -no-emul-boot -partition_offset 16 -boot-load-size 4 -boot-info-table \
+    -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin \
+    -o "$DEST" "$TMP"
+
+    #xorriso -as mkisofs \
+    #-D -r -J -joliet-long -l -V "Custom Install CD" \
+    #-b isolinux/isolinux.bin \
+    #-c isolinux/boot.cat \
+    #-iso-level 3 -no-emul-boot -partition_offset 16 -boot-load-size 4 -boot-info-table \
+    #-isohybrid-mbr /usr/lib/syslinux/isohdpfx.bin \
+    #-o "$DEST" "$TMP"
+
 
 	echo "Removing the temporary directory..."
 	rm -rf "$TMP"

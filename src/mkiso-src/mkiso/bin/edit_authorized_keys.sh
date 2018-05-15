@@ -11,9 +11,18 @@ authorized_keys=/home/sftpgroup/newrules/.ssh/authorized_keys
 
 trap 'echo please exit nicely' 1 2 3 13 15
 
+hosts="ww1.ddps.deic.dk ww2.ddps.deic.dk"
+me="`hostname`"
+partner=`echo ${hosts} | sed "s/${me}//g;s/[[:blank:]]//g; s/[[:space:]]//g"`
+
+
 sudo chattr -i $authorized_keys
 sudo vi /home/sftpgroup/newrules/.ssh/authorized_keys
 sudo chattr +i $authorized_keys
+
+echo "sudo chattr -i $authorized_keys" | ssh -qt $partner 2>/dev/null
+scp $authorized_keys $partner:$authorized_keys
+echo "sudo chattr +i $authorized_keys" | ssh -qt $partner 2>/dev/null
 
 exit 0
 

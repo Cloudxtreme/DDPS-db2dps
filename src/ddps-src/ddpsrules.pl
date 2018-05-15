@@ -476,7 +476,7 @@ sub printrule()
 	my $driver  = "Pg";
 
 	my $sql_query = "
-		select
+		select distinct uuid_flowspecruleid
 		uuid_flowspecruleid, direction, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport,
 		sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding, action, validfrom,
 		validto, description
@@ -484,12 +484,10 @@ sub printrule()
 		flow.flowspecrules,
 		flow.fastnetmoninstances
 	where
-		flow.flowspecrules.uuid_fastnetmoninstanceid = flow.fastnetmoninstances.uuid_fastnetmoninstanceid
-		AND not isexpired
-		AND mode = 'enforce'
+		 not isexpired
 	order by
 		validto DESC,
-		validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding ; "; 
+		validto, destinationprefix, sourceprefix, ipprotocol, srcordestport, destinationport, sourceport, icmptype, icmpcode, tcpflags, packetlength, dscp, fragmentencoding ;"; 
 
 	# Connect to the database
 	my $dsn = "DBI:$driver:dbname=$db;host=127.0.0.1;port=5432";

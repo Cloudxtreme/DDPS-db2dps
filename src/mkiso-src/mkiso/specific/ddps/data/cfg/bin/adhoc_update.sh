@@ -17,6 +17,7 @@ CHECKONLY=FALSE
 TMPFILE=/tmp/${MYNAME}.tmp
 
 export PATH=/bin:/etc:/sbin:/usr/bin:/usr/bin/X11:/usr/local/bin:/usr/local/etc:/usr/local/sbin:/usr/sbin:/usr/lib
+export DEBIAN_FRONTEND=noninteractive
 
 #
 # Functions
@@ -37,8 +38,7 @@ function run_apt_get()
                 logit "apt-get $do failed:"
                 logit  < $tmpfile
                 /bin/rm -f $tmpfile
-				logit "please investigate, bye"
-                exit 1
+                logit "proceding anyway ... "
 		else
 				if egrep -q "^W: Failed to fetch|^Err http"  $tmpfile
 				then
@@ -119,7 +119,9 @@ case $opt in
 	;;
 	c)	CHECKONLY=TRUE
 	;;
-	*)	usage
+	*)	echo "usage: `basename $0` [-cv]"
+		echo "     -c: check only"
+		echo "     -v: verbose"
 		exit
 	;;
 esac
@@ -128,9 +130,15 @@ shift `expr $OPTIND - 1`
 
 logit "starting $0 $*"
 
+# fix any expired keys
+(
+	for K in $(apt-key list | grep expired | cut -d'/' -f2 | cut -d' ' -f1); do sudo apt-key adv --recv-keys --keyserver keys.gnupg.net $K; done
+) 2>&1 | logit
+
 run_apt_get update
 
 apt-get --just-print upgrade 2>&1 | awk '
+$1 == 0 { next }	# 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded
 $1 != "Inst" { next; }
 {
 	gsub(/\[/, "", $0);
@@ -151,9 +159,13 @@ esac
 
 #| /usr/bin/perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "PROGRAM: $1 INSTALLED: $2 AVAILABLE: $3\n"}' | logit
 
+# sometimes upgrade fails so run this:
+dpkg --configure -a
+
 run_apt_get upgrade
 run_apt_get dist-upgrade
 run_apt_get autoremove
+run_apt_get clean
 
 if [ -f /var/run/reboot-required ]; then
         logit reboot required - reboot in 60 seconds

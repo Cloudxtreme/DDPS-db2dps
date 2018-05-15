@@ -222,6 +222,7 @@ our $newrules;
 our $remove_expired_rules;
 our $update_rules_when_announced;
 our $update_rules_when_expired;
+our $check_admin_rights_on_dst;
 
 my $section;
 my %data;
@@ -801,25 +802,25 @@ sub mkrulebase($$)
                 $validfrom              = $validfrom            ? $validfrom            : "";
                 $validto                = $validto              ? $validto              : "";
 
-                logit("debug:");
-                logit("number of collums in \@row:$#row");
-                logit("flowspecruleid: $flowspecruleid");
-                logit("direction: $direction");
-                logit("destinationprefix: $destinationprefix");
-                logit("sourceprefix: $sourceprefix");
-                logit("ipprotocol: $ipprotocol");
-                logit("srcordestport: $srcordestport");
-                logit("destinationport: $destinationport");
-                logit("sourceport: $sourceport");
-                logit("icmptype: $icmptype");
-                logit("icmpcode: $icmpcode");
-                logit("tcpflags: $tcpflags");
-                logit("packetlength: $packetlength");
-                logit("dscp: $dscp");
-                logit("fragmentencoding: $fragmentencoding");
-                logit("action: $action");
-                logit("validfrom: $validfrom");
-                logit("validto: $validto");
+#                logit("debug:");
+#                logit("number of collums in \@row:$#row");
+#                logit("flowspecruleid: $flowspecruleid");
+#                logit("direction: $direction");
+#                logit("destinationprefix: $destinationprefix");
+#                logit("sourceprefix: $sourceprefix");
+#                logit("ipprotocol: $ipprotocol");
+#                logit("srcordestport: $srcordestport");
+#                logit("destinationport: $destinationport");
+#                logit("sourceport: $sourceport");
+#                logit("icmptype: $icmptype");
+#                logit("icmpcode: $icmpcode");
+#                logit("tcpflags: $tcpflags");
+#                logit("packetlength: $packetlength");
+#                logit("dscp: $dscp");
+#                logit("fragmentencoding: $fragmentencoding");
+#                logit("action: $action");
+#                logit("validfrom: $validfrom");
+#                logit("validto: $validto");
 
                 #
                 #  2554, in, 130.226.136.242, , udp, , , , , , , , 60, , , 2017-04-26 17:05:38.492843+02, 2017-04-26 17:15:38.492843+02,   -- no validto
@@ -846,18 +847,22 @@ sub mkrulebase($$)
 
                 # Last line of defence to prevent wron announcements: Do not
                 # announce / withdraw networks outside our constituency
-                my $dst_subnet = new NetAddr::IP $destinationprefix;
+                my $dst_subnet = new NetAddr::IP->new($destinationprefix);
 
                 my $destinationprefix_is_within_my_network = 1;
 
                 logit ("testing $destinationprefix = $dst_subnet within my networks: $destinationprefix_is_within_my_network");
                 foreach my $mynetwork (split ' ', $allmynetworks)
                 {
-                    my $subnet = new NetAddr::IP $mynetwork;
+                    my $subnet = new NetAddr::IP->new($mynetwork);
                     if ($dst_subnet->within($subnet))
                     {
                             logit("dst $dst_subnet is within $subnet");
                             $destinationprefix_is_within_my_network = 0;
+                    }
+                    else 
+                    {
+                            logit("dst $dst_subnet is not part of $subnet");
                     }
                 }
                 logit ("test done destinationprefix_is_within_my_network: $destinationprefix_is_within_my_network (0 is good)");
@@ -918,7 +923,7 @@ sub mkrulebase($$)
                         {
                             $tcpflags           = "";
                             $icmptype           = "";
-                            $tcpflags           = "";
+                            $icmpcode           = "";
                         }
                         if ($ipprotocol     =~/null/)                   # may be set to null from the command line tool meaning discard
                         {
@@ -1044,9 +1049,9 @@ sub mkrulebase($$)
                 my $timeout = 10;
                 my %ssh_opts = (user => $sshuser, key_path => $identity_file, timeout => $timeout);
 
-                my $ssh = Net::OpenSSH->new($remotemember, %ssh_opts);
+                my $ssh = Net::OpenSSH->new($host, %ssh_opts);
                 if ($ssh->error) {
-                    logit("ssh/scp connection to '$remotemember' failed");
+                    logit("ssh/scp connection to '$host' failed");
                     $ok_to_connect = 0;
                 }
 
@@ -1161,7 +1166,7 @@ sub processnewrules()
             $tcp_flags{$_} = 0;
         }
 
-        my ($action,$customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$description);
+        my ($action,$customerid,$uuid,$fastnetmoninstanceid,$uuid_administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$description);
         my $length_min  = 90000;    # jumbo package: count down
         my $length_max  = 0;        # max = 0: increment
 
@@ -1194,7 +1199,7 @@ sub processnewrules()
                 next if ($line =~ m/^head/);
                 next if ($line =~ m/$file_finished_ok_string/);
                 chomp($line);
-                ($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$action,$description) = split(/;/, $line);
+                ($customerid,$uuid,$fastnetmoninstanceid,$uuid_administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$action,$description) = split(/;/, $line);
 
                 if ($action eq "" || $action eq "null")
                 {
@@ -1322,7 +1327,7 @@ sub processnewrules()
                     }
                     else
                     {
-                        $sport = ">=" . $sport_min . "&<=" . $sport_max ;
+                        $sport = ">=" . $sport_min . " <=" . $sport_max ;
                     }
                 }
                 else
@@ -1346,7 +1351,7 @@ sub processnewrules()
                     }
                     else
                     {
-                        $dport = ">=" . $dport_min . "&<=" . $dport_max ;
+                        $dport = ">=" . $dport_min . " <=" . $dport_max ;
                     }
                 }
                 else
@@ -1369,7 +1374,7 @@ sub processnewrules()
                     }
                     else
                     {
-                        $length = ">=" . $length_min . "&<=" . $length_max ;
+                        $length = ">=" . $length_min . " <=" . $length_max ;
 
                     }
                 }
@@ -1405,7 +1410,7 @@ sub processnewrules()
                 $tcp_match_flags = "null";
             }
 
-            logit("$rules_in_file rules reduced to: ");
+#           logit("$rules_in_file rules reduced to: ");
 #           logit("insert into database ...");
 #           logit("match destination '$dst'");
 #           logit("match source      '$src'");
@@ -1413,77 +1418,109 @@ sub processnewrules()
 #           logit("match sport       '$sport'");
 #           logit("match dport       '$dport'");
 #           logit("match fragment    '$frag'");
-            
 #           logit("match tcp flags   '$tcp_match_flags'");
 #           logit("match length:     '$length'");
 #           logit("then              '$action'");
-        
-            logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action description: $description");
-            
-            # quote everything except null and false
-            $sql_query = $addrule;
 
-            for ($sql_query) {
-                s/__customerid/$customerid/g;
-                s/__uuid/$uuid/g;
-                s/__administratorid/$administratorid/g;
-                s/__blocktime/$blocktime/g;
-                s/__fastnetmoninstanceid/$fastnetmoninstanceid/g;
-                s/__dst/$dst/g;
-                s/__src/$src/g;
-                s/__protocol/$protocol/g;
-                s/__dport/$dport/g;
-                s/__sport/$sport/g;
-                s/__icmp_type/$icmp_type/g;
-                s/__icmp_code/$icmp_code/g;
-                s/__flags/$flags/g;
-                s/__length/$length/g;
-                s/__dscp/$dscp/g;
-                s/__frag/$frag/g;
-                s/__action/$action/g;
-                s/__description/$description/g;
-                s/'false'/false/g;
-                s/'null'/null/g;
-                s/''/'null'/g;
-            }
-            # Last line of defence to prevent wron announcements: Do not
-            # announce / withdraw networks outside our constituency
-            # if ($dst !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
-            if ($dst =~ m/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)    # host with no space
-            {
-                $dst = $dst . "/32";
-            }
-            
-            # dst may be a list -- but this is currently not accepted in the database as the field type of src and dst is inet (meaning one cidr)
-            my $destinationprefix_is_within_my_network = 1;
-            foreach my $d (split(/ /, $dst))
-            {
-                my $dst_subnet = new NetAddr::IP $d;
+#            logit("check if $uuid_administratorid really have rights to make rules on $dst");
+#            $sql_query = "$check_admin_rights_on_dst";
+#
+#            for ($sql_query) {
+#                s/__uuid_administratorid/$uuid_administratorid/g;
+#                s/__dst/$dst/g;
+#                s/'false'/false/g;
+#                s/'null'/null/g;
+#                s/''/'null'/g;
+#            }
+#            logit("running sql_query: $sql_query");
+#            my $sth = $dbh->prepare($sql_query) or logit("Failed in statement prepare: $dbh->errstr");
+#            $sth->execute()                     or logit("Failed to execute statement: $dbh->errstr");
+#
+#            my @tmparr;
+#            while (my @row = $sth->fetchrow_array)
+#            {
+#                if ($row[0] eq 1)
+#                {
+#                    logit("ok: admin $uuid_administratorid may create rules for $dst");
+                    #last loop;
+                    logit("insert into ... $uuid/$fastnetmoninstanceid|$uuid_administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action description: $description");
+                    
+                    # quote everything except null and false
+                    $sql_query = $addrule;
 
-                logit ("testing $d = $dst_subnet within my networks: $destinationprefix_is_within_my_network");
-                foreach my $mynetwork (split ' ', $allmynetworks)
-                {
-                    my $subnet = new NetAddr::IP $mynetwork;
-                    if ($dst_subnet->within($subnet))
-                    {
-                            logit("dst $dst_subnet is within $subnet");
-                            $destinationprefix_is_within_my_network = 0;
+                    for ($sql_query) {
+                        s/__customerid/$customerid/g;
+                        s/__uuid_administratorid/$uuid_administratorid/g;
+                        s/__uuid/$uuid/g;
+                        s/__blocktime/$blocktime/g;
+                        s/__fastnetmoninstanceid/$fastnetmoninstanceid/g;
+                        s/__dst/$dst/g;
+                        s/__src/$src/g;
+                        s/__protocol/$protocol/g;
+                        s/__dport/$dport/g;
+                        s/__sport/$sport/g;
+                        s/__icmp_type/$icmp_type/g;
+                        s/__icmp_code/$icmp_code/g;
+                        s/__flags/$flags/g;
+                        s/__length/$length/g;
+                        s/__dscp/$dscp/g;
+                        s/__frag/$frag/g;
+                        s/__action/$action/g;
+                        s/__description/$description/g;
+                        s/'false'/false/g;
+                        s/'null'/null/g;
+                        s/''/'null'/g;
                     }
-                }
-                logit ("test done destinationprefix_is_within_my_network: $destinationprefix_is_within_my_network (0 is good)");
-            }
-                
-            if ($destinationprefix_is_within_my_network == 1)
-            {
-                logit("rule NOT added to database: dst is outside our constituency destinationprefix=$dst sourceprefix=$src ipprotocol=$protocol validfrom=$validfrom validto=$validto");
-            }
-            else
-            {
-                logit("running sql_query: $sql_query");
-                my $sth = $dbh->prepare($sql_query) or logit("Failed in statement prepare: $dbh->errstr");
-                $sth->execute()                     or logit("Failed to execute statement: $dbh->errstr");
-            }
-            unlink $file or logit("Could not unlink $file $!");
+                    # Last line of defence to prevent wron announcements: Do not
+                    # announce / withdraw networks outside our constituency
+                    # if ($dst !~ m|(^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/(\d{1,2})$| )
+                    if ($dst =~ m/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/)    # host with no space
+                    {
+                        $dst = $dst . "/32";
+                    }
+                    
+                    # dst may be a list -- but this is currently not accepted in the database as the field type of src and dst is inet (meaning one cidr)
+                    my $destinationprefix_is_within_my_network = 1;
+                    foreach my $d (split(/ /, $dst))
+                    {
+                        my $dst_subnet = new NetAddr::IP $d;
+
+                        logit ("testing $d = $dst_subnet within my networks: $destinationprefix_is_within_my_network");
+                        foreach my $mynetwork (split ' ', $allmynetworks)
+                        {
+                            my $subnet = new NetAddr::IP $mynetwork;
+                            if ($dst_subnet->within($subnet))
+                            {
+                                    logit("dst $dst_subnet is within $subnet");
+                                    $destinationprefix_is_within_my_network = 0;
+                            }
+                        }
+                        logit ("test done destinationprefix_is_within_my_network: $destinationprefix_is_within_my_network (0 is good)");
+                    }
+                        
+                    if ($destinationprefix_is_within_my_network == 1)
+                    {
+                        logit("rule NOT added to database: dst is outside our constituency destinationprefix=$dst sourceprefix=$src ipprotocol=$protocol validfrom=$validfrom validto=$validto");
+                    }
+                    else
+                    {
+                        logit("running sql_query: $sql_query");
+                        my $sth = $dbh->prepare($sql_query) or logit("Failed in statement prepare: $dbh->errstr");
+                        $sth->execute()                     or logit("Failed to execute statement: $dbh->errstr");
+                        # manglede der ern sth->finish her?
+                        $sth->finish();
+                    }
+                    my @tmparr;
+                    unlink $file or logit("Could not unlink $file $!");
+#                }
+#                elsif ($row[0] eq 0)
+#                {
+#                    logit("ERROR: admin $uuid_administratorid may NOT create rules for $dst");
+#                    # TODO: move somewhere else for further investigation
+#                    # unlink $file or logit("Could not unlink $file $!");
+#                    last loop;
+#                }
+#            }
         }
         else
         {
@@ -1501,7 +1538,7 @@ sub processnewrules()
                 next if ($line =~ m/^head/);
                 next if ($line =~ m/$file_finished_ok_string/);
                 chomp($line);
-                ($customerid,$uuid,$fastnetmoninstanceid,$administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$action,$description) = split(/;/, $line);
+                ($customerid,$uuid,$fastnetmoninstanceid,$uuid_administratorid,$blocktime,$dst,$src,$protocol,$sport,$dport,$dport,$icmp_type,$icmp_code,$flags,$length,$ttl,$dscp,$frag,$action,$description) = split(/;/, $line);
     
                 # shouldn't be but better check
                 if ($action eq "" || $action eq "null")
@@ -1541,14 +1578,14 @@ sub processnewrules()
                 }
                 else
                 {
-                    logit("insert into ... $uuid/$fastnetmoninstanceid|$administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action description:$description");
+                    logit("insert into ... $uuid/$fastnetmoninstanceid|$uuid_administratorid dest:$dst proto:$protocol port:$dport length:$length frag:$frag action:$action description:$description");
                     # quote everything except null and false
                     $sql_query = $addrule;
 
                     for ($sql_query) {
                         s/__customerid/$customerid/g;
+                        s/__uuid_administratorid/$uuid_administratorid/g;
                         s/__uuid/$uuid/g;
-                        s/__administratorid/$administratorid/g;
                         s/__blocktime/$blocktime/g;
                         s/__fastnetmoninstanceid/$fastnetmoninstanceid/g;
                         s/__dst/$dst/g;

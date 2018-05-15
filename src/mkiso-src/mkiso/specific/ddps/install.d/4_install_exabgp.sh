@@ -44,6 +44,7 @@ function install_exabgp()
     echo "$0: installing configuration files ... "
     /bin/cp /root/files/data/exabgp/* /etc/exabgp/
     echo 'd /var/run/exabgp 0755 exabgp exabgp -' > /usr/lib/tmpfiles.d/exabgp.conf
+    echo 'd /var/run/exabgp 0755 exabgp exabgp -' > /etc/tmpfiles.d/exabgp.conf
     service exabgp stop
     systemctl enable exabgp
     service exabgp start
