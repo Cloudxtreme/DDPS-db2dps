@@ -185,12 +185,10 @@ db update freq is 10 seconds
 
 All active rules may be deleted with
 
-    ddpsrules del `ddpsrules active|awk ' $0 ~ /^-*$/ { next; }; $1 ~ /flowspecruleid/ { next; }; $1 ~ /^[-a-z0-9]+$/ { print $1 }'`
+    ddpsrules -v delall
 
-<!-- ddpsrules del `ddpsrules active|awk ' $1 ~ /^[0-9]+$/ { print $1 }'` -->
+<!-- ddpsrules del `ddpsrules active|awk ' $0 ~ /^-*$/ { next; }; $1 ~ /flowspecruleid/ { next; }; $1 ~ /^[-a-z0-9]+$/ { print $1 }'` -->
 
-<!-- ddpsrules del `ddpsrules active |awk '{ print $1 }'|sed '/Read/d; /^$/d; /^|/d; /^\---*/d; /flowspecruleid/d'` -->
-	
 If everything else fails, a full reset of all announcements may be initiated
 
 	kill_switch_restart_all_exabgp.pl

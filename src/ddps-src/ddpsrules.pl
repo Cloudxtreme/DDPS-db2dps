@@ -96,7 +96,7 @@ my $isdigit				= qr/^[[:digit:]]+$/x;
 my $assume_yes = 0;
 
 my $usage = "
-    $0 [-v] add [-h] ... | del ... | active [-s seconds] | log
+    $0 [-v] add [-h] ... | del ... | delall | active [-s seconds] | log
 
     active:
         Print active rules with rule id's from database
@@ -105,6 +105,9 @@ my $usage = "
 
     del:
     Set expire time to now for rule matching (list of) rule id(s)
+
+    delall:
+    Set expire time to now for all rules
 
     add:
         --blocktime|b    minutes
@@ -232,7 +235,10 @@ sub main(@) {
 	}elsif ($do eq 'del')
 	{
 		delrule();
-	}
+	} elsif ($do eq 'delall')
+    {
+        delallrules();
+    } 
 	elsif ($do eq 'active')
 	{
         if (defined $ARGV[0] && $ARGV[0] eq '-s')
@@ -424,6 +430,63 @@ EOF
 	print "done\nshow result with\n$0 active or $0 log\n";
 }
 
+sub delallrules()
+{
+	my $driver  = "Pg";
+
+	my $sql_query = "select distinct uuid_flowspecruleid
+	from
+		flow.flowspecrules,
+		flow.fastnetmoninstances
+	where
+		 not isexpired;"; 
+
+    my @all_rules_to_expire = ();
+	# Connect to the database
+    while (1)
+    {
+        my $dsn = "DBI:$driver:dbname=$db;host=127.0.0.1;port=5432";
+        $dbh = DBI->connect($dsn, $dbuser, $dbpass, { RaiseError => 1 }) or die $DBI::errstr;
+
+        my $sth = $dbh->prepare($sql_query);
+        $sth->execute();
+
+        my $i = 0;
+        while (my @row = $sth->fetchrow_array)
+        {	
+            $i++;
+            if ($row[0] ne "")
+            {
+                $uuid_flowspecruleid    = "'" . $row[0] . "'";
+                push @all_rules_to_expire, "$uuid_flowspecruleid";
+            }
+        }
+        $sth->finish();
+
+        # if (scalar(@all_rules_to_expire
+        my $count = scalar(@all_rules_to_expire);
+        if (scalar(@all_rules_to_expire) == 0)
+        {
+            print "no active rules found\n";
+        }
+        else
+        {
+            logit("Found $i rules, setting validto=now() ... ");
+            my $unique_implemented_flowspecruleid = join(', ', @all_rules_to_expire);
+            $sql_query = "update flow.flowspecrules set validto=now() where uuid_flowspecruleid in ( $unique_implemented_flowspecruleid );";
+
+            my $sth = $dbh->prepare($sql_query);
+            $sth->execute();
+            logit("done. Check with 'ddpsrules active'");
+        }
+
+	    $dbh->disconnect();
+
+
+        exit 0;
+    }
+}
+
 sub delrule()
 {
 	if (@ARGV == 0)
@@ -495,7 +558,6 @@ sub printrule()
 
     while (1)
     {
-
         my $sth = $dbh->prepare($sql_query);
         $sth->execute();
 
