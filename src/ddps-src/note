@@ -1,2 +1,5 @@
-skal testes i udv f'r prod
+
+check if apt install ny.deb fix dependencies or else check the dependencies
+with dpkg -I my.deb and apt-get install the dependencies before dpkg -i my.deb
+
 

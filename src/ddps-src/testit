@@ -1,0 +1,27 @@
+: 
+
+make clean; make; echo made *deb
+
+set -x 
+echo removeing *deb and dependencies ...
+apt-get -y remove db2dps 1>/dev/null
+apt -y autoremove 1>/dev/null
+
+sleep 2
+
+echo reading and installing dependencies
+apt-get install -y `dpkg -I *deb|sed '/Depends:/!d; s/Depends://; s/,//g'` > /dev/null && echo "done successfully"
+echo installing *deb ...
+dpkg -i db2dps_*.deb && echo "done successfully"
+
+systemctl is-active db2dps.service
+
+echo "installed. but it should not run .... "
+systemctl is-active  db2dps.service
+systemctl is-enabled db2dps.service
+
+exit 0
+
+echo removing *deb and dependencies ...
+apt-get -y -f install 1>/dev/null && echo "done successfully"
+apt -y autoremove 1>/dev/null && echo "also done successfully"
