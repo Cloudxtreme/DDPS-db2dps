@@ -1,0 +1,2 @@
+sudo systemctl stop db2dps.service
+sudo systemctl stop db2fnm.service

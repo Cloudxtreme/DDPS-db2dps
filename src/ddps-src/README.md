@@ -1,4 +1,16 @@
 
+# Build instructions
+
+Install vagrant and virtualbox then follow the instructions in [README](../vagrant/README.md).
+
+## What is missing
+
+The package does not install configuration nor ssh keys; the following files are missing:
+
+  - `/opt/db2dps/etc/db.ini`: See `db.ini.example`
+  - `/opt/db2dps/etc/ssh/id_rsa: keye made with e.g `ssh-keygen -t rsa -b 4096 -f -f /opt/db2dps/etc/ssh/ -N ""`
+  - `/opt/db2dps/etc/fnmcfg.ini`: see fnmcfg.ini.example`
+
 # db2dps
 
   - db2dps is a daemon which periodically queries the rule database for new
@@ -117,12 +129,12 @@ Block UDP fragments for 1 min. from all to 95.128.24.0/21:
         --tcpflags 'null' --length 'null' --dscp 'null'            \
         --frag '[is-fragment first-fragment last-fragment]'        \
         --action 'discard'
-   
+
 Rate limit SNMP traffic:
 
     ddpsrules add --blocktime '1' --dst '95.128.24.0/21'           \
                   --src 'null' --protocol '=udp'  --dport 'null'   \
-                  --sport '=161&=162' --icmp_type 'null'           \
+                  --sport '=161 =162' --icmp_type 'null'           \
                   --icmp_code 'null'  --tcpflags 'null'            \
                   --length 'null' --dscp 'null' --frag 'null       \
                    --action 'rate-limit 9600'

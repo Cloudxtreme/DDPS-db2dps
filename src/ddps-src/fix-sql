@@ -1,1 +1,0 @@
-UPDATE flow.flowspecrules set isexpired = TRUE, isactivated = FALSE where isexpired = TRUE and isactivated = TRUE;
