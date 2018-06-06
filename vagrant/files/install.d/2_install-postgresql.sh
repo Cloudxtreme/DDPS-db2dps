@@ -178,6 +178,8 @@ function main()
 {
 	install_postgresql
 
+    make_sftp_user
+
     rm -f $TMPFILE
 
 	exit 0
