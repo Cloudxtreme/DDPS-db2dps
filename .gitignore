@@ -1,5 +1,6 @@
 **/*console.log*
 *.com
+*.vagrant
 *.class
 *.dll
 *.exe
