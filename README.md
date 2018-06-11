@@ -1,10 +1,36 @@
 
-# Database to DDPS daemon, dd2dps
+# Administrating Database Rules, and fastnetmon instances
 
-The following describes the _database host_ and the daemon which adds and
-queries the database for new and expired rules.
+The following describes the installation of the  _database host_ and
+the daemons for rule- and fastnetmon administration.
 
-## Documentation and installation procedure and a short configuration guide:
+## Daemons
+
+  - **db2dps** rule administration: announce and withdraw rules
+    and add rules from fastnetmon to the database.
+  - **fnmcfg** fastnetmon administrration: add, edit and delete
+    fastnetmon instances, manage and install configuration changes.       
+    Check that the expected status for all fastnetmon instances matches
+    the real status (up/down, service and vpn running etc), check the
+    number flow spec announcements matches the expected status in the
+    database.
+
+## Command line tools
+
+  - **apply-default-rules**: apply a set of default rules preventing most
+    volumetric DDoS attacks.
+  - **ddpsrules**: command line add, delete and view rules
+  - **edit_authorized_keys**: add fastnetmon ssh keys to both _database hosts_
+  - **kill_switch_restart_all_exabgp**: ExaBGP kill switch (both)
+
+## Installation, development, etc
+
+**Test and deployment**: See [README in vagrant](vagrant/README.md)
+[vagrant](https://www.vagrantup.com/intro/index.html) and
+[virtualbox](https://www.virtualbox.org).       
+**Source**: See [README in source/ddps-src](src/ddps-src/README.md)
+
+## Documentation and configuration etc:
 
   - [Design overview](docs/ddps-design-short.md)
   - [Installation](docs/install.md)

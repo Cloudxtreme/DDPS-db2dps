@@ -3,14 +3,6 @@
 
 Install vagrant and virtualbox then follow the instructions in [README](../vagrant/README.md).
 
-## What is missing
-
-The package does not install configuration nor ssh keys; the following files are missing:
-
-  - `/opt/db2dps/etc/db.ini`: See `db.ini.example`
-  - `/opt/db2dps/etc/ssh/id_rsa: keye made with e.g `ssh-keygen -t rsa -b 4096 -f -f /opt/db2dps/etc/ssh/ -N ""`
-  - `/opt/db2dps/etc/fnmcfg.ini`: see fnmcfg.ini.example`
-
 # db2dps
 
   - db2dps is a daemon which periodically queries the rule database for new
@@ -205,5 +197,6 @@ If everything else fails, a full reset of all announcements may be initiated
 
 	kill_switch_restart_all_exabgp.pl
 	
-Which will restart the exabgp services
+Which will restart the exabgp services.
+
 

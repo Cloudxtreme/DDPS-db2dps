@@ -1,4 +1,0 @@
-if systemctl is-active db2dps.service|grep active; then
-    echo systemctl stop db2dps.service
-fi
-
