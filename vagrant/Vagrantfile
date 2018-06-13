@@ -1,23 +1,31 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# config.vm.provision "shell", path: "provision.sh", args: ENV['SHELL_ARGS']
+# SHELL_ARGS='-h' vagrant provision
+# from https://github.com/hashicorp/vagrant/issues/2064
+# SHELL_ARGS=LIVE_TESTDATA
+# SHELL_ARGS=LIVE_RESTORED_DATA
+# SHELL_ARGS=MAKE_ISO
+
 # based on https://shakedos.com/passing-vagrant-command-line-parameters
 # vagrant --do=option up
 # vagrant --do=option provision
+# but that interfers with e.g. 'vagrant destroy -f'
+#require 'getoptlong'
+#opts = GetoptLong.new(
+#  [ '--do', GetoptLong::OPTIONAL_ARGUMENT ]
+#)
+#
+#customParameter=''
+#
+#opts.each do |opt, arg|
+#  case opt
+#    when '--do'
+#      customParameter=arg
+#  end
+#end
 
-require 'getoptlong'
-opts = GetoptLong.new(
-  [ '--do', GetoptLong::OPTIONAL_ARGUMENT ]
-)
-
-customParameter=''
-
-opts.each do |opt, arg|
-  case opt
-    when '--do'
-      customParameter=arg
-  end
-end
 #
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -45,7 +53,9 @@ Vagrant.configure("2") do |config|
 
     config.vm.box_check_update = true
 
-    config.vm.provision :shell, path: "provision.sh", :args => customParameter
+    # GetoptLong::OPTIONAL_ARGUMENT ...
+    # config.vm.provision :shell, path: "provision.sh", :args => customParameter
+    config.vm.provision "shell", path: "provision.sh", args: ENV['SHELL_ARGS']
 
 end
 

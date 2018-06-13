@@ -1,0 +1,10 @@
+sudo systemctl stop db2dps.service
+sudo systemctl disable db2dps.service
+sudo rm -f /etc/systemd/system/multi-user.target.wants/db2dps.service /etc/systemd/system/db2dps.service
+
+sudo systemctl stop db2fnm.service
+sudo systemctl disable db2fnm.service
+sudo rm -f /etc/systemd/system/multi-user.target.wants/db2fnm.service /etc/systemd/system/db2fnm.service
+
+sudo systemctl daemon-reload
+sudo systemctl reset-failed
