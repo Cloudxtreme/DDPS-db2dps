@@ -10,12 +10,12 @@ Quick start of DDPS using vagrant / virtualbox:
 
 Either:
 
-    - create a ISO build environment:
-      `SHELL_ARGS=MAKE_ISO vagrant --provision up`
-    - create a live test environment with test data:
-      `SHELL_ARGS=LIVE_TESTDATA vagrant --provision up`
-    - create a live environment with restored live data:
-      `SHELL_ARGS=LIVE_RESTORED_DATA vagrant --provision up`
+  - create a ISO build environment:
+    `SHELL_ARGS=MAKE_ISO vagrant --provision up`
+  - create a live test environment with test data:
+    `SHELL_ARGS=LIVE_TESTDATA vagrant --provision up`
+  - create a live environment with restored live data:
+    `SHELL_ARGS=LIVE_RESTORED_DATA vagrant --provision up`
 
 The ISO will be written to '.', while the test data is in `test-data`and the
 restored data must be in `restored-data` (not no git).
