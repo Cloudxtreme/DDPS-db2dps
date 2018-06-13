@@ -1,5 +1,6 @@
 :
-
+# will be updated by Ash
+exit 0
 
 # mangler også nginx
 

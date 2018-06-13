@@ -58,7 +58,7 @@ Version: ${major_version}.${minor_version}-${package_revision}
 Section: base
 Priority: optional
 Architecture: all
-Depends: libnet-openssh-compat-perl, liblist-moreutils-perl, libnet-openssh-compat-perl, libnet-ssh2-perl, libproc-daemon-perl, libnetaddr-ip-perl, libdbi-perl, libdbd-pg-perl, libtypes-path-tiny-perl, libnetaddr-ip-perl, libtypes-path-tiny-perl, libnet-sftp-foreign-perl, libnet-openssh-perl
+Depends: libnet-openssh-compat-perl, liblist-moreutils-perl, libnet-openssh-compat-perl, libnet-ssh2-perl, libproc-daemon-perl, libnetaddr-ip-perl, libdbi-perl, libdbd-pg-perl, libtypes-path-tiny-perl, libnetaddr-ip-perl, libtypes-path-tiny-perl, libnet-sftp-foreign-perl, libnet-openssh-perl, jq 
 Maintainer: Niels Thomas Haugård <ntha@dtu.dk>
 Description: Two scripts to force backup and software update on debian and ubuntu
 EOF
@@ -133,6 +133,6 @@ EOF
 
 chmod 755 ${prefix}/DEBIAN/postinst ${prefix}/DEBIAN/prerm ${prefix}/DEBIAN/postrm ${prefix}/DEBIAN/preinst
 
-cd ${prefix}/DEBIAN/
-echo "made ${prefix}/DEBIAN with `echo *`"
+# cd ${prefix}/DEBIAN/
+# echo *
 
