@@ -3,25 +3,50 @@
 # 
 
 # git versions made by make-version.sh
-include version_makefile
+#include version_makefile
 
-project=db2dps
+major_version=1
+minor_version=0
+package_revision=0
+
+git_sha				= $(shell git rev-parse HEAD 2>/dev/null)
+build_date			= $(shell date +"%Y-%m-%d %H:%M")
+
+VERSION				= $(shell git tag 2>/dev/null | sort -n -t'-' -k2,2 | tail -1 )
+
+# may/may not solve first run with no git tag
+ifeq ($(strip $(VERSION)),)
+VERSION = "1.0-1"
+endif
+
+# here be dragons: seems like $NF, $1 etc is not acceptable in $(shell ... which exclude awk and reduces sed match capab.
+package_revision    = $(shell echo ${VERSION} | sed 's/^.*-//' )
+major_version       = $(shell echo ${VERSION} | sed 's/\..*//')
+minor_version       = $(shell echo ${VERSION} | sed 's/^.*\.//; s/-.*//')
+
+project				= db2dps
 # <project>_<major version>.<minor version>-<package revision>
 
-package=${project}_${major_version}.${minor_version}-${package_revision}
-prefix="/opt/${project}"
+package				= ${project}_${major_version}.${minor_version}-${package_revision}
+prefix				= "/opt/${project}"
 
-libfiles = sqlstr.pm
-etcfiles = db2dps.service db2dpsrc db.ini.example fnmcfg.ini
-inifiles = db2dpsrc db2fnm
-binfiles = db2dps ddpsrules apply-default-rules kill_switch_restart_all_exabgp fnmcfg
+libfiles			= sqlstr.pm
+etcfiles			= db2dps.service db2dpsrc db.ini.example fnmcfg.ini
+inifiles			= db2dpsrc db2fnm
+binfiles			= db2dps ddpsrules apply-default-rules kill_switch_restart_all_exabgp fnmcfg
 # careful: binfiles (without extension) will be removed by clean target
-configs  = configs/add_new_fastnetmon.sql.SH configs/change_fastnetmon_parameters.sql.SH configs/fastnetmon.conf.SH configs/fnm2db.ini.SH configs/import.sql.SH configs/influxd.conf configs/networks_list.SH configs/networks_whitelist.SH configs/postbootstrap.sh configs/rc.conf.SH
 
-all: dirs Makefile
+configs				= configs/add_new_fastnetmon.sql.SH configs/change_fastnetmon_parameters.sql.SH configs/fastnetmon.conf.SH configs/fnm2db.ini.SH configs/import.sql.SH configs/influxd.conf configs/networks_list.SH configs/networks_whitelist.SH configs/postbootstrap.sh configs/rc.conf.SH
+
+
+all: dirs Makefile version_make
+	@echo "version: ${VERSION}"
+	@echo "major_version: $(major_version)"
+	@echo "minor_version: $(minor_version)"
+	@echo "package_revision : $(package_revision)"
 	@bash mk-debian-control-files.sh
 	@$(MAKE) files
-	@dpkg-deb --build ${package} && echo "made $@"
+	@dpkg-deb --build ${package}
 	@echo "Install with:"
 	@echo "apt-get install -y `dpkg -I *deb|sed '/Depends:/!d; s/Depends://; s/,//g'`"
 	@echo "dpkg -i ${package}.deb"
@@ -74,6 +99,10 @@ version.pm:
 
 uninstall:
 			echo remove everything below $(PREFIX)
+
+version_make:
+	bash make-version.sh
+
 
 # pkgs		= mkisofs curl libdata-dumper-simple-perl
 

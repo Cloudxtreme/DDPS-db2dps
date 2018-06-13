@@ -10,7 +10,7 @@ export LC_CTYPE=C
 f_iso()
 {
     echo "creating boot iso for ddps ... "
-    patch
+    f_patch
 }
 
 f_ddps_live()
@@ -33,7 +33,7 @@ f_ddps_live()
     #cd /root/files
 }
 
-function patch()
+function f_patch()
 {
 	apt-get -y update
 	apt-get -y upgrade
@@ -41,31 +41,41 @@ function patch()
 
 }
 
-
-function install_mkiso()
+function f_install_test_data()
 {
-	echo
+    cd /vagrant/test-data || {
+        echo chdir /vagrant/test-data failed
+        exit 0
+    }
+    bash /vagrant/test-data/apply_demo_data.sh
+    echo "if running under vagrant do"
+    echo "vagrant halt; vagrant up"
+    echo "else just "
+    echo "reboot"
 }
 
-# main
+# SHELL_ARGS=LIVE_TESTDATA
+# SHELL_ARGS=LIVE_RESTORED_DATA
+# SHELL_ARGS=MAKE_ISO
+
 echo "arguments: $*"
 
 locale-gen en_GB.UTF-8
 
 case $* in 
-    "")     echo "nothing special to do ... "
+    "") echo "nothing special to do ... "
         ;;
-    onlyiso)    f_iso
+    MAKE_ISO)    f_iso
         ;;
-    live)       f_ddps_live
-                # create a live environment prepared for either restore of our data
-                # part 1: install software, tweak ssh etc. 
-                # part 2: nothing or apply configurations: users, databse etc.
-                # demo data: apply_demo_data.sh
-                # restore: restore from daily_backup
+    LIVE_TESTDATA)
+                f_ddps_live
+                f_install_test_data
+        ;;
+    LIVE_RESTORED_DATA)
+                f_ddps_live
+                # install test data
         ;;
 esac
 
 exit 0
-
 

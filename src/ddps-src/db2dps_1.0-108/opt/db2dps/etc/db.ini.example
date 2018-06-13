@@ -2,15 +2,17 @@
 # INI style configuration file for db2dps
 # Quote strings which contain ';'
 
+# THIS IS AN EXAMPLE FILE
+
 [general]
 
 # access to postgress database on localhost
 dbuser              = dbadmin
-dbpassword          = hopsasa
+dbpassword          = ${dbpassword}
 dbname              = netflow
 
 # all our networks
-ournetworks         = 95.128.24.0/21 130.225.0.0/16 130.226.0.0/16 185.1.57.0/24 192.38.0.0/17
+ournetworks         = 10.0.0.0/8 172.16.0.0/12 192.168.0.0/8
 
 # name of exabgp instances requiring a full bgp flow will show up here
 datadir             = /opt/db2dps/data
@@ -40,10 +42,42 @@ unratelimit         = route delete %s next-hop rate.limit.ip.addr community [650
 # from the templates above. Exabgp communicates wia a named pipe; the template string is echo'ed after substitution
 # of % .. has taken place
 
-# we use pgpool2 in production, but for testing we only have one system
-clustermembers  = localhost
+# cluster mode using pgpool2
+clustermembers  = ww1 ww2
 
-hostlist   = localhost
+hostlist   = exabgp1 exabgp2 localhost
+
+[ww1]
+hostname        = ww1.devel.ddps.deic.dk
+sshuser         = root
+identity_file   = /opt/db2dps/etc/ssh/id_rsa
+public_key      = /opt/db2dps/etc/ssh/id_rsa.pub
+filtertype      = flowspec
+exabgp_pipe     = /run/exabgp/exabgp.cmd
+
+[ww2]
+hostname        = ww1.devel.ddps.deic.dk
+sshuser         = root
+identity_file   = /opt/db2dps/etc/ssh/id_rsa
+public_key      = /opt/db2dps/etc/ssh/id_rsa.pub
+filtertype      = flowspec
+exabgp_pipe     = /run/exabgp/exabgp.cmd
+
+[exabgp1]
+hostname        = exabgp1.devel.ddps.deic.dk
+sshuser         = root
+identity_file   = /opt/db2dps/etc/ssh/id_rsa
+public_key      = /opt/db2dps/etc/ssh/id_rsa.pub
+filtertype      = flowspec
+exabgp_pipe     = /run/exabgp/exabgp.cmd
+
+[exabgp2]
+hostname        = exabgp2.devel.ddps.deic.dk
+sshuser         = root
+identity_file   = /opt/db2dps/etc/ssh/id_rsa
+public_key      = /opt/db2dps/etc/ssh/id_rsa.pub
+filtertype      = flowspec
+exabgp_pipe     = /run/exabgp/exabgp.cmd
 
 [localhost]
 hostname        = localhost
@@ -54,7 +88,6 @@ filtertype      = flowspec
 exabgp_pipe     = /run/exabgp/exabgp.cmd
 
 [ddpsrules]
-
 customerid              = f561067e-10e3-44ed-ab12-9caed904d8d9
 fastnetmoninstanceid    = aac8c5a6-097b-4c0c-bbe6-fe6677ff7eac
 uuid                    = ddpsrules-cli-adm

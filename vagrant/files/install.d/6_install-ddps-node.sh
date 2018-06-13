@@ -1,4 +1,6 @@
 :
+exit 0
+# will by updated by Ash
 cd /tmp/
 git clone https://github.com/deic-dk/ddps-node.git
 cd ddps-node
