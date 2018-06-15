@@ -35,7 +35,7 @@ do
 		${DO} default-discard-QOTD { match { destination ${D}; protocol tcp; source-port =17; } then { discard } }
 		${DO} default-discard-gre { match { destination ${D}; protocol =47; source-port =17; } then { discard } }
 		${DO} default-ratelimit-SSDP { match { destination ${D}; protocol udp; source-port =1900 } then { rate-limit 9600; } }
-		${DO} default-ratelimit-snmp { match { destination ${D}; protocol udp; source-port =161&=162; } then { rate-limit 9600; } }
+		${DO} default-ratelimit-snmp { match { destination ${D}; protocol udp; source-port =161 =162; } then { rate-limit 9600; } }
 EOF
 	done
 done
