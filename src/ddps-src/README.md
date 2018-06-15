@@ -6,7 +6,7 @@ Install vagrant and virtualbox then follow the instructions in [README](../vagra
 # db2dps
 
   - db2dps is a daemon which periodically queries the rule database for new
-    rules, announces or withdraws them using two exabgp instances.
+    rules, announces or withdraw them using two exabgp instances.
   - the requirements and installation procedure are described
     [here](../docs/ddps-database-server-installation.md).
 
@@ -17,19 +17,19 @@ Install vagrant and virtualbox then follow the instructions in [README](../vagra
    - **-V**: print version information and exit
    - **-v**: verbose and run in foreground
    - **-d**: demonise
-   - **-s** _seconds_: sleep time between database scan. The default is 20 seconds.
+   - **-s** _seconds_: sleep time between database scan. Default is 20 seconds.
  
 ## Description
 
 The _initial configuration_ is kept in a _ini style_ configuration file. The
-information includes:
+information includes
 
   - credentials for accessing the database
   - most / all used sql statements
   - path to directory for _rules uploaded by fastnetmon_ and directory where exabgp may create a semaphore file in case it requires a full bgp flow
   - path to semaphore file for controlled shutdown
   - sleep time
-  - blackhole and ratelimit templates
+  - blackhole and reatelimit templates
   - sections / list of exabgp instances and how to access them
   - list of all internal networks for which there may be made destination rules
 
@@ -39,7 +39,7 @@ The configuration file is `/opt/i2dps/etc/db.ini`, change the following as
 needed:
 
 Under `[general]` set / change `dbpassword` and edit`ournetworks` to match all your networks.
-The daemon will not issue announce / withdraw commands for addresses outside these networks.
+The daemon will not issue announce / withdraw commands for addresses outside these net.
 
 The `sleep_time` is by default 10 seconds and the database is polled this interval
 for changes.  Please check `rolconnlimit` in
@@ -64,13 +64,13 @@ Do not use [`-o -a ... ` nor
 ed25519](https://stribika.github.io/2015/01/04/secure-secure-shell.html) as
 this may not be compatible with `libssh` used by the software.
 
-Test ssh connectivity with:
+Test ssh connectivity with
 
 	su - sysadm
 	ssh -v localhost
 	exit
 
-Next edit `db.ini` and set:
+Next edit `db.ini` and set
 
 	hostlist	= localhost
 
@@ -82,7 +82,7 @@ Next edit `db.ini` and set:
 	filtertype      = flowspec
 	exabgp_pipe     = /tmp/destignation-append
 
-You should be able to login. Check the software is started with:
+You should be able to login. Check the software is started with
 
 	service db2dps status
 
@@ -93,7 +93,7 @@ If not then start it with:
 #### Rule creation 
 
 There is a set of command line tools for creating e.g. default rules that
-match a combination of [DDoS/DoS Attack Mitigation Best Common Operational
+matches a combination of [DDoS/DoS Attack Mitigation Best Common Operational
 Practices](http://nabcop.org/index.php/DDoS-DoS-attack-BCOP) and [Akamai Q4
 2016 state of the internet security
 report](https://www.akamai.com/us/en/multimedia/documents/state-of-the-internet/q4-2016-state-of-the-internet-security-report.pdf)
@@ -102,7 +102,7 @@ Apply default rules with:
 
 	apply-default-rules
 
-See a short view of currently enforced rules with :
+See a short view of currently enforced rules with
 
 	ddpsrules active
 
@@ -111,7 +111,7 @@ See a short view of currently enforced rules with :
 
 The rules which should go to exabgp is in `/tmp/destignation-append`.
 
-##### Example of rule creation
+##### Example rule creation
 
 Block UDP fragments for 1 min from all to 95.128.24.0/21:
 
@@ -122,7 +122,7 @@ Block UDP fragments for 1 min from all to 95.128.24.0/21:
         --frag '[is-fragment first-fragment last-fragment]'        \
         --action 'discard'
 
-Rate limit SNMP traffic:
+Rate limit SNMP traffic
 
     ddpsrules add --blocktime '1' --dst '95.128.24.0/21'           \
                   --src 'null' --protocol '=udp'  --dport 'null'   \
@@ -131,7 +131,7 @@ Rate limit SNMP traffic:
                   --length 'null' --dscp 'null' --frag 'null       \
                    --action 'rate-limit 9600'
 
-Block chargen (tcp and udp):
+Block chargen (tcp and udp)
                    
     ddpsrules add   --blocktime '1' --dst '95.128.24.0/21'          \
                     --src 'null' --protocol '=tcp =udp'             \
@@ -140,7 +140,7 @@ Block chargen (tcp and udp):
                     --length 'null' --dscp 'null' --frag 'null'     \
                     --action 'discard'
 
-Block NTP amplification attacks; notice filtering on the source port:
+Block NTP amplification attacks; notice filtering on the source port
 
     ddpsrules add   --blocktime '1' --dst '95.128.24.0/21'  \
                     --src 'null' --protocol 'udp'  --dport 'null'   \
@@ -164,7 +164,7 @@ ddpsrules active
 
 `````
 
-And the enforced rule (exabgp syntax) is show with:
+And the enforced rule (exabgp syntax) is show with
 
 `````
 sudo ddpsrules log
@@ -193,7 +193,7 @@ All active rules may be deleted with:
 
 <!-- ddpsrules del `ddpsrules active|awk ' $0 ~ /^-*$/ { next; }; $1 ~ /flowspecruleid/ { next; }; $1 ~ /^[-a-z0-9]+$/ { print $1 }'` -->
 
-If everything else fails, a full reset of all announcements may be initiated:
+If everything else fails, a full reset of all announcements may be initiated
 
 	kill_switch_restart_all_exabgp.pl
 	
