@@ -31,9 +31,10 @@ TODO:
   - The graphs in the web-gui is empty as there is no fastnetmon instances
     sending rules to the test system, nor is it possible to
     query any fastnetmon / influxd for network data.
-  - There is no looking glass server running (lg.TLD) and only one exabgp
-    installed, so the `fnmcfg` fails to check if the announced rules are
-    enforced.
+  - There is no
+    [looking glass](https://www.noction.com/blog/bgp-looking-glass-servers)
+    server running (lg.TLD) and only one exabgp installed, so the `fnmcfg`
+    fails to check if the announced rules are enforced.
   - Currently pgpool2 is not configured
   - Probably a lot of other thing I've forgot
 
