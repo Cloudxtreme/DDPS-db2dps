@@ -7,7 +7,7 @@ Install vagrant and virtualbox then follow the instructions in [README](../vagra
 
   - db2dps is a daemon which periodically queries the rule database for new
     rules, announces or withdraws them using two exabgp instances.
-  - the requirements and installation procedure is described
+  - the requirements and installation procedure are described
     [here](../docs/ddps-database-server-installation.md).
 
 ## Usage
