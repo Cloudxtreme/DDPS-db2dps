@@ -1,43 +1,101 @@
 #! /usr/bin/env bash
 #
-# Restore / install example / test data
+# Install example/test data
 #
-# The database information is currently based on actual test-pre-production data, this should be changed
-# Also, the pgpool2 data is not installed
 
-# everything below here
 RESTORE_SRC_DIR=/vagrant/test-data
+    
+function print_vars()
+{
+    cat << EOF
+Added postgress etc. configuration with the following parameters:
+-----------------------------------------------------------------
+dbusers:                      $dbusers
+dbpass:                       $dbpass
+dbname:                       $dbname
+ipv4addr:                     $ipv4addr
+ipv4listenaddress:            $ipv4listenaddress
+pcp_listen_addresses:         $pcp_listen_addresses
+backend_hostname0:            $backend_hostname0
+backend_hostname1:            $backend_hostname1
+sr_check_password:            ${sr_check_password}
+sr_check_database:            ${sr_check_database}
+
+default_uuid_administratorid: $default_uuid_administratorid
+bootstrap_ip:                 $bootstrap_ip
+
+dbusr:                        $dbusr
+dbpassword:                   $dbpass
+dbname:                       $dbname
+
+ournetworks:                  $ournetworks
+
+customerid                    $customerid
+fastnetmoninstanceid          $fastnetmoninstanceid
+uuid                          ddpsrules-cli-adm
+administratorid               $administratorid
+
+EOF
+
+    echo "Installed the following system users with sudo privilegies:"
+    echo "------------------------------------------------------------------------------------------------------------------------------------"
+    echo " username  | userid   | name                            | public ssh key"
+    echo "-----------+----------+---------------------------------+---------------------------------------------------------------------------"
+    awk -F';' '{ printf(" %-9s | %8d | %-31s | %-.70s... \n", $1, $3, $2, $4) } ' < unix_users.csv
+
+    echo ""
+    echo "Postgres users:"
+    echo "------------------------------------------------------------------------------------------------------------------------------------"
+    echo 'select * from pg_shadow;' |sudo su postgres -c "cd /tmp; psql -d netflow" | sed '/^(.*rows)$/d'
+
+}
 
 function stop_services()
 {
     service db2dps stop
     service db2fnm stop
+    service exabgp stop
 }
 
 function start_services()
 {
     # (re-)start services
+    service exabgp start
     service db2dps start
     service db2fnm start
-    service db2dps status
-    service db2fnm status
+    systemctl is-active --quiet db2dps && echo Service db2dps is running
+    systemctl is-active --quiet db2fnm && echo Service db2fnm is running
 }
     
 function create_example_database()
 {
     # add data and schema to database
     echo "create example database .... "
-    cd /tmp
-    gunzip -c ${RESTORE_SRC_DIR}/dumpall-with-oids.gz > /tmp/restore
-    chown postgres /tmp/restore
-    echo 'psql -d postgres -f  /tmp/restore' | su postgres
+
+    envsubst < $RESTORE_SRC_DIR/pgpool2/etc/pool_hba.conf.SH > /opt/pgpool2/etc/pool_hba.conf
+    envsubst < $RESTORE_SRC_DIR/pgpool2/etc/pgpool.conf.SH   > /opt/pgpool2/etc/pgpool.conf
+
+    gunzip -c test-data.sql.gz | sed "s/__PASSWORD__/${dbpass}/g" > /tmp/test-data.sql
+    chown postgres /tmp/test-data.sql
+
+    echo 'psql -d postgres -f /tmp/test-data.sql' | su postgres
+    /bin/rm -f /tmp/test-data.sql
+
+    for dbuser in ${dbusers}
+    do
+        pg_md5 --md5auth --username=${dbuser} ${dbpass}
+    done
+
 }
 
 function apply_config_to_opt_db2dps()
 {
     # /opt/db2dps/etc
-    test -f /opt/db2dps/etc/db.ini     || /bin/cp $RESTORE_SRC_DIR/opt_db2dps_etc/db.ini /opt/db2dps/etc
-    test -f /opt/db2dps/etc/fnmcfg.ini || /bin/cp $RESTORE_SRC_DIR/opt_db2dps_etc/fnmcfg.ini /opt/db2dps/etc
+    # test -f /opt/db2dps/etc/db.ini     || /bin/cp $RESTORE_SRC_DIR/opt_db2dps_etc/db.ini /opt/db2dps/etc
+    # test -f /opt/db2dps/etc/fnmcfg.ini || /bin/cp $RESTORE_SRC_DIR/opt_db2dps_etc/fnmcfg.ini /opt/db2dps/etc
+
+    envsubst < $RESTORE_SRC_DIR/opt_db2dps_etc/db.ini.SH     > /opt/db2dps/etc/db.ini
+    envsubst < $RESTORE_SRC_DIR/opt_db2dps_etc/fnmcfg.ini.SH > /opt/db2dps/etc/fnmcfg.ini
 
     test -f /opt/db2dps/etc/ssh/id_rsa || ssh-keygen -t rsa -b 4096 -f  /opt/db2dps/etc/ssh/id_rsa -N ""
     test -d /root/.ssh || mkdir /root/.ssh && chmod 700 /root/.ssh
@@ -203,6 +261,12 @@ EOF
 }
 
 # exabgp
+function apply_exabgp_config()
+{
+    envsubst < $RESTORE_SRC_DIR/exabgp/exabgp.conf.SH > /etc/exabgp/exabgp.conf
+    cp $RESTORE_SRC_DIR/exabgp/exabgp.env               /etc/exabgp/
+    cp $RESTORE_SRC_DIR/exabgp/runsocat.sh              /etc/exabgp/
+}
 
 # nginx
 
@@ -233,8 +297,12 @@ function main()
     done
     shift `expr $OPTIND - 1`
 
-    stop_services
+    . vars.SH
 
+    print_vars
+    exit 0
+
+    stop_services
     generate_dk_locale
     add_developers
     add_group_and_user
@@ -242,8 +310,11 @@ function main()
     modify_sshd_config 
     create_example_database
     apply_config_to_opt_db2dps
+    apply_exabgp_config
 
     start_services
+
+    print_vars
 
     exit 0
 }

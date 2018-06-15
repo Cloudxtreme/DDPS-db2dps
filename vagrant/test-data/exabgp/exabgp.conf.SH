@@ -1,16 +1,16 @@
 group flownetmon {
         # Remote peer
-        neighbor 172.22.89.3 {
+        neighbor ${neighbor} {
                 hold-time 180;
                 # local AS number
-                local-as 64621;
+                local-as ${local-as};
                 # Remote AS number
-                peer-as 64601;
+                peer-as ${peer_as};
                 # ID for this ExaBGP router
-                router-id 172.22.89.21;
+                router-id ${router_id};
                 graceful-restart 1200;
                 # Local IP addess which used for connections to this peer
-                local-address 172.22.89.21;
+                local-address ${local_addr};
                 description "ju3";
         }
         process service-dynamic {
