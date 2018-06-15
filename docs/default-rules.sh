@@ -1,16 +1,16 @@
 #! /bin/bash
-# A poor mans static DDoS protection system in 42 lines of shell code
-#   Copyright 2017, DeiC, Niels Thomas Haugård, apache license apply
+#
+# Destination networks (DST) has the format 
+# 	ournetworks = a.b.c.d/e f.g.h.i/j
+# The list of exabgp hosts (EXABGPHOSTS) has the format
+#      hostlist = 1.2.3.4 5.6.7.8
+# Assumes you have one or more exabgp instances for announcements and uses
+# juniper for enforcement
 
 INI=/opt/db2dps/etc/db.ini
 
 DST=`sed '/^ournetworks/!d; s/^ournetworks.*=[\t ]*//'	${INI}`
 EXABGPHOSTS=`sed '/^hostlist/!d; s/^.*=[\t ]*//'		${INI}`
-EXABGPHOSTS=localhost
-
-################################################################################
-#INCLUDE_VERSION_SH
-################################################################################
 
 case $1 in
 	"announce"|"withdraw")	DO="$1 flow route "
@@ -42,6 +42,8 @@ done
 exit 0
 
 #
+# A poor mans static DDoS protection system in 42 lines of shell code
+#
 #   Copyright 2017, DeiC, Niels Thomas Haugård
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,10 +71,4 @@ exit 0
 # idea from http://nabcop.org/index.php/DDoS-DoS-attack-BCOP, conversation with Nordunet and
 # https://www.akamai.com/us/en/multimedia/documents/state-of-the-internet/q4-2016-state-of-the-internet-security-report.pdf
 #
-# Assumes you have one or more exabgp instances for announcements
-#
-# Destination networks (DST) has the format 
-# 	ournetworks = a.b.c.d/e f.g.h.i/j
-# The list of exabgp hosts (EXABGPHOSTS) has the format
-#      hostlist = 1.2.3.4 5.6.7.8
 #
