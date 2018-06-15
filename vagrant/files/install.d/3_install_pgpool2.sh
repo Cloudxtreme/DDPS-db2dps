@@ -59,8 +59,14 @@ echo "added /etc/profile.d/pgpool2.sh as pgpool is installed in /opt/pgpool2"
 echo 'd /var/run/pgpool/ 0755 postgres postgres - ' > /etc/tmpfiles.d/pgpool.conf
 echo "added /etc/tmpfiles.d/pgpool.conf"
 
-# cat << EOF > /opt/pgpool2/etc/pgpool.conf
-# EOF
+mkdir /var/log/pgpool
+chown syslog:adm /var/log/pgpool
+
+# create extension ...
+cd /usr/local/src/pgpool2/src/sql/pgpool-recovery/
+make install
+echo 'create extension pgpool_recovery ; select * from pg_extension ;' | sudo su - postgres -c "cd /tmp; psql -d netflow -U postgres -p 5432"
+
 
 echo "No config has been applied"
 
