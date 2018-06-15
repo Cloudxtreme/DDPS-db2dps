@@ -1,5 +1,9 @@
 
-# Administrating Database Rules, and fastnetmon instances
+# DeiC Distributed Denial of Service Attack Prevention System, DDPS
+
+For an overview see [DDPS-documentation](https://github.com/deic-dk/DDPS-documentation).
+
+## Administrating Database Rules, and fastnetmon instances
 
 The following describes the installation of the  _database host_ and
 the daemons for rule- and fastnetmon administration.
