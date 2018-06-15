@@ -36,8 +36,11 @@ Vagrant.configure("2") do |config|
     config.vm.box = "ubuntu/xenial64"
     config.vm.hostname = "ww1-test"
 
-    config.vm.network :forwarded_port, guest: 80, host: 8080, id: 'http'
-    config.vm.network :forwarded_port, guest: 443, host: 8443, id: 'https'
+    config.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
+
+    # config.vm.network :forwarded_port, guest: 8080, host: 8080, id: 'http'
+    # config.vm.network :forwarded_port, guest: 9090, host: 9090, id: 'http'
+    #config.vm.network :forwarded_port, guest: 443, host: 8443, id: 'https'
 
     config.vm.synced_folder "../", "/DDPS-db2dps"
     config.vm.synced_folder "../src/mkiso-src/mkiso", "/opt/mkiso"

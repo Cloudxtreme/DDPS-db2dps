@@ -1,7 +1,3 @@
-# ####
-# ret 172.22.86.11/__IP_v4_ADDRESS__/; flowuser/__FLOWUSER__; netflow/__DATABASENAME__  Gbr(Ff)wCJOF/__??? (se nedenfor):
-# pg_md5 --md5auth --username=
-# #### 
 # ----------------------------
 # pgPool-II configuration file
 # ----------------------------
@@ -28,7 +24,7 @@
 
 # - pgpool Connection Settings -
 
-listen_addresses = '172.22.86.11'
+listen_addresses = '$ipv4_listenaddress'
                                    # Host name or IP address to listen on:
                                    # '*' for all, '' for no TCP/IP connections
                                    # (change requires restart)
@@ -50,7 +46,7 @@ serialize_accept = off
 
 # - pgpool Communication Manager Connection Settings -
 
-pcp_listen_addresses = '172.22.86.11'
+pcp_listen_addresses = '$ipv4_listenaddress'
                                    # Host name or IP address for pcp process to listen on:
                                    # '*' for all, '' for no TCP/IP connections
                                    # (change requires restart)
@@ -65,7 +61,7 @@ pcp_socket_dir = '/var/run/pgpool'
 
 # - Backend Connection Settings -
 
-backend_hostname0 = '172.22.86.11'
+backend_hostname0 = '$ipv4_listenaddress'
                                    # Host name or IP address to connect to for backend 0
 backend_port0 = 5432
                                    # Port number for backend 0
@@ -76,7 +72,7 @@ backend_data_directory0 = '/var/lib/postgresql/9.6/main'
 backend_flag0 = 'ALLOW_TO_FAILOVER'
                                    # Controls various backend behavior
                                    # ALLOW_TO_FAILOVER or DISALLOW_TO_FAILOVER
-backend_hostname1 = '172.22.86.12'
+backend_hostname1 = '$backend_hostname'
 backend_port1 = 5432
 backend_weight1 = 1
 backend_data_directory1 = '/var/lib/postgresql/9.6/main'
@@ -337,9 +333,9 @@ sr_check_user = 'flowuser'
                                    # This is necessary even if you disable
                                    # streaming replication delay check with
                                    # sr_check_period = 0
-sr_check_password = 'Gbr(Ff)wCJOF'
+sr_check_password = '${sr_check_password}'
                                    # Password for streaming replication check user
-sr_check_database = 'netflow'
+sr_check_database = '${sr_check_database}'
                                    # Database name for streaming replication check
 delay_threshold = 0
                                    # Threshold before not dispatching query to standby node
