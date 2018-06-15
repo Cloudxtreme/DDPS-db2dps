@@ -13,7 +13,7 @@ software and use it for live demo and development. It is also possible to
 create a bootable CD for installation on VMware, or replace the vagrant up test
 data with a copy of the production data.
 
-  - **create a live test environment with test data:** from `test-data/vars.SH`:
+  - **create a live test environment with test data:** from `test-data/vars.SH`:          
     `SHELL_ARGS=LIVE_TESTDATA vagrant --provision up`
   - create a ISO build environment:
     `SHELL_ARGS=MAKE_ISO vagrant --provision up`
