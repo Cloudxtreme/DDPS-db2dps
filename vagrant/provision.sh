@@ -2,6 +2,7 @@
 #
 #  as /opt/mkiso is mounted the @argv thing here is more or less obsolite
 #
+export DEBIAN_FRONTEND=noninteractive
 export LC_ALL=C
 export LANG=C
 export LANGUAGE=C

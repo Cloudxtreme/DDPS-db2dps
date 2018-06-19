@@ -25,6 +25,8 @@ DATADIR=${MYDIR}/data/
 VERBOSE=FALSE
 TMPFILE=`tempfile`
 
+export DEBIAN_FRONTEND=noninteractive
+
 # functions
 function logit() {
 # purpose     : Timestamp output
