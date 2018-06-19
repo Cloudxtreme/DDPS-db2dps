@@ -4,6 +4,7 @@
 #
 
 RESTORE_SRC_DIR=/vagrant/test-data
+export PATH=$PATH:/opt/db2dps/bin:/opt/mkiso/bin:/opt/pgpool2/bin
     
 function print_vars()
 {
@@ -83,7 +84,11 @@ function create_example_database()
 
     for dbuser in ${dbusers}
     do
-        /opt/pgpool2/bin/pg_md5 --md5auth --username=${dbuser} ${dbpass}
+	if ! type pg_md5 >/dev/null; then 
+        	/opt/pgpool2/bin/pg_md5 --md5auth --username=${dbuser} ${dbpass}
+	else
+        	pg_md5 --md5auth --username=${dbuser} ${dbpass}
+	fi
     done
 
 }
