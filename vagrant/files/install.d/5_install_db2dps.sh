@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 function main()
 {
 	# check on how to suppress newline (found in an Oracle installation script ca 1992)
