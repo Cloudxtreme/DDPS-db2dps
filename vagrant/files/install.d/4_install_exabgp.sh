@@ -9,6 +9,8 @@
 
 TMPFILE=`tempfile`
 
+export DEBIAN_FRONTEND=noninteractive
+
 function install_exabgp()
 {
     echo "$0: installing exabgp and socat .... "

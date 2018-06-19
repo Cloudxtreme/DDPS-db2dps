@@ -12,6 +12,8 @@ DATADIR=../data/
 TMPFILE=`tempfile`
 MYNAME=`basename $0`
 
+export DEBIAN_FRONTEND=noninteractive
+
 # functions
 
 function savefile()

@@ -6,6 +6,8 @@
 MYNAME=`basename $0`
 TMPFILE=`tempfile`
 
+export DEBIAN_FRONTEND=noninteractive
+
 # speed up test process
 if [ -f /opt/pgpool2/bin/pgpool_setup ]; then
     echo "pgpool2 already installed in /opt/pgpool2"
