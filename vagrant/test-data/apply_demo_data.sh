@@ -103,7 +103,7 @@ function apply_config_to_opt_db2dps()
     grep -q "`cat /opt/db2dps/etc/ssh/id_rsa.pub`" /root/.ssh/authorized_keys || cat /opt/db2dps/etc/ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 
     # make known_hosts
-    HOSTLIST=`sed '/^hostlist/!d; s/.*=//; s/^[ \t]*//' $RESTORE_SRC_DIR/opt_db2dps_etc/db.ini`
+    HOSTLIST=`sed '/^hostlist/!d; s/.*=//; s/^[ \t]*//' /opt/db2dps/etc//db.ini`
     # assume same user
     for H in ${HOSTLIST}
     do
