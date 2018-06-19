@@ -265,7 +265,11 @@ EOF
     service ssh restart
 }
 
-# exabgp
+function apply_pgpool_configuration()
+{
+    echo 'create extension pgpool_recovery ; select * from pg_extension ;' | sudo su - postgres -c "cd /tmp; psql -d netflow -U postgres -p 5432"
+}
+
 function apply_exabgp_config()
 {
     envsubst < $RESTORE_SRC_DIR/exabgp/exabgp.conf.SH > /etc/exabgp/exabgp.conf
@@ -311,6 +315,7 @@ function main()
     modify_sudoers 
     modify_sshd_config 
     create_example_database
+    apply_pgpool_configuration
     apply_config_to_opt_db2dps
     apply_exabgp_config
 
