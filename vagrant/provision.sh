@@ -67,6 +67,7 @@ EOF
 echo "arguments: $*"
 
 locale-gen en_GB.UTF-8
+dpkg-reconfigure locales
 
 case $* in 
     "") echo "nothing special to do ... "
