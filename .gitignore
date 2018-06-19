@@ -1,3 +1,4 @@
+**/*.ini
 **/*.iso
 **/*.log
 **/.gitignore
