@@ -13,7 +13,7 @@ if [ -f /opt/pgpool2/bin/pgpool_setup ]; then
     echo "pgpool2 already installed in /opt/pgpool2"
 else
     echo "$MYNAME: installing autoconf bison byacc ... "
-    apt-get install -y git autoconf bison byacc  > $TMPFILE
+    apt-get install -y git autoconf bison byacc flex libtool > $TMPFILE
     case $? in
         0)  echo "done"
             ;;
@@ -35,7 +35,7 @@ else
     echo "compiling ... "
     (
     touch configure.ac aclocal.m4 configure Makefile.am Makefile.in
-    autoreconf
+    autoreconf -fi
     ./configure --prefix=/opt/pgpool2
     automake
     make install
