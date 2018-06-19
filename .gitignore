@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 **/*.ini
+=======
+>>>>>>> b3c3d4cb031f9b629b4d5a60664577611df4a77b
 **/*.iso
 **/*.log
 **/.gitignore
