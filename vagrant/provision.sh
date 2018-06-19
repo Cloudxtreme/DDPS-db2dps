@@ -11,6 +11,15 @@ f_iso()
 {
     echo "creating boot iso for ddps ... "
     f_patch
+
+    # specific needs to be restored/cloned from our internal gitlab server
+    # git clone ...
+    # ln -s ...
+
+    cd /opt/mkiso
+    apt-get -y install genisoimage
+    /opt/mkiso/bin/mkautoiso -u 16.04 -s ddps
+    test -d /vagrant && mv /tmp/*iso /vagrant
 }
 
 f_ddps_live()
@@ -20,7 +29,6 @@ f_ddps_live()
     ln -s /vagrant/files /root
 
     cd /root/files
-
     bash ./install.sh -v
 
     # ls  /mkiso-src/mkiso/common/* 
@@ -29,7 +37,6 @@ f_ddps_live()
     #/bin/rm -f	/root/files/install.d/6_install_go.sh	\
 	#	/root/files/host.config			\
 	#	/root/files/host.config.template
-#
     #cd /root/files
 }
 
@@ -48,15 +55,13 @@ function f_install_test_data()
         exit 0
     }
     bash /vagrant/test-data/apply_demo_data.sh
-    echo "if running under vagrant do"
-    echo "vagrant halt; vagrant up"
-    echo "else just "
-    echo "reboot"
+    cat <<-EOF
+Vagrant:
+    varant halt; vagrant up
+*:
+    reboot
+EOF
 }
-
-# SHELL_ARGS=LIVE_TESTDATA
-# SHELL_ARGS=LIVE_RESTORED_DATA
-# SHELL_ARGS=MAKE_ISO
 
 echo "arguments: $*"
 
@@ -73,7 +78,7 @@ case $* in
         ;;
     LIVE_RESTORED_DATA)
                 f_ddps_live
-                # install test data
+                # install restored data ...
         ;;
 esac
 
