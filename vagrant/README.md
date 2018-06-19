@@ -40,5 +40,7 @@ TODO:
     server running (lg.TLD) and only one exabgp installed, so the `fnmcfg`
     fails to check if the announced rules are enforced.
   - Currently pgpool2 is not configured
+  - The guest OS is configured with two interfaces: NAT and PUBLIC; edit `Vagrantfile`
+    and change the binding interface to match your environment.
   - Probably a lot of other thing I've forgot
 
