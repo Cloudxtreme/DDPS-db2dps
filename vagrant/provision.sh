@@ -58,7 +58,7 @@ function f_install_test_data()
     bash /vagrant/test-data/apply_demo_data.sh
     cat <<-EOF
 Vagrant:
-    varant halt; vagrant up
+    vagrant halt; vagrant up
 *:
     reboot
 EOF
