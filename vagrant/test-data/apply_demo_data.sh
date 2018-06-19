@@ -83,7 +83,7 @@ function create_example_database()
 
     for dbuser in ${dbusers}
     do
-        pg_md5 --md5auth --username=${dbuser} ${dbpass}
+        /opt/pgpool2/bin/pg_md5 --md5auth --username=${dbuser} ${dbpass}
     done
 
 }
