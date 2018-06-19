@@ -299,9 +299,6 @@ function main()
 
     . vars.SH
 
-    print_vars
-    exit 0
-
     stop_services
     generate_dk_locale
     add_developers
