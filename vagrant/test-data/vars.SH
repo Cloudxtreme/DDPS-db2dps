@@ -2,12 +2,12 @@
 # envsubst
 #
 case `uname` in
-    Darwin) ipv4addr="10.0.2.15/24"
+    Darwin) export ipv4addr="10.0.2.15/24"
         ;;
-    Linux) ipv4addr=`ip -o -4 addr| awk '$4 !~ /127.0.0.1/ { print $4 }'|head -1`
-           interface=`netstat -rn|awk '$1 == "0.0.0.0" { print $NF }'|head -1`
-           local_addr=`ifconfig $interface |sed '/inet/!d; /inet6/d; s/.*addr://; s/ .*//'|head -1`
-           local_net=`netstat -rn|awk '$1 == "0.0.0.0" { print $2 }'|awk -F'.' '{ print $1 "." $2 "." $3 }'`
+    Linux) export ipv4addr=`ip -o -4 addr| awk '$4 !~ /127.0.0.1/ { print $4 }'|head -1`
+           export interface=`netstat -rn|awk '$1 == "0.0.0.0" { print $NF }'|head -1`
+           export local_addr=`ifconfig $interface |sed '/inet/!d; /inet6/d; s/.*addr://; s/ .*//'|head -1`
+           export local_net=`netstat -rn|awk '$1 == "0.0.0.0" { print $2 }'|awk -F'.' '{ print $1 "." $2 "." $3 }'`
         ;;
 esac
 

@@ -3,7 +3,7 @@ group flownetmon {
         neighbor ${neighbor} {
                 hold-time 180;
                 # local AS number
-                local-as ${local-as};
+                local-as ${local_as};
                 # Remote AS number
                 peer-as ${peer_as};
                 # ID for this ExaBGP router
