@@ -137,7 +137,7 @@ my $usage = "
         Specify http and https only
           -P '=80 =443'
         Specify length: 3 specific all more than 300 or less than 302
-          -l '=205 =206 =207 >=300&<=302' 
+          -l '=205 =206 =207 >=300<=302' 
         Specify fragments and TCP tcpflags
           -f '[not-a-fragment dont-fragment is-fragment first-fragment last-fragment]'
           -T '[fin syn rst push ack urgent]'
