@@ -12,7 +12,7 @@ the daemons for rule- and fastnetmon administration.
 
   - **db2dps** rule administration: announce and withdraw rules
     and add rules from fastnetmon to the database.
-  - **fnmcfg** fastnetmon administrration: add, edit and delete
+  - **fnmcfg** fastnetmon administration: add, edit and delete
     fastnetmon instances, manage and install configuration changes.       
     Check that the expected status for all fastnetmon instances matches
     the real status (up/down, service and vpn running etc), check the
@@ -56,7 +56,7 @@ specific language governing permissions and limitations under the License.
 
 At least the following other licences apply:
 
-  - [PostgreSQL](https://www.postgresql.org/about/licence/) - essential an BSD license
+  - [PostgreSQL](https://www.postgresql.org/about/licence/) - essentially a BSD license
   - [perl](https://dev.perl.org/licenses/) which also covers the used perl modules. Each license
     may be found on [http://search.cpan.org](http://search.cpan.org).
 
