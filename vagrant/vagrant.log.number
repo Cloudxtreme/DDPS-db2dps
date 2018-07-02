@@ -1,0 +1,1426 @@
+    1	==> default: Destroying VM and associated drives...
+    2	==> default: Checking for updates to 'ubuntu/xenial64'
+    3	    default: Latest installed version: 20180628.0.0
+    4	    default: Version constraints: 
+    5	    default: Provider: virtualbox
+    6	==> default: Box 'ubuntu/xenial64' (v20180628.0.0) is running the latest version.
+    7	Bringing machine 'default' up with 'virtualbox' provider...
+    8	==> default: Importing base box 'ubuntu/xenial64'...
+    9	[KProgress: 10%[KProgress: 90%[K==> default: Matching MAC address for NAT networking...
+   10	==> default: Checking if box 'ubuntu/xenial64' is up to date...
+   11	==> default: Setting the name of the VM: ww1-test
+   12	==> default: Clearing any previously set network interfaces...
+   13	==> default: Preparing network interfaces based on configuration...
+   14	    default: Adapter 1: nat
+   15	==> default: Forwarding ports...
+   16	    default: 9090 (guest) => 9090 (host) (adapter 1)
+   17	    default: 22 (guest) => 2222 (host) (adapter 1)
+   18	==> default: Running 'pre-boot' VM customizations...
+   19	==> default: Booting VM...
+   20	==> default: Waiting for machine to boot. This may take a few minutes...
+   21	    default: SSH address: 127.0.0.1:2222
+   22	    default: SSH username: vagrant
+   23	    default: SSH auth method: private key
+   24	    default: 
+   25	    default: Vagrant insecure key detected. Vagrant will automatically replace
+   26	    default: this with a newly generated keypair for better security.
+   27	    default: 
+   28	    default: Inserting generated public key within guest...
+   29	    default: Removing insecure key from the guest if it's present...
+   30	    default: Key inserted! Disconnecting and reconnecting using new SSH key...
+   31	==> default: Machine booted and ready!
+   32	==> default: Checking for guest additions in VM...
+   33	    default: The guest additions on this VM do not match the installed version of
+   34	    default: VirtualBox! In most cases this is fine, but in rare cases it can
+   35	    default: prevent things such as shared folders from working properly. If you see
+   36	    default: shared folder errors, please make sure the guest additions within the
+   37	    default: virtual machine match the version of VirtualBox you have installed on
+   38	    default: your host and reload your VM.
+   39	    default: 
+   40	    default: Guest Additions Version: 5.1.34
+   41	    default: VirtualBox Version: 5.2
+   42	==> default: Setting hostname...
+   43	==> default: Mounting shared folders...
+   44	    default: /vagrant => /Users/uninth/ownsky/src/github/DDPS-db2dps/vagrant
+   45	    default: /opt/mkiso => /Users/uninth/ownsky/src/github/DDPS-db2dps/src/mkiso-src/mkiso
+   46	    default: /DDPS-db2dps => /Users/uninth/ownsky/src/github/DDPS-db2dps
+   47	==> default: Running provisioner: shell...
+   48	    default: Running: /var/folders/2d/n362xj9148lg_rrsgy61wsjr0008qx/T/vagrant-shell20180702-72162-1ix8idl.sh
+   49	    default: arguments: LIVE_TESTDATA
+   50	    default: Generating locales (this might take a while)...
+   51	    default:   en_GB.UTF-8
+   52	    default: ...
+   53	    default:  done
+   54	    default: Generation complete.
+   55	    default: Generating locales (this might take a while)...
+   56	    default:   en_GB.UTF-8
+   57	    default: ...
+   58	    default:  done
+   59	    default:   en_US.UTF-8
+   60	    default: ...
+   61	    default:  done
+   62	    default: Generation complete.
+   63	    default: creating live environment for ddps ... 
+   64	    default: 13:12:01 (02/07) No free interface (ok if not specific CD image)
+   65	    default: 13:12:01 (02/07) running apt-get -y update, upgrade dist-upgrade ... 
+   66	    default: 13:12:33 (02/07) done
+   67	    default: 13:12:33 (02/07) installing virt-what ... 
+   68	    default: 13:12:35 (02/07) done
+   69	    default: 13:12:35 (02/07) Install local packages ... 
+   70	    default: 13:12:35 (02/07) installed ./data//deb/cmod_1.2-2.deb
+   71	    default: 13:12:35 (02/07) installed ./data//deb/dailybuandupdate_1.9-3.deb
+   72	    default: 13:12:35 (02/07) installed ./data//deb/grouproot_1.2-1.deb
+   73	    default: 13:12:35 (02/07) installing build-essential and autoconf ... 
+   74	    default: Extracting templates from packages: 75%
+   75	    default: Extracting templates from packages: 100%
+   76	    default: 13:13:01 (02/07) done
+   77	    default: 13:13:01 (02/07) copy autopgsqlbackup ... 
+   78	    default: 13:13:01 (02/07) installing configuration files ... 
+   79	    default: 13:13:01 (02/07) installing /usr/local/etc/./data//cfg/etc/daily_backup.cfg  ... 
+   80	    default: 13:13:01 (02/07) installing /usr/local/etc/./data/cfg/etc/daily_backup.files  ... 
+   81	    default: 13:13:01 (02/07) Set DK console keyboard, xenial preseed cannot set keyboard layout, as of
+   82	    default: 13:13:01 (02/07) Bug #1553147 reported by Schlomo Schapiro on 2016-03-04, this fixes it
+   83	    default: Wide character (U+215D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   84	    default: Wide character (U+215D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   85	    default: Wide character (U+215D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   86	    default: Wide character (U+215D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   87	    default: Wide character (U+215D) in lc at /usr/bin/ckbcomp line 4287.
+   88	    default: Wide character (U+215D) in uc at /usr/bin/ckbcomp line 4288.
+   89	    default: Wide character (U+215D) in lc at /usr/bin/ckbcomp line 4287.
+   90	    default: Wide character (U+215D) in uc at /usr/bin/ckbcomp line 4288.
+   91	    default: Wide character (U+215D) in lc at /usr/bin/ckbcomp line 4287.
+   92	    default: Wide character (U+215D) in uc at /usr/bin/ckbcomp line 4288.
+   93	    default: Wide character (U+215D) in lc at /usr/bin/ckbcomp line 4287.
+   94	    default: Wide character (U+215D) in uc at /usr/bin/ckbcomp line 4288.
+   95	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   96	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   97	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   98	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+   99	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  100	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  101	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  102	    default: Wide character (U+3A9) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  103	    default: Wide character (U+3A9) in lc at /usr/bin/ckbcomp line 4287.
+  104	    default: Wide character (U+3A9) in uc at /usr/bin/ckbcomp line 4288.
+  105	    default: Wide character (U+3A9) in lc at /usr/bin/ckbcomp line 4287.
+  106	    default: Wide character (U+3A9) in uc at /usr/bin/ckbcomp line 4288.
+  107	    default: Wide character (U+3A9) in lc at /usr/bin/ckbcomp line 4287.
+  108	    default: Wide character (U+3A9) in uc at /usr/bin/ckbcomp line 4288.
+  109	    default: Wide character (U+3A9) in lc at /usr/bin/ckbcomp line 4287.
+  110	    default: Wide character (U+3A9) in uc at /usr/bin/ckbcomp line 4288.
+  111	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  112	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  113	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  114	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  115	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  116	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  117	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  118	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  119	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  120	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  121	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  122	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  123	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  124	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  125	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  126	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  127	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  128	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  129	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  130	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  131	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  132	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  133	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  134	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  135	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  136	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  137	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  138	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  139	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  140	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  141	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  142	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  143	    default: Wide character (U+20AC) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  144	    default: Wide character (U+20AC) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  145	    default: Wide character (U+20AC) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  146	    default: Wide character (U+20AC) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  147	    default: Wide character (U+20AC) in lc at /usr/bin/ckbcomp line 4287.
+  148	    default: Wide character (U+20AC) in uc at /usr/bin/ckbcomp line 4288.
+  149	    default: Wide character (U+20AC) in lc at /usr/bin/ckbcomp line 4287.
+  150	    default: Wide character (U+20AC) in uc at /usr/bin/ckbcomp line 4288.
+  151	    default: Wide character (U+20AC) in lc at /usr/bin/ckbcomp line 4287.
+  152	    default: Wide character (U+20AC) in uc at /usr/bin/ckbcomp line 4288.
+  153	    default: Wide character (U+20AC) in lc at /usr/bin/ckbcomp line 4287.
+  154	    default: Wide character (U+20AC) in uc at /usr/bin/ckbcomp line 4288.
+  155	    default: Wide character (U+2190) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  156	    default: Wide character (U+2190) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  157	    default: Wide character (U+2190) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  158	    default: Wide character (U+2190) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  159	    default: Wide character (U+2190) in lc at /usr/bin/ckbcomp line 4287.
+  160	    default: Wide character (U+2190) in uc at /usr/bin/ckbcomp line 4288.
+  161	    default: Wide character (U+2190) in lc at /usr/bin/ckbcomp line 4287.
+  162	    default: Wide character (U+2190) in uc at /usr/bin/ckbcomp line 4288.
+  163	    default: Wide character (U+2190) in lc at /usr/bin/ckbcomp line 4287.
+  164	    default: Wide character (U+2190) in uc at /usr/bin/ckbcomp line 4288.
+  165	    default: Wide character (U+2190) in lc at /usr/bin/ckbcomp line 4287.
+  166	    default: Wide character (U+2190) in uc at /usr/bin/ckbcomp line 4288.
+  167	    default: Wide character (U+2193) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  168	    default: Wide character (U+2191) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  169	    default: Wide character (U+2193) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  170	    default: Wide character (U+2191) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  171	    default: Wide character (U+2193) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  172	    default: Wide character (U+2191) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  173	    default: Wide character (U+2193) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  174	    default: Wide character (U+2191) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  175	    default: Wide character (U+2193) in lc at /usr/bin/ckbcomp line 4287.
+  176	    default: Wide character (U+2193) in uc at /usr/bin/ckbcomp line 4288.
+  177	    default: Wide character (U+2191) in lc at /usr/bin/ckbcomp line 4287.
+  178	    default: Wide character (U+2191) in uc at /usr/bin/ckbcomp line 4288.
+  179	    default: Wide character (U+2193) in lc at /usr/bin/ckbcomp line 4287.
+  180	    default: Wide character (U+2193) in uc at /usr/bin/ckbcomp line 4288.
+  181	    default: Wide character (U+2191) in lc at /usr/bin/ckbcomp line 4287.
+  182	    default: Wide character (U+2191) in uc at /usr/bin/ckbcomp line 4288.
+  183	    default: Wide character (U+2193) in lc at /usr/bin/ckbcomp line 4287.
+  184	    default: Wide character (U+2193) in uc at /usr/bin/ckbcomp line 4288.
+  185	    default: Wide character (U+2191) in lc at /usr/bin/ckbcomp line 4287.
+  186	    default: Wide character (U+2191) in uc at /usr/bin/ckbcomp line 4288.
+  187	    default: Wide character (U+2193) in lc at /usr/bin/ckbcomp line 4287.
+  188	    default: Wide character (U+2193) in uc at /usr/bin/ckbcomp line 4288.
+  189	    default: Wide character (U+2191) in lc at /usr/bin/ckbcomp line 4287.
+  190	    default: Wide character (U+2191) in uc at /usr/bin/ckbcomp line 4288.
+  191	    default: Wide character (U+2192) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  192	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  193	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  194	    default: Wide character (U+2192) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  195	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  196	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  197	    default: Wide character (U+2192) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  198	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  199	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  200	    default: Wide character (U+2192) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  201	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  202	    default: Wide character (U+131) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  203	    default: Wide character (U+2192) in lc at /usr/bin/ckbcomp line 4287.
+  204	    default: Wide character (U+2192) in uc at /usr/bin/ckbcomp line 4288.
+  205	    default: Wide character (U+131) in lc at /usr/bin/ckbcomp line 4287.
+  206	    default: Can't do uc("\x{131}") on non-UTF-8 locale; resolved to "\x{131}". at /usr/bin/ckbcomp line 4288.
+  207	    default: Wide character (U+2192) in lc at /usr/bin/ckbcomp line 4287.
+  208	    default: Wide character (U+2192) in uc at /usr/bin/ckbcomp line 4288.
+  209	    default: Wide character (U+131) in lc at /usr/bin/ckbcomp line 4287.
+  210	    default: Can't do uc("\x{131}") on non-UTF-8 locale; resolved to "\x{131}". at /usr/bin/ckbcomp line 4288.
+  211	    default: Wide character (U+2192) in lc at /usr/bin/ckbcomp line 4287.
+  212	    default: Wide character (U+2192) in uc at /usr/bin/ckbcomp line 4288.
+  213	    default: Wide character (U+131) in lc at /usr/bin/ckbcomp line 4287.
+  214	    default: Can't do uc("\x{131}") on non-UTF-8 locale; resolved to "\x{131}". at /usr/bin/ckbcomp line 4288.
+  215	    default: Wide character (U+2192) in lc at /usr/bin/ckbcomp line 4287.
+  216	    default: Wide character (U+2192) in uc at /usr/bin/ckbcomp line 4288.
+  217	    default: Wide character (U+131) in lc at /usr/bin/ckbcomp line 4287.
+  218	    default: Can't do uc("\x{131}") on non-UTF-8 locale; resolved to "\x{131}". at /usr/bin/ckbcomp line 4288.
+  219	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  220	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  221	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  222	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  223	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  224	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  225	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  226	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  227	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  228	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  229	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  230	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  231	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  232	    default: Wide character (U+153) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  233	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  234	    default: Wide character (U+152) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  235	    default: Wide character (U+153) in lc at /usr/bin/ckbcomp line 4287.
+  236	    default: Wide character (U+153) in uc at /usr/bin/ckbcomp line 4288.
+  237	    default: Wide character (U+152) in lc at /usr/bin/ckbcomp line 4287.
+  238	    default: Wide character (U+152) in uc at /usr/bin/ckbcomp line 4288.
+  239	    default: Wide character (U+153) in lc at /usr/bin/ckbcomp line 4287.
+  240	    default: Wide character (U+153) in uc at /usr/bin/ckbcomp line 4288.
+  241	    default: Wide character (U+152) in lc at /usr/bin/ckbcomp line 4287.
+  242	    default: Wide character (U+152) in uc at /usr/bin/ckbcomp line 4288.
+  243	    default: Wide character (U+153) in lc at /usr/bin/ckbcomp line 4287.
+  244	    default: Wide character (U+153) in uc at /usr/bin/ckbcomp line 4288.
+  245	    default: Wide character (U+152) in lc at /usr/bin/ckbcomp line 4287.
+  246	    default: Wide character (U+152) in uc at /usr/bin/ckbcomp line 4288.
+  247	    default: Wide character (U+153) in lc at /usr/bin/ckbcomp line 4287.
+  248	    default: Wide character (U+153) in uc at /usr/bin/ckbcomp line 4288.
+  249	    default: Wide character (U+152) in lc at /usr/bin/ckbcomp line 4287.
+  250	    default: Wide character (U+152) in uc at /usr/bin/ckbcomp line 4288.
+  251	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  252	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  253	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  254	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  255	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  256	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  257	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  258	    default: Wide character (U+111) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  259	    default: Wide character (U+111) in lc at /usr/bin/ckbcomp line 4287.
+  260	    default: Wide character (U+111) in uc at /usr/bin/ckbcomp line 4288.
+  261	    default: Wide character (U+111) in lc at /usr/bin/ckbcomp line 4287.
+  262	    default: Wide character (U+111) in uc at /usr/bin/ckbcomp line 4288.
+  263	    default: Wide character (U+111) in lc at /usr/bin/ckbcomp line 4287.
+  264	    default: Wide character (U+111) in uc at /usr/bin/ckbcomp line 4288.
+  265	    default: Wide character (U+111) in lc at /usr/bin/ckbcomp line 4287.
+  266	    default: Wide character (U+111) in uc at /usr/bin/ckbcomp line 4288.
+  267	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  268	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  269	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  270	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  271	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  272	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  273	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  274	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  275	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  276	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  277	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  278	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  279	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  280	    default: Wide character (U+14B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  281	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  282	    default: Wide character (U+14A) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  283	    default: Wide character (U+14B) in lc at /usr/bin/ckbcomp line 4287.
+  284	    default: Wide character (U+14B) in uc at /usr/bin/ckbcomp line 4288.
+  285	    default: Wide character (U+14A) in lc at /usr/bin/ckbcomp line 4287.
+  286	    default: Wide character (U+14A) in uc at /usr/bin/ckbcomp line 4288.
+  287	    default: Wide character (U+14B) in lc at /usr/bin/ckbcomp line 4287.
+  288	    default: Wide character (U+14B) in uc at /usr/bin/ckbcomp line 4288.
+  289	    default: Wide character (U+14A) in lc at /usr/bin/ckbcomp line 4287.
+  290	    default: Wide character (U+14A) in uc at /usr/bin/ckbcomp line 4288.
+  291	    default: Wide character (U+14B) in lc at /usr/bin/ckbcomp line 4287.
+  292	    default: Wide character (U+14B) in uc at /usr/bin/ckbcomp line 4288.
+  293	    default: Wide character (U+14A) in lc at /usr/bin/ckbcomp line 4287.
+  294	    default: Wide character (U+14A) in uc at /usr/bin/ckbcomp line 4288.
+  295	    default: Wide character (U+14B) in lc at /usr/bin/ckbcomp line 4287.
+  296	    default: Wide character (U+14B) in uc at /usr/bin/ckbcomp line 4288.
+  297	    default: Wide character (U+14A) in lc at /usr/bin/ckbcomp line 4287.
+  298	    default: Wide character (U+14A) in uc at /usr/bin/ckbcomp line 4288.
+  299	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  300	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  301	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  302	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  303	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  304	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  305	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  306	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  307	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  308	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  309	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  310	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  311	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  312	    default: Wide character (U+127) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  313	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  314	    default: Wide character (U+126) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  315	    default: Wide character (U+127) in lc at /usr/bin/ckbcomp line 4287.
+  316	    default: Wide character (U+127) in uc at /usr/bin/ckbcomp line 4288.
+  317	    default: Wide character (U+126) in lc at /usr/bin/ckbcomp line 4287.
+  318	    default: Wide character (U+126) in uc at /usr/bin/ckbcomp line 4288.
+  319	    default: Wide character (U+127) in lc at /usr/bin/ckbcomp line 4287.
+  320	    default: Wide character (U+127) in uc at /usr/bin/ckbcomp line 4288.
+  321	    default: Wide character (U+126) in lc at /usr/bin/ckbcomp line 4287.
+  322	    default: Wide character (U+126) in uc at /usr/bin/ckbcomp line 4288.
+  323	    default: Wide character (U+127) in lc at /usr/bin/ckbcomp line 4287.
+  324	    default: Wide character (U+127) in uc at /usr/bin/ckbcomp line 4288.
+  325	    default: Wide character (U+126) in lc at /usr/bin/ckbcomp line 4287.
+  326	    default: Wide character (U+126) in uc at /usr/bin/ckbcomp line 4288.
+  327	    default: Wide character (U+127) in lc at /usr/bin/ckbcomp line 4287.
+  328	    default: Wide character (U+127) in uc at /usr/bin/ckbcomp line 4288.
+  329	    default: Wide character (U+126) in lc at /usr/bin/ckbcomp line 4287.
+  330	    default: Wide character (U+126) in uc at /usr/bin/ckbcomp line 4288.
+  331	    default: Wide character (U+309) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  332	    default: Wide character (U+31B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  333	    default: Wide character (U+309) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  334	    default: Wide character (U+31B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  335	    default: Wide character (U+309) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  336	    default: Wide character (U+31B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  337	    default: Wide character (U+309) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  338	    default: Wide character (U+31B) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  339	    default: Wide character (U+309) in lc at /usr/bin/ckbcomp line 4287.
+  340	    default: Wide character (U+309) in uc at /usr/bin/ckbcomp line 4288.
+  341	    default: Wide character (U+31B) in lc at /usr/bin/ckbcomp line 4287.
+  342	    default: Wide character (U+31B) in uc at /usr/bin/ckbcomp line 4288.
+  343	    default: Wide character (U+309) in lc at /usr/bin/ckbcomp line 4287.
+  344	    default: Wide character (U+309) in uc at /usr/bin/ckbcomp line 4288.
+  345	    default: Wide character (U+31B) in lc at /usr/bin/ckbcomp line 4287.
+  346	    default: Wide character (U+31B) in uc at /usr/bin/ckbcomp line 4288.
+  347	    default: Wide character (U+309) in lc at /usr/bin/ckbcomp line 4287.
+  348	    default: Wide character (U+309) in uc at /usr/bin/ckbcomp line 4288.
+  349	    default: Wide character (U+31B) in lc at /usr/bin/ckbcomp line 4287.
+  350	    default: Wide character (U+31B) in uc at /usr/bin/ckbcomp line 4288.
+  351	    default: Wide character (U+309) in lc at /usr/bin/ckbcomp line 4287.
+  352	    default: Wide character (U+309) in uc at /usr/bin/ckbcomp line 4288.
+  353	    default: Wide character (U+31B) in lc at /usr/bin/ckbcomp line 4287.
+  354	    default: Wide character (U+31B) in uc at /usr/bin/ckbcomp line 4288.
+  355	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  356	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  357	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  358	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  359	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  360	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  361	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  362	    default: Wide character (U+138) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  363	    default: Wide character (U+138) in lc at /usr/bin/ckbcomp line 4287.
+  364	    default: Wide character (U+138) in uc at /usr/bin/ckbcomp line 4288.
+  365	    default: Wide character (U+138) in lc at /usr/bin/ckbcomp line 4287.
+  366	    default: Wide character (U+138) in uc at /usr/bin/ckbcomp line 4288.
+  367	    default: Wide character (U+138) in lc at /usr/bin/ckbcomp line 4287.
+  368	    default: Wide character (U+138) in uc at /usr/bin/ckbcomp line 4288.
+  369	    default: Wide character (U+138) in lc at /usr/bin/ckbcomp line 4287.
+  370	    default: Wide character (U+138) in uc at /usr/bin/ckbcomp line 4288.
+  371	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  372	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  373	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  374	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  375	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  376	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  377	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  378	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  379	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  380	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  381	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  382	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  383	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  384	    default: Wide character (U+142) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  385	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  386	    default: Wide character (U+141) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  387	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  388	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  389	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  390	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  391	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  392	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  393	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  394	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  395	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  396	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  397	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  398	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  399	    default: Wide character (U+142) in lc at /usr/bin/ckbcomp line 4287.
+  400	    default: Wide character (U+142) in uc at /usr/bin/ckbcomp line 4288.
+  401	    default: Wide character (U+141) in lc at /usr/bin/ckbcomp line 4287.
+  402	    default: Wide character (U+141) in uc at /usr/bin/ckbcomp line 4288.
+  403	    default: Wide character (U+201C) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  404	    default: Wide character (U+2018) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  405	    default: Wide character (U+201C) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  406	    default: Wide character (U+2018) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  407	    default: Wide character (U+201C) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  408	    default: Wide character (U+2018) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  409	    default: Wide character (U+201C) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  410	    default: Wide character (U+2018) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  411	    default: Wide character (U+201C) in lc at /usr/bin/ckbcomp line 4287.
+  412	    default: Wide character (U+201C) in uc at /usr/bin/ckbcomp line 4288.
+  413	    default: Wide character (U+2018) in lc at /usr/bin/ckbcomp line 4287.
+  414	    default: Wide character (U+2018) in uc at /usr/bin/ckbcomp line 4288.
+  415	    default: Wide character (U+201C) in lc at /usr/bin/ckbcomp line 4287.
+  416	    default: Wide character (U+201C) in uc at /usr/bin/ckbcomp line 4288.
+  417	    default: Wide character (U+2018) in lc at /usr/bin/ckbcomp line 4287.
+  418	    default: Wide character (U+2018) in uc at /usr/bin/ckbcomp line 4288.
+  419	    default: Wide character (U+201C) in lc at /usr/bin/ckbcomp line 4287.
+  420	    default: Wide character (U+201C) in uc at /usr/bin/ckbcomp line 4288.
+  421	    default: Wide character (U+2018) in lc at /usr/bin/ckbcomp line 4287.
+  422	    default: Wide character (U+2018) in uc at /usr/bin/ckbcomp line 4288.
+  423	    default: Wide character (U+201C) in lc at /usr/bin/ckbcomp line 4287.
+  424	    default: Wide character (U+201C) in uc at /usr/bin/ckbcomp line 4288.
+  425	    default: Wide character (U+2018) in lc at /usr/bin/ckbcomp line 4287.
+  426	    default: Wide character (U+2018) in uc at /usr/bin/ckbcomp line 4288.
+  427	    default: Wide character (U+201D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  428	    default: Wide character (U+2019) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  429	    default: Wide character (U+201D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  430	    default: Wide character (U+2019) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  431	    default: Wide character (U+201D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  432	    default: Wide character (U+2019) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  433	    default: Wide character (U+201D) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  434	    default: Wide character (U+2019) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  435	    default: Wide character (U+201D) in lc at /usr/bin/ckbcomp line 4287.
+  436	    default: Wide character (U+201D) in uc at /usr/bin/ckbcomp line 4288.
+  437	    default: Wide character (U+2019) in lc at /usr/bin/ckbcomp line 4287.
+  438	    default: Wide character (U+2019) in uc at /usr/bin/ckbcomp line 4288.
+  439	    default: Wide character (U+201D) in lc at /usr/bin/ckbcomp line 4287.
+  440	    default: Wide character (U+201D) in uc at /usr/bin/ckbcomp line 4288.
+  441	    default: Wide character (U+2019) in lc at /usr/bin/ckbcomp line 4287.
+  442	    default: Wide character (U+2019) in uc at /usr/bin/ckbcomp line 4288.
+  443	    default: Wide character (U+201D) in lc at /usr/bin/ckbcomp line 4287.
+  444	    default: Wide character (U+201D) in uc at /usr/bin/ckbcomp line 4288.
+  445	    default: Wide character (U+2019) in lc at /usr/bin/ckbcomp line 4287.
+  446	    default: Wide character (U+2019) in uc at /usr/bin/ckbcomp line 4288.
+  447	    default: Wide character (U+201D) in lc at /usr/bin/ckbcomp line 4287.
+  448	    default: Wide character (U+201D) in uc at /usr/bin/ckbcomp line 4288.
+  449	    default: Wide character (U+2019) in lc at /usr/bin/ckbcomp line 4287.
+  450	    default: Wide character (U+2019) in uc at /usr/bin/ckbcomp line 4288.
+  451	    default: Wide character (U+323) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  452	    default: Wide character (U+323) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  453	    default: Wide character (U+323) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  454	    default: Wide character (U+323) in pattern match (m//) at /usr/bin/ckbcomp line 3763.
+  455	    default: Wide character (U+323) in lc at /usr/bin/ckbcomp line 4287.
+  456	    default: Wide character (U+323) in uc at /usr/bin/ckbcomp line 4288.
+  457	    default: Wide character (U+323) in lc at /usr/bin/ckbcomp line 4287.
+  458	    default: Wide character (U+323) in uc at /usr/bin/ckbcomp line 4288.
+  459	    default: Wide character (U+323) in lc at /usr/bin/ckbcomp line 4287.
+  460	    default: Wide character (U+323) in uc at /usr/bin/ckbcomp line 4288.
+  461	    default: Wide character (U+323) in lc at /usr/bin/ckbcomp line 4287.
+  462	    default: Wide character (U+323) in uc at /usr/bin/ckbcomp line 4288.
+  463	    default: 13:13:02 (02/07) done
+  464	    default: 13:13:02 (02/07) replacing systemd time keeping with ntp ... 
+  465	    default: 13:13:02 (02/07) disabled systemd based time keeping ... 
+  466	    default: 13:13:02 (02/07) installing ntp ... 
+  467	    default: 13:13:04 (02/07) done
+  468	    default: 13:13:04 (02/07) function savefile: saving original /etc/ssh/sshd_config as /etc/ssh/sshd_config.org ... 
+  469	    default: 13:13:04 (02/07) changing sshd_config:
+  470	    default: 13:13:04 (02/07)   - enabled password less ssh root login ... 
+  471	    default: 13:13:04 (02/07)   - disabled password ssh login ... 
+  472	    default: 13:13:04 (02/07)   - adding sftp group ... 
+  473	    default: 13:13:05 (02/07) new sshd_config, ssh restarted: Login with password now prohibited
+  474	    default: 13:13:05 (02/07) Executing each script in install.d ....
+  475	    default: 13:13:05 (02/07) executing install.d/2_install-postgresql.sh ... 
+  476	    default: 13:13:05 (02/07) 2_install-postgresql.sh: installing postgresql ...
+  477	    default: 13:13:05 (02/07) 2_install-postgresql.sh: adding PPA to /etc/apt/sources.list.d/pgdg.list ...
+  478	    default: 13:13:05 (02/07) 2_install-postgresql.sh: apt-key add ACCC4CF8 (www.postgresql.org)  ... apt-get update with new PPA ...
+  479	    default: 13:13:05 (02/07) OK
+  480	    default: 13:13:05 (02/07) 2_install-postgresql.sh: done
+  481	    default: 13:13:05 (02/07) installing postgresql-9.6 and related packages ...
+  482	    default: 13:13:05 (02/07) 2_install-postgresql.sh: done
+  483	    default: 13:13:05 (02/07) setting apt-mark hold as pgpool2 does not work with the latest postgres ... (KASM)
+  484	    default: 13:13:05 (02/07) postgresql-9.6 set on hold.
+  485	    default: 13:13:05 (02/07) postgresql-client-9.6 set on hold.
+  486	    default: 13:13:05 (02/07) postgresql-client-common set on hold.
+  487	    default: 13:13:05 (02/07) postgresql-common set on hold.
+  488	    default: 13:13:05 (02/07) postgresql-contrib-9.6 set on hold.
+  489	    default: 13:13:05 (02/07) postgresql-server-dev-9.6 set on hold.
+  490	    default: 13:13:05 (02/07) 2_install-postgresql.sh: installed postgresql version:
+  491	    default: 13:13:05 (02/07) PostgreSQL 9.6.9
+  492	    default: 13:13:05 (02/07) 2_install-postgresql.sh: expected output: PostgreSQL 9.6.1 or later
+  493	    default: 13:13:05 (02/07) psql (PostgreSQL) 9.6.9
+  494	    default: 13:13:05 (02/07) 2_install-postgresql.sh: expected output: psql (PostgreSQL) 9.6.1 or later
+  495	    default: 13:13:05 (02/07) 2_install-postgresql.sh: chaning postgres config file ...
+  496	    default: 13:13:05 (02/07) 2_install-postgresql.sh: config file: /etc/postgresql/9.6/main/pg_hba.conf
+  497	    default: 13:13:05 (02/07) 2_install-postgresql.sh: function savefile: saving original /etc/postgresql/9.6/main/pg_hba.conf as /etc/postgresql/9.6/main/pg_hba.conf.org ...
+  498	    default: 13:13:05 (02/07) postgresql installed and started, changes to /etc/postgresql/9.6/main/pg_hba.conf:
+  499	    default: 13:13:05 (02/07) 86,87d85
+  500	    default: 13:13:05 (02/07) < local all flowuser peer
+  501	    default: 13:13:05 (02/07) < local all dbadmin md5
+  502	    default: 13:13:05 (02/07) 2_install-postgresql.sh: database NOT created
+  503	    default: 13:13:05 (02/07) 2_install-postgresql.sh: adduser 'ddpsadm' ....
+  504	    default: 13:13:05 (02/07) Adding user `ddpsadm' ...
+  505	    default: 13:13:05 (02/07) Adding new user `ddpsadm' (1002) with group `staff' ...
+  506	    default: 13:13:05 (02/07) Creating home directory `/home/ddpsadm' ...
+  507	    default: 13:13:05 (02/07) Copying files from `/etc/skel' ...
+  508	    default: 13:13:05 (02/07) 2_install-postgresql.sh: adding 'sftpgroup' ....
+  509	    default: 13:13:05 (02/07) Adding group `sftpgroup' (GID 120) ...
+  510	    default: 13:13:05 (02/07) Done.
+  511	    default: 13:13:05 (02/07) 2_install-postgresql.sh: creating /home/sftpgroup; chown root:root /home/sftpgroup ...
+  512	    default: 13:13:05 (02/07) 2_install-postgresql.sh: adduser 'newrules' sftp user for fastnetmon upload ....
+  513	    default: 13:13:05 (02/07) 2_install-postgresql.sh: permissions for /home/sftpgroup has been set carefully, dont change
+  514	    default: 13:13:05 (02/07) 2_install-postgresql.sh: use chattr to lock / unlock /home/sftpgroup/newrules/.ssh/authorized_keys
+  515	    default: 13:13:05 (02/07) 2_install-postgresql.sh: dummy key added to /home/sftpgroup/.ssh/authorized_keys
+  516	    default: 13:13:25 (02/07) executing install.d/3_install_pgpool2.sh ... 
+  517	    default: 13:13:25 (02/07) 3_install_pgpool2.sh: installing autoconf bison byacc ...
+  518	    default: 13:13:25 (02/07) done
+  519	    default: 13:13:25 (02/07) 3_install_pgpool2.sh: installing pgpool2 from git ... src in /usr/local/src/pgpool2
+  520	    default: 13:13:25 (02/07) Cloning into 'pgpool2'...
+  521	    default: 13:13:25 (02/07) compiling ...
+  522	    default: 13:13:25 (02/07) configure.ac:5: installing './compile'
+  523	    default: 13:13:25 (02/07) configure.ac:7: installing './missing'
+  524	    default: 13:13:25 (02/07) /usr/local/src/pgpool2/src/parser/gram.y:232.1-13: warning: deprecated directive, use '%name-prefix' [-Wdeprecated]
+  525	    default: 13:13:25 (02/07) %name-prefix="base_yy"
+  526	    default: 13:13:25 (02/07) ^^^^^^^^^^^^^
+  527	    default: 13:13:25 (02/07) ar: `u' modifier ignored since `D' is the default (see `U')
+  528	    default: 13:13:25 (02/07) ar: `u' modifier ignored since `D' is the default (see `U')
+  529	    default: 13:13:25 (02/07) wd_json_data.c: In function 'parse_wd_node_function_json':
+  530	    default: 13:13:25 (02/07) wd_json_data.c:771:48: warning: passing argument 3 of 'json_get_int_value_for_key' from incompatible pointer type [-Wincompatible-pointer-types]
+  531	    default: 13:13:25 (02/07) if (json_get_int_value_for_key(root, "Flags", flags))
+  532	    default: 13:13:25 (02/07) ^
+  533	    default: 13:13:25 (02/07) In file included from wd_json_data.c:28:0:
+  534	    default: 13:13:25 (02/07) ../../src/include/utils/json.h:306:5: note: expected 'int *' but argument is of type 'unsigned char *'
+  535	    default: 13:13:25 (02/07) int json_get_int_value_for_key(json_value* source, const char* key, int* value);
+  536	    default: 13:13:25 (02/07) ^
+  537	    default: 13:13:25 (02/07) ar: `u' modifier ignored since `D' is the default (see `U')
+  538	    default: 13:13:25 (02/07) main/pgpool_main.c: In function 'reload_config_handler':
+  539	    default: 13:13:25 (02/07) main/pgpool_main.c:2729:2: warning: ignoring return value of 'write', declared with attribute warn_unused_result [-Wunused-result]
+  540	    default: 13:13:25 (02/07) write(pipe_fds[1], "0", 1);
+  541	    default: 13:13:25 (02/07) ^
+  542	    default: 13:13:25 (02/07) main/pgpool_main.c: In function 'sigusr1_handler':
+  543	    default: 13:13:25 (02/07) main/pgpool_main.c:1459:2: warning: ignoring return value of 'write', declared with attribute warn_unused_result [-Wunused-result]
+  544	    default: 13:13:25 (02/07) write(pipe_fds[1], "0", 1);
+  545	    default: 13:13:25 (02/07) ^
+  546	    default: 13:13:25 (02/07) main/pgpool_main.c: In function 'reap_handler':
+  547	    default: 13:13:25 (02/07) main/pgpool_main.c:2380:3: warning: ignoring return value of 'write', declared with attribute warn_unused_result [-Wunused-result]
+  548	    default: 13:13:25 (02/07) write(pipe_fds[1], "0", 1);
+  549	    default: 13:13:25 (02/07) ^
+  550	    default: 13:13:25 (02/07) main/pgpool_main.c: In function 'wakeup_handler':
+  551	    default: 13:13:25 (02/07) main/pgpool_main.c:2708:3: warning: ignoring return value of 'write', declared with attribute warn_unused_result [-Wunused-result]
+  552	    default: 13:13:25 (02/07) write(pipe_fds[1], "0", 1);
+  553	    default: 13:13:25 (02/07) ^
+  554	    default: 13:13:25 (02/07) pgpool2 installed in /opt/pgpool2
+  555	    default: 13:13:25 (02/07) added /etc/profile.d/pgpool2.sh as pgpool is installed in /opt/pgpool2
+  556	    default: 13:13:25 (02/07) added /etc/tmpfiles.d/pgpool.conf
+  557	    default: 13:13:25 (02/07) sed 's,MODULE_PATHNAME,$libdir/pgpool-recovery,g' pgpool-recovery.sql.in >pgpool-recovery.sql
+  558	    default: 13:13:25 (02/07) gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -g -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -fPIC -pie -fno-omit-frame-pointer -fPIC -I. -I./ -I/usr/include/postgresql/9.6/server -I/usr/include/postgresql/internal -Wdate-time -D_FORTIFY_SOURCE=2 -D_GNU_SOURCE -I/usr/include/libxml2  -I/usr/include/mit-krb5  -c -o pgpool-recovery.o pgpool-recovery.c
+  559	    default: 13:13:25 (02/07) gcc -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -g -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -fPIC -pie -fno-omit-frame-pointer -fPIC -L/usr/lib/x86_64-linux-gnu -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now  -L/usr/lib/x86_64-linux-gnu/mit-krb5 -Wl,--as-needed  -shared -o pgpool-recovery.so pgpool-recovery.o
+  560	    default: 13:13:25 (02/07) /bin/mkdir -p '/usr/share/postgresql/9.6/extension'
+  561	    default: 13:13:25 (02/07) /bin/mkdir -p '/usr/share/postgresql/9.6/extension'
+  562	    default: 13:13:25 (02/07) /bin/mkdir -p '/usr/lib/postgresql/9.6/lib'
+  563	    default: 13:13:25 (02/07) /usr/bin/install -c -m 644 .//pgpool_recovery.control '/usr/share/postgresql/9.6/extension/'
+  564	    default: 13:13:25 (02/07) /usr/bin/install -c -m 644 .//pgpool_recovery--1.2.sql pgpool-recovery.sql '/usr/share/postgresql/9.6/extension/'
+  565	    default: 13:13:25 (02/07) /usr/bin/install -c -m 755  pgpool-recovery.so '/usr/lib/postgresql/9.6/lib/'
+  566	    default: 13:13:25 (02/07) psql: FATAL:  database "netflow" does not exist
+  567	    default: 13:13:25 (02/07) No config has been applied
+  568	    default: 13:14:22 (02/07) executing install.d/4_install_exabgp.sh ... 
+  569	    default: 13:14:22 (02/07) ./4_install_exabgp.sh: installing exabgp and socat ....
+  570	    default: 13:14:22 (02/07) done
+  571	    default: 13:14:22 (02/07) ./4_install_exabgp.sh: applying tmpfile configs ...
+  572	    default: 13:14:22 (02/07) Synchronizing state of exabgp.service with SysV init with /lib/systemd/systemd-sysv-install...
+  573	    default: 13:14:22 (02/07) Executing /lib/systemd/systemd-sysv-install enable exabgp
+  574	    default: 13:14:22 (02/07) NO exabgp config has been appliled
+  575	    default: 13:14:29 (02/07) executing install.d/5_install_db2dps.sh ... 
+  576	    default: 13:14:30 (02/07) ./5_install_db2dps.sh: installing package db2dps ...
+  577	    default: 13:14:30 (02/07) installing db2dps_1.0-108.deb ...
+  578	    default: 13:14:30 (02/07) reading and installing dependencies
+  579	    default: 13:14:30 (02/07) done successfully
+  580	    default: 13:14:30 (02/07) Selecting previously unselected package db2dps.
+  581	    default: 13:14:30 (02/07) (Reading database ... 91569 files and directories currently installed.)
+  582	    default: 13:14:30 (02/07) Preparing to unpack db2dps_1.0-108.deb ...
+  583	    default: 13:14:30 (02/07) inactive
+  584	    default: 13:14:30 (02/07) systemctl stop db2dps.service
+  585	    default: 13:14:30 (02/07) Unpacking db2dps (1.0-108) ...
+  586	    default: 13:14:30 (02/07) Setting up db2dps (1.0-108) ...
+  587	    default: 13:14:30 (02/07) Created symlink from /etc/systemd/system/multi-user.target.wants/db2dps.service to /etc/systemd/system/db2dps.service.
+  588	    default: 13:14:30 (02/07) done successfully
+  589	    default: 13:14:30 (02/07) ./5_install_db2dps.sh: all done
+  590	    default: 13:14:35 (02/07) executing install.d/6_install-ddps-node.sh ... 
+  591	    default: 13:14:35 (02/07) Cloning into 'ddosapi-install'...
+  592	    default: 13:14:35 (02/07) total 16
+  593	    default: 13:14:35 (02/07) drwxr-xr-x 3 root root 4096 Jul  2 13:14 .
+  594	    default: 13:14:35 (02/07) drwxrwxrwt 8 root root 4096 Jul  2 13:14 ..
+  595	    default: 13:14:35 (02/07) drwxr-xr-x 8 root root 4096 Jul  2 13:14 .git
+  596	    default: 13:14:35 (02/07) -rw-r--r-- 1 root root 2466 Jul  2 13:14 ww-ss.sh
+  597	    default: 13:14:35 (02/07) Warning: The home dir /dev/null you specified can't be accessed:
+  598	    default: 13:14:35 (02/07) Adding user `hansolo' ...
+  599	    default: 13:14:35 (02/07) Adding new user `hansolo' (1004) with group `staff' ...
+  600	    default: 13:14:35 (02/07) Not creating home directory `/dev/null'.
+  601	    default: 13:14:35 (02/07) md5sum for nodesource_setup.sh changed, please review nodesource_setup.sh
+  602	    default: 13:14:35 (02/07) update check sum with
+  603	    default: 13:14:35 (02/07) md5sum nodesource_setup.sh  > nodesource_setup.sh.md5
+  604	    default: 13:14:35 (02/07) ## Installing the NodeSource Node.js 8.x LTS Carbon repo...
+  605	    default: 13:14:35 (02/07) ## Populating apt-get cache...
+  606	    default: 13:14:35 (02/07) + apt-get update
+  607	    default: 13:14:35 (02/07) Hit:1 http://archive.ubuntu.com/ubuntu xenial InRelease
+  608	    default: 13:14:35 (02/07) Hit:2 http://archive.ubuntu.com/ubuntu xenial-updates InRelease
+  609	    default: 13:14:35 (02/07) Hit:3 http://archive.ubuntu.com/ubuntu xenial-backports InRelease
+  610	    default: 13:14:35 (02/07) Hit:4 http://security.ubuntu.com/ubuntu xenial-security InRelease
+  611	    default: 13:14:35 (02/07) Hit:5 http://apt.postgresql.org/pub/repos/apt xenial-pgdg InRelease
+  612	    default: 13:14:35 (02/07) Reading package lists...
+  613	    default: 13:14:35 (02/07) ## Confirming "xenial" is supported...
+  614	    default: 13:14:35 (02/07) + curl -sLf -o /dev/null 'https://deb.nodesource.com/node_8.x/dists/xenial/Release'
+  615	    default: 13:14:35 (02/07) ## Adding the NodeSource signing key to your keyring...
+  616	    default: 13:14:35 (02/07) + curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+  617	    default: 13:14:35 (02/07) OK
+  618	    default: 13:14:35 (02/07) ## Creating apt sources list file for the NodeSource Node.js 8.x LTS Carbon repo...
+  619	    default: 13:14:35 (02/07) + echo 'deb https://deb.nodesource.com/node_8.x xenial main' > /etc/apt/sources.list.d/nodesource.list
+  620	    default: 13:14:35 (02/07) + echo 'deb-src https://deb.nodesource.com/node_8.x xenial main' >> /etc/apt/sources.list.d/nodesource.list
+  621	    default: 13:14:35 (02/07) ## Running `apt-get update` for you...
+  622	    default: 13:14:35 (02/07) + apt-get update
+  623	    default: 13:14:35 (02/07) Hit:1 http://security.ubuntu.com/ubuntu xenial-security InRelease
+  624	    default: 13:14:35 (02/07) Hit:2 http://archive.ubuntu.com/ubuntu xenial InRelease
+  625	    default: 13:14:35 (02/07) Hit:3 http://archive.ubuntu.com/ubuntu xenial-updates InRelease
+  626	    default: 13:14:35 (02/07) Hit:4 http://archive.ubuntu.com/ubuntu xenial-backports InRelease
+  627	    default: 13:14:35 (02/07) Get:5 https://deb.nodesource.com/node_8.x xenial InRelease [4646 B]
+  628	    default: 13:14:35 (02/07) Hit:6 http://apt.postgresql.org/pub/repos/apt xenial-pgdg InRelease
+  629	    default: 13:14:35 (02/07) Get:7 https://deb.nodesource.com/node_8.x xenial/main Sources [761 B]
+  630	    default: 13:14:35 (02/07) Get:8 https://deb.nodesource.com/node_8.x xenial/main amd64 Packages [1007 B]
+  631	    default: 13:14:35 (02/07) Fetched 6414 B in 0s (13.4 kB/s)
+  632	    default: 13:14:35 (02/07) Reading package lists...
+  633	    default: 13:14:35 (02/07) ## Run `sudo apt-get install -y nodejs` to install Node.js 8.x LTS Carbon and npm
+  634	    default: 13:14:35 (02/07) ## You may also need development tools to build native addons:
+  635	    default: 13:14:35 (02/07) sudo apt-get install gcc g++ make
+  636	    default: 13:14:35 (02/07) ## To install the Yarn package manager, run:
+  637	    default: 13:14:35 (02/07) curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+  638	    default: 13:14:35 (02/07) echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+  639	    default: 13:14:35 (02/07) sudo apt-get update && sudo apt-get install yarn
+  640	    default: 13:14:35 (02/07) Reading package lists...
+  641	    default: 13:14:35 (02/07) Building dependency tree...
+  642	    default: 13:14:35 (02/07) Reading state information...
+  643	    default: 13:14:35 (02/07) build-essential is already the newest version (12.1ubuntu2).
+  644	    default: 13:14:35 (02/07) The following NEW packages will be installed:
+  645	    default: 13:14:35 (02/07) nodejs
+  646	    default: 13:14:35 (02/07) 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+  647	    default: 13:14:35 (02/07) Need to get 12.7 MB of archives.
+  648	    default: 13:14:35 (02/07) After this operation, 61.4 MB of additional disk space will be used.
+  649	    default: 13:14:35 (02/07) Get:1 https://deb.nodesource.com/node_8.x xenial/main amd64 nodejs amd64 8.11.3-1nodesource1 [12.7 MB]
+  650	    default: 13:14:35 (02/07) dpkg-preconfigure: unable to re-open stdin: No such file or directory
+  651	    default: 13:14:35 (02/07) Fetched 12.7 MB in 1s (10.0 MB/s)
+  652	    default: 13:14:35 (02/07) Selecting previously unselected package nodejs.
+  653	    default: 13:14:35 (02/07) (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 91602 files and directories currently installed.)
+  654	    default: 13:14:35 (02/07) Preparing to unpack .../nodejs_8.11.3-1nodesource1_amd64.deb ...
+  655	    default: 13:14:35 (02/07) Unpacking nodejs (8.11.3-1nodesource1) ...
+  656	    default: 13:14:35 (02/07) Processing triggers for man-db (2.7.5-1) ...
+  657	    default: 13:14:35 (02/07) Setting up nodejs (8.11.3-1nodesource1) ...
+  658	    default: 13:14:35 (02/07) Cloning into 'eco'...
+  659	    default: 13:14:35 (02/07) total 16
+  660	    default: 13:14:35 (02/07) drwxr-xr-x 3 hansolo staff 4096 Jul  2 13:14 .
+  661	    default: 13:14:35 (02/07) drwxr-xr-x 7 root    root  4096 Jul  2 13:14 ..
+  662	    default: 13:14:35 (02/07) drwxr-xr-x 8 root    root  4096 Jul  2 13:14 .git
+  663	    default: 13:14:35 (02/07) -rw-r--r-- 1 root    root  2405 Jul  2 13:14 ecosystem.json
+  664	    default: 13:14:35 (02/07) npm WARN registry Unexpected warning for https://registry.npmjs.org/: Miscellaneous Warning EINTEGRITY: sha1-QFUCsAfzGcP0cXXER0UnMA8qta0= integrity checksum failed when using sha1: wanted sha1-QFUCsAfzGcP0cXXER0UnMA8qta0= but got sha512-zr6QQnzLt3Ja0t0XI8gws2kn7zV2p0l/D3kreNvS6hFZhVU5g+uY/30l42jbgt0XGcNBEmBDGJR71J692V92tA==. (260 bytes)
+  665	    default: 13:14:35 (02/07) npm WARN registry Using stale package data from https://registry.npmjs.org/ due to a request error during revalidation.
+  666	    default: 13:14:35 (02/07) /usr/bin/pm2 -> /usr/lib/node_modules/pm2/bin/pm2
+  667	    default: 13:14:35 (02/07) /usr/bin/pm2-dev -> /usr/lib/node_modules/pm2/bin/pm2-dev
+  668	    default: 13:14:35 (02/07) /usr/bin/pm2-docker -> /usr/lib/node_modules/pm2/bin/pm2-docker
+  669	    default: 13:14:35 (02/07) /usr/bin/pm2-runtime -> /usr/lib/node_modules/pm2/bin/pm2-runtime
+  670	    default: 13:14:35 (02/07) npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.4 (node_modules/pm2/node_modules/fsevents):
+  671	    default: 13:14:35 (02/07) npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.4: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+  672	    default: 13:14:35 (02/07) + pm2@2.10.4
+  673	    default: 13:14:35 (02/07) added 221 packages in 6.382s
+  674	    default: 13:14:35 (02/07) -------------
+  675	    default: 13:14:35 (02/07) __/\\\\\\____/\\____________/\\____/\\\\_____
+  676	    default: 13:14:35 (02/07) _/\/////////\_/\\\________/\\\__/\///////\___
+  677	    default: 13:14:35 (02/07) _/\_______/\_/\//\____/\//\_///______//\__
+  678	    default: 13:14:35 (02/07) _/\\\\\\/__/\\///\/\/_/\___________/\/___
+  679	    default: 13:14:35 (02/07) _/\/////////____/\__///\/___/\________/\//_____
+  680	    default: 13:14:35 (02/07) _/\_____________/\____///_____/\_____/\//________
+  681	    default: 13:14:35 (02/07) _/\_____________/\_____________/\___/\/___________
+  682	    default: 13:14:35 (02/07) _/\_____________/\_____________/\__/\\\\\\\_
+  683	    default: 13:14:35 (02/07) _///______________///______________///__///////////////__
+  684	    default: 13:14:35 (02/07) Community Edition
+  685	    default: 13:14:35 (02/07) Production Process Manager for Node.js applications
+  686	    default: 13:14:35 (02/07) with a built-in Load Balancer.
+  687	    default: 13:14:35 (02/07) Start and Daemonize any application:
+  688	    default: 13:14:35 (02/07) $ pm2 start app.js
+  689	    default: 13:14:35 (02/07) Load Balance 4 instances of api.js:
+  690	    default: 13:14:35 (02/07) $ pm2 start api.js -i 4
+  691	    default: 13:14:35 (02/07) Monitor in production:
+  692	    default: 13:14:35 (02/07) $ pm2 monitor
+  693	    default: 13:14:35 (02/07) Make pm2 auto-boot at server restart:
+  694	    default: 13:14:35 (02/07) $ pm2 startup
+  695	    default: 13:14:35 (02/07) To go further checkout:
+  696	    default: 13:14:35 (02/07) http://pm2.io/
+  697	    default: 13:14:35 (02/07) -------------
+  698	    default: 13:14:35 (02/07) [PM2] Spawning PM2 daemon with pm2_home=/root/.pm2
+  699	    default: 13:14:35 (02/07) [PM2] PM2 Successfully daemonized
+  700	    default: 13:14:35 (02/07) --> Deploying to production environment
+  701	    default: 13:14:35 (02/07) --> on host localhost
+  702	    default: 13:14:35 (02/07) ○ hook pre-setup
+  703	    default: 13:14:35 (02/07) ○ running setup
+  704	    default: 13:14:35 (02/07) ○ cloning https://github.com/deic-dk/ddosapi.git
+  705	    default: 13:14:35 (02/07) ○ full fetch
+  706	    default: 13:14:35 (02/07) Cloning into '/opt/ddosapi/pro-ddosapi/source'...
+  707	    default: 13:14:35 (02/07) ○ executing post-setup `npm install; ls -la; pwd`
+  708	    default: 13:14:35 (02/07) > nodemon@1.17.5 postinstall /opt/ddosapi/pro-ddosapi/source/node_modules/nodemon
+  709	    default: 13:14:35 (02/07) > node bin/postinstall || exit 0
+  710	    default: 13:14:35 (02/07) [32mLove nodemon? You can now support the project via the open collective:[22m[39m
+  711	    default: 13:14:35 (02/07) > [96m[1mhttps://opencollective.com/nodemon/donate[0m
+  712	    default: 13:14:35 (02/07) npm WARN node-ddos@1.0.0 No repository field.
+  713	    default: 13:14:35 (02/07) npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.4 (node_modules/fsevents):
+  714	    default: 13:14:35 (02/07) npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.4: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+  715	    default: 13:14:35 (02/07) added 718 packages in 9.125s
+  716	    default: 13:14:35 (02/07) total 376
+  717	    default: 13:14:35 (02/07) drwxr-xr-x  10 root root   4096 Jul  2 13:15 .
+  718	    default: 13:14:35 (02/07) drwxr-xr-x   4 root root   4096 Jul  2 13:14 ..
+  719	    default: 13:14:35 (02/07) -rw-r--r--   1 root root    184 Jul  2 13:14 .eslintrc.js
+  720	    default: 13:14:35 (02/07) drwxr-xr-x   8 root root   4096 Jul  2 13:14 .git
+  721	    default: 13:14:35 (02/07) -rw-r--r--   1 root root     86 Jul  2 13:14 .gitignore
+  722	    default: 13:14:35 (02/07) drwxr-xr-x   2 root root   4096 Jul  2 13:14 .influxql
+  723	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   2078 Jul  2 13:14 .snyk
+  724	    default: 13:14:35 (02/07) drwxr-xr-x   7 root root   4096 Jul  2 13:14 .sql
+  725	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   2416 Jul  2 13:14 README.md
+  726	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   2666 Jul  2 13:14 app.js
+  727	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   3350 Jul  2 13:14 auth.js
+  728	    default: 13:14:35 (02/07) drwxr-xr-x   2 root root   4096 Jul  2 13:14 bin
+  729	    default: 13:14:35 (02/07) -rw-r--r--   1 root root  12442 Jul  2 13:14 customers.js
+  730	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   2302 Jul  2 13:14 db.js
+  731	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   1033 Jul  2 13:14 env_template.md
+  732	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   3519 Jul  2 13:14 fnm.js
+  733	    default: 13:14:35 (02/07) -rw-r--r--   1 root root    717 Jul  2 13:14 icmp.js
+  734	    default: 13:14:35 (02/07) -rwxr-xr-x   1 root root   2236 Jul  2 13:14 install_ddosapi.sh
+  735	    default: 13:14:35 (02/07) drwxr-xr-x 578 root root  20480 Jul  2 13:15 node_modules
+  736	    default: 13:14:35 (02/07) -rw-r--r--   1 root root     54 Jul  2 13:14 nodesource_setup.sh.md5
+  737	    default: 13:14:35 (02/07) -rw-r--r--   1 root root 228768 Jul  2 13:15 package-lock.json
+  738	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   1161 Jul  2 13:14 package.json
+  739	    default: 13:14:35 (02/07) drwxr-xr-x   4 root root   4096 Jul  2 13:14 public
+  740	    default: 13:14:35 (02/07) drwxr-xr-x   2 root root   4096 Jul  2 13:14 routes
+  741	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   4979 Jul  2 13:14 rules.js
+  742	    default: 13:14:35 (02/07) -rw-r--r--   1 root root     10 Jul  2 13:14 serve
+  743	    default: 13:14:35 (02/07) -rw-r--r--   1 root root    384 Jul  2 13:14 stats.js
+  744	    default: 13:14:35 (02/07) -rw-r--r--   1 root root    665 Jul  2 13:14 tcp.js
+  745	    default: 13:14:35 (02/07) -rw-r--r--   1 root root   8162 Jul  2 13:14 users.js
+  746	    default: 13:14:35 (02/07) drwxr-xr-x   2 root root   4096 Jul  2 13:14 views
+  747	    default: 13:14:35 (02/07) /opt/ddosapi/pro-ddosapi/current
+  748	    default: 13:14:35 (02/07) ○ setup complete
+  749	    default: 13:14:35 (02/07) --> Success
+  750	    default: 13:14:35 (02/07) Successfully installed ddosapi
+  751	    default: 13:15:05 (02/07) executing install.d/7_install-ddps-gossamer.sh ... 
+  752	    default: 13:15:05 (02/07) npm WARN deprecated bower@1.8.4: We don't recommend using Bower for new projects. Please consider Yarn and Webpack or Parcel. You can read how to migrate legacy project here: https://bower.io/blog/2017/how-to-migrate-away-from-bower/
+  753	    default: 13:15:05 (02/07) /usr/bin/bower -> /usr/lib/node_modules/bower/bin/bower
+  754	    default: 13:15:05 (02/07) + bower@1.8.4
+  755	    default: 13:15:05 (02/07) added 1 package in 2.167s
+  756	    default: 13:15:05 (02/07) npm WARN deprecated exists-sync@0.0.4: Please replace with usage of fs.existsSync
+  757	    default: 13:15:05 (02/07) npm WARN deprecated exists-sync@0.0.3: Please replace with usage of fs.existsSync
+  758	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] ws has the following vulnerability: 1 high. Go here for more details: https://nodesecurity.io/advisories?search=ws&version=1.1.1 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  759	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] debug has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=debug&version=2.3.3 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  760	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] debug has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=debug&version=2.3.3 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  761	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] debug has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=debug&version=2.2.0 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  762	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] debug has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=debug&version=2.3.3 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  763	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] parsejson has the following vulnerability: 1 high. Go here for more details: https://nodesecurity.io/advisories?search=parsejson&version=0.0.3 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  764	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] lodash has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=lodash&version=3.10.1 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  765	    default: 13:15:05 (02/07) /usr/bin/ember -> /usr/lib/node_modules/ember-cli/bin/ember
+  766	    default: 13:15:05 (02/07) /usr/bin/🐹 -> /usr/lib/node_modules/ember-cli/bin/ember
+  767	    default: 13:15:05 (02/07) > spawn-sync@1.0.15 postinstall /usr/lib/node_modules/ember-cli/node_modules/spawn-sync
+  768	    default: 13:15:05 (02/07) > node postinstall
+  769	    default: 13:15:05 (02/07) npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.4 (node_modules/ember-cli/node_modules/fsevents):
+  770	    default: 13:15:05 (02/07) npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.4: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+  771	    default: 13:15:05 (02/07) + ember-cli@2.13.0
+  772	    default: 13:15:05 (02/07) added 772 packages in 18.674s
+  773	    default: 13:15:05 (02/07) Cloning into 'gossamer'...
+  774	    default: 13:15:05 (02/07) bower semantic-ui#^2.2.10   not-cached https://github.com/Semantic-Org/Semantic-UI.git#^2.2.10
+  775	    default: 13:15:05 (02/07) bower semantic-ui#^2.2.10      resolve https://github.com/Semantic-Org/Semantic-UI.git#^2.2.10
+  776	    default: 13:15:05 (02/07) bower ember-cli-moment-shim#0.0.3       not-cached https://github.com/jasonmit/ember-cli-moment-shim.git#0.0.3
+  777	    default: 13:15:05 (02/07) bower ember-cli-moment-shim#0.0.3          resolve https://github.com/jasonmit/ember-cli-moment-shim.git#0.0.3
+  778	    default: 13:15:05 (02/07) bower ember-cli-moment-shim#0.0.3         download https://github.com/jasonmit/ember-cli-moment-shim/archive/0.0.3.tar.gz
+  779	    default: 13:15:05 (02/07) bower semantic-ui#^2.2.10                 download https://github.com/Semantic-Org/Semantic-UI/archive/2.3.2.tar.gz
+  780	    default: 13:15:05 (02/07) bower ember-cli-moment-shim#0.0.3          extract archive.tar.gz
+  781	    default: 13:15:05 (02/07) bower ember-cli-moment-shim#0.0.3         resolved https://github.com/jasonmit/ember-cli-moment-shim.git#0.0.3
+  782	    default: 13:15:05 (02/07) bower moment#>=2.7.0                    not-cached https://github.com/moment/moment.git#>=2.7.0
+  783	    default: 13:15:05 (02/07) bower moment#>=2.7.0                       resolve https://github.com/moment/moment.git#>=2.7.0
+  784	    default: 13:15:05 (02/07) bower moment#>=2.7.0                      download https://github.com/moment/moment/archive/2.22.2.tar.gz
+  785	    default: 13:15:05 (02/07) bower semantic-ui#^2.2.10                  extract archive.tar.gz
+  786	    default: 13:15:05 (02/07) bower moment#>=2.7.0                       extract archive.tar.gz
+  787	    default: 13:15:05 (02/07) bower moment#>=2.7.0                      resolved https://github.com/moment/moment.git#2.22.2
+  788	    default: 13:15:05 (02/07) bower semantic-ui#^2.2.10                 resolved https://github.com/Semantic-Org/Semantic-UI.git#2.3.2
+  789	    default: 13:15:05 (02/07) bower jquery#>=1.8                      not-cached https://github.com/jquery/jquery-dist.git#>=1.8
+  790	    default: 13:15:05 (02/07) bower jquery#>=1.8                         resolve https://github.com/jquery/jquery-dist.git#>=1.8
+  791	    default: 13:15:05 (02/07) bower jquery#>=1.8                        download https://github.com/jquery/jquery-dist/archive/3.3.1.tar.gz
+  792	    default: 13:15:05 (02/07) bower jquery#>=1.8                         extract archive.tar.gz
+  793	    default: 13:15:05 (02/07) bower jquery#>=1.8                        resolved https://github.com/jquery/jquery-dist.git#3.3.1
+  794	    default: 13:15:05 (02/07) bower ember-cli-moment-shim#0.0.3          install ember-cli-moment-shim#0.0.3
+  795	    default: 13:15:05 (02/07) bower moment#>=2.7.0                       install moment#2.22.2
+  796	    default: 13:15:05 (02/07) bower semantic-ui#^2.2.10                  install semantic-ui#2.3.2
+  797	    default: 13:15:05 (02/07) bower jquery#>=1.8                         install jquery#3.3.1
+  798	    default: 13:15:05 (02/07) ember-cli-moment-shim#0.0.3 bower_components/ember-cli-moment-shim
+  799	    default: 13:15:05 (02/07) └── moment#2.22.2
+  800	    default: 13:15:05 (02/07) moment#2.22.2 bower_components/moment
+  801	    default: 13:15:05 (02/07) semantic-ui#2.3.2 bower_components/semantic-ui
+  802	    default: 13:15:05 (02/07) └── jquery#3.3.1
+  803	    default: 13:15:05 (02/07) jquery#3.3.1 bower_components/jquery
+  804	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] is-my-json-valid has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=is-my-json-valid&version=2.16.0 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  805	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] sshpk has the following vulnerability: 1 high. Go here for more details: https://nodesecurity.io/advisories?search=sshpk&version=1.13.0 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  806	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] tough-cookie has the following vulnerability: 1 high. Go here for more details: https://nodesecurity.io/advisories?search=tough-cookie&version=2.3.2 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  807	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] stringstream has the following vulnerability: 1 moderate. Go here for more details: https://nodesecurity.io/advisories?search=stringstream&version=0.0.5 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  808	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] debug has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=debug&version=2.6.7 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  809	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] mime has the following vulnerability: 1 moderate. Go here for more details: https://nodesecurity.io/advisories?search=mime&version=1.3.4 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  810	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] minimatch has the following vulnerability: 1 high. Go here for more details: https://nodesecurity.io/advisories?search=minimatch&version=2.0.10 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  811	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] randomatic has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=randomatic&version=1.1.6 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  812	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] moment has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=moment&version=2.18.1 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  813	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] mime has the following vulnerability: 1 moderate. Go here for more details: https://nodesecurity.io/advisories?search=mime&version=1.3.6 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  814	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] lodash has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=lodash&version=4.17.4 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  815	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] hoek has the following vulnerability: 1 moderate. Go here for more details: https://nodesecurity.io/advisories?search=hoek&version=2.16.3 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  816	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] forwarded has the following vulnerability: 1 high. Go here for more details: https://nodesecurity.io/advisories?search=forwarded&version=0.1.0 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  817	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] fresh has the following vulnerability: 1 high. Go here for more details: https://nodesecurity.io/advisories?search=fresh&version=0.5.0 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  818	    default: 13:15:05 (02/07) npm WARN notice [SECURITY] debug has the following vulnerability: 1 low. Go here for more details: https://nodesecurity.io/advisories?search=debug&version=2.6.8 - Run `npm i npm@latest -g` to upgrade your npm version, and then `npm audit` to get more info.
+  819	    default: 13:15:05 (02/07) > spawn-sync@1.0.15 postinstall /tmp/gossamer/node_modules/spawn-sync
+  820	    default: 13:15:05 (02/07) > node postinstall
+  821	    default: 13:15:05 (02/07) npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.1.3 (node_modules/fsevents):
+  822	    default: 13:15:05 (02/07) npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.1.3: wanted {"os":"darwin","arch":"any"} (current: {"os":"linux","arch":"x64"})
+  823	    default: 13:15:05 (02/07) added 1924 packages in 35.394s
+  824	    default: 13:15:05 (02/07) > gossamer@0.0.0 test /tmp/gossamer
+  825	    default: 13:15:05 (02/07) > ember test
+  826	    default: 13:15:05 (02/07) WARNING: Node v8.11.3 is not tested against Ember CLI on your platform. We recommend that you use the most-recent "Active LTS" version of Node.js.
+  827	    default: 13:15:05 (02/07) Could not start watchman
+  828	    default: 13:15:05 (02/07) Visit https://ember-cli.com/user-guide/#watchman for more info.
+  829	    default: 13:15:05 (02/07) DEPRECATION: Please refactor `{{render "login"}}` to a component and invoke via `{{login}}`. ('gossamer/templates/application.hbs' @ L23:C2)  [deprecation id: ember-template-compiler.deprecate-render] See http://emberjs.com/deprecations/v2.x#toc_code-render-code-helper for more details.
+  830	    default: 13:15:05 (02/07) at logDeprecationStackTrace (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:5376:19)
+  831	    default: 13:15:05 (02/07) at HANDLERS.(anonymous function) (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:5586:7)
+  832	    default: 13:15:05 (02/07) at raiseOnDeprecation (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:5406:12)
+  833	    default: 13:15:05 (02/07) at HANDLERS.(anonymous function) (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:5586:7)
+  834	    default: 13:15:05 (02/07) at invoke (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:5602:7)
+  835	    default: 13:15:05 (02/07) at deprecate (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:5471:32)
+  836	    default: 13:15:05 (02/07) at Object.deprecate (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:5910:37)
+  837	    default: 13:15:05 (02/07) at /tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:14086:21
+  838	    default: 13:15:05 (02/07) at each (/tmp/gossamer/node_modules/ember-source/dist/ember-template-compiler.js:14103:7)
+  839	    default: 13:15:05 (02/07) cleaning up...
+  840	    default: 13:15:05 (02/07) Built project successfully. Stored in "/tmp/gossamer/tmp/class-tests_dist-5ixoKUzE.tmp".
+  841	    default: 13:15:05 (02/07) not ok 1 Error
+  842	    default: 13:15:05 (02/07) ---
+  843	    default: 13:15:05 (02/07) message: >
+  844	    default: 13:15:05 (02/07) Launcher Chrome not found. Not installed?
+  845	    default: 13:15:05 (02/07) ...
+  846	    default: 13:15:05 (02/07) 1..1
+  847	    default: 13:15:05 (02/07) # tests 1
+  848	    default: 13:15:05 (02/07) # pass  0
+  849	    default: 13:15:05 (02/07) # skip  0
+  850	    default: 13:15:05 (02/07) # fail  1
+  851	    default: 13:15:05 (02/07) Launcher Chrome not found. Not installed?
+  852	    default: 13:15:05 (02/07) Error: Launcher Chrome not found. Not installed?
+  853	    default: 13:15:05 (02/07) at /tmp/gossamer/node_modules/testem/lib/config.js:340:15
+  854	    default: 13:15:05 (02/07) at Array.forEach (<anonymous>)
+  855	    default: 13:15:05 (02/07) at Config.getWantedLaunchers (/tmp/gossamer/node_modules/testem/lib/config.js:334:10)
+  856	    default: 13:15:05 (02/07) at /tmp/gossamer/node_modules/testem/lib/config.js:304:10
+  857	    default: 13:15:05 (02/07) at /tmp/gossamer/node_modules/testem/lib/config.js:293:5
+  858	    default: 13:15:05 (02/07) at tryCatcher (/tmp/gossamer/node_modules/bluebird/js/release/util.js:16:23)
+  859	    default: 13:15:05 (02/07) at Promise.successAdapter [as _fulfillmentHandler0] (/tmp/gossamer/node_modules/bluebird/js/release/nodeify.js:23:30)
+  860	    default: 13:15:05 (02/07) at Promise._settlePromise (/tmp/gossamer/node_modules/bluebird/js/release/promise.js:566:21)
+  861	    default: 13:15:05 (02/07) at Promise._settlePromise0 (/tmp/gossamer/node_modules/bluebird/js/release/promise.js:614:10)
+  862	    default: 13:15:05 (02/07) at Promise._settlePromises (/tmp/gossamer/node_modules/bluebird/js/release/promise.js:693:18)
+  863	    default: 13:15:05 (02/07) at Promise._fulfill (/tmp/gossamer/node_modules/bluebird/js/release/promise.js:638:18)
+  864	    default: 13:15:05 (02/07) at MappingPromiseArray.PromiseArray._resolve (/tmp/gossamer/node_modules/bluebird/js/release/promise_array.js:126:19)
+  865	    default: 13:15:05 (02/07) at MappingPromiseArray._filter (/tmp/gossamer/node_modules/bluebird/js/release/map.js:127:10)
+  866	    default: 13:15:05 (02/07) at MappingPromiseArray._promiseFulfilled (/tmp/gossamer/node_modules/bluebird/js/release/map.js:99:18)
+  867	    default: 13:15:05 (02/07) at Promise._settlePromise (/tmp/gossamer/node_modules/bluebird/js/release/promise.js:574:26)
+  868	    default: 13:15:05 (02/07) at Promise._settlePromise0 (/tmp/gossamer/node_modules/bluebird/js/release/promise.js:614:10)
+  869	    default: 13:15:05 (02/07) npm ERR! Test failed.  See above for more details.
+  870	    default: 13:15:05 (02/07) Successfully installed DDPS GUI
+  871	    default: 13:15:05 (02/07) cat: gossamer/.env.deploy.production: No such file or directory
+  872	    default: 13:15:05 (02/07) ./7_install-ddps-gossamer.sh: line 38: cd: gossamer: No such file or directory
+  873	    default: 13:15:05 (02/07) WARNING: Node v8.11.3 is not tested against Ember CLI on your platform. We recommend that you use the most-recent "Active LTS" version of Node.js.
+  874	    default: 13:15:05 (02/07) Could not start watchman
+  875	    default: 13:15:05 (02/07) Visit https://ember-cli.com/user-guide/#watchman for more info.
+  876	    default: 13:15:05 (02/07) cleaning up...
+  877	    default: 13:15:05 (02/07) Built project successfully. Stored in "/opt/ngx/ddosgui".
+  878	    default: 13:15:05 (02/07) File sizes:
+  879	    default: 13:15:05 (02/07) - /opt/ngx/ddosgui/assets/gossamer-812e9714518f40983cada42f117bded1.js: 223.44 KB (30.88 KB gzipped)
+  880	    default: 13:15:05 (02/07) - /opt/ngx/ddosgui/assets/gossamer-ccc5e0bd0308dfda5301e49aab2cf0a5.css: 8.3 KB (2.46 KB gzipped)
+  881	    default: 13:15:05 (02/07) - /opt/ngx/ddosgui/assets/vendor-110b457f965f39b921523a14f72ee93f.css: 649.43 KB (110.27 KB gzipped)
+  882	    default: 13:15:05 (02/07) - /opt/ngx/ddosgui/assets/vendor-ef7e1b59eee5e463cedddff27142691b.js: 4.37 MB (1023.59 KB gzipped)
+  883	    default: 13:15:05 (02/07) - /opt/ngx/ddosgui/ember-fetch/fastboot-fetch-6ea396418a32de73a0276debae134aa9.js: 411 B (234 B gzipped)
+  884	    default: 13:15:05 (02/07) - /opt/ngx/ddosgui/moment/fastboot-moment-e59e132dee9d705c0f6393692519cbec.js: 125 B (119 B gzipped)
+  885	    default: 13:15:05 (02/07) - /opt/ngx/ddosgui/moment/fastboot-moment-timezone-3eedf313f255a01eea892d59a82120d8.js: 134 B (128 B gzipped)
+  886	    default: 13:17:00 (02/07) executing install.d/8_install-ngnx.sh ... 
+  887	    default: 13:17:00 (02/07) Hit:1 http://apt.postgresql.org/pub/repos/apt xenial-pgdg InRelease
+  888	    default: 13:17:00 (02/07) Hit:2 http://security.ubuntu.com/ubuntu xenial-security InRelease
+  889	    default: 13:17:00 (02/07) Hit:3 http://archive.ubuntu.com/ubuntu xenial InRelease
+  890	    default: 13:17:00 (02/07) Hit:4 http://archive.ubuntu.com/ubuntu xenial-updates InRelease
+  891	    default: 13:17:00 (02/07) Hit:5 http://archive.ubuntu.com/ubuntu xenial-backports InRelease
+  892	    default: 13:17:00 (02/07) Hit:6 https://deb.nodesource.com/node_8.x xenial InRelease
+  893	    default: 13:17:00 (02/07) Reading package lists...
+  894	    default: 13:17:00 (02/07) Reading package lists...
+  895	    default: 13:17:00 (02/07) Building dependency tree...
+  896	    default: 13:17:00 (02/07) Reading state information...
+  897	    default: 13:17:00 (02/07) The following additional packages will be installed:
+  898	    default: 13:17:00 (02/07) fontconfig-config fonts-dejavu-core libfontconfig1 libgd3 libjbig0
+  899	    default: 13:17:00 (02/07) libjpeg-turbo8 libjpeg8 libtiff5 libvpx3 libxpm4 nginx-common nginx-core
+  900	    default: 13:17:00 (02/07) Suggested packages:
+  901	    default: 13:17:00 (02/07) libgd-tools fcgiwrap nginx-doc
+  902	    default: 13:17:00 (02/07) The following NEW packages will be installed:
+  903	    default: 13:17:00 (02/07) fontconfig-config fonts-dejavu-core libfontconfig1 libgd3 libjbig0
+  904	    default: 13:17:00 (02/07) libjpeg-turbo8 libjpeg8 libtiff5 libvpx3 libxpm4 nginx nginx-common
+  905	    default: 13:17:00 (02/07) nginx-core
+  906	    default: 13:17:00 (02/07) 0 upgraded, 13 newly installed, 0 to remove and 0 not upgraded.
+  907	    default: 13:17:00 (02/07) Need to get 2857 kB of archives.
+  908	    default: 13:17:00 (02/07) After this operation, 9307 kB of additional disk space will be used.
+  909	    default: 13:17:00 (02/07) Get:1 http://archive.ubuntu.com/ubuntu xenial/main amd64 libjpeg-turbo8 amd64 1.4.2-0ubuntu3 [111 kB]
+  910	    default: 13:17:00 (02/07) Get:2 http://archive.ubuntu.com/ubuntu xenial/main amd64 libjbig0 amd64 2.1-3.1 [26.6 kB]
+  911	    default: 13:17:00 (02/07) Get:3 http://archive.ubuntu.com/ubuntu xenial/main amd64 fonts-dejavu-core all 2.35-1 [1039 kB]
+  912	    default: 13:17:00 (02/07) Get:4 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 fontconfig-config all 2.11.94-0ubuntu1.1 [49.9 kB]
+  913	    default: 13:17:00 (02/07) Get:5 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libfontconfig1 amd64 2.11.94-0ubuntu1.1 [131 kB]
+  914	    default: 13:17:00 (02/07) Get:6 http://archive.ubuntu.com/ubuntu xenial/main amd64 libjpeg8 amd64 8c-2ubuntu8 [2194 B]
+  915	    default: 13:17:00 (02/07) Get:7 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libtiff5 amd64 4.0.6-1ubuntu0.4 [148 kB]
+  916	    default: 13:17:00 (02/07) Get:8 http://archive.ubuntu.com/ubuntu xenial/main amd64 libvpx3 amd64 1.5.0-2ubuntu1 [732 kB]
+  917	    default: 13:17:00 (02/07) Get:9 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libxpm4 amd64 1:3.5.11-1ubuntu0.16.04.1 [33.8 kB]
+  918	    default: 13:17:00 (02/07) Get:10 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libgd3 amd64 2.1.1-4ubuntu0.16.04.8 [126 kB]
+  919	    default: 13:17:00 (02/07) Get:11 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 nginx-common all 1.10.3-0ubuntu0.16.04.2 [26.6 kB]
+  920	    default: 13:17:00 (02/07) Get:12 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 nginx-core amd64 1.10.3-0ubuntu0.16.04.2 [428 kB]
+  921	    default: 13:17:00 (02/07) Get:13 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 nginx all 1.10.3-0ubuntu0.16.04.2 [3490 B]
+  922	    default: 13:17:00 (02/07) Preconfiguring packages ...
+  923	    default: 13:17:00 (02/07) Fetched 2857 kB in 1s (1676 kB/s)
+  924	    default: 13:17:00 (02/07) Selecting previously unselected package libjpeg-turbo8:amd64.
+  925	    default: 13:17:00 (02/07) (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 96266 files and directories currently installed.)
+  926	    default: 13:17:00 (02/07) Preparing to unpack .../libjpeg-turbo8_1.4.2-0ubuntu3_amd64.deb ...
+  927	    default: 13:17:00 (02/07) Unpacking libjpeg-turbo8:amd64 (1.4.2-0ubuntu3) ...
+  928	    default: 13:17:00 (02/07) Selecting previously unselected package libjbig0:amd64.
+  929	    default: 13:17:00 (02/07) Preparing to unpack .../libjbig0_2.1-3.1_amd64.deb ...
+  930	    default: 13:17:00 (02/07) Unpacking libjbig0:amd64 (2.1-3.1) ...
+  931	    default: 13:17:00 (02/07) Selecting previously unselected package fonts-dejavu-core.
+  932	    default: 13:17:00 (02/07) Preparing to unpack .../fonts-dejavu-core_2.35-1_all.deb ...
+  933	    default: 13:17:00 (02/07) Unpacking fonts-dejavu-core (2.35-1) ...
+  934	    default: 13:17:00 (02/07) Selecting previously unselected package fontconfig-config.
+  935	    default: 13:17:00 (02/07) Preparing to unpack .../fontconfig-config_2.11.94-0ubuntu1.1_all.deb ...
+  936	    default: 13:17:00 (02/07) Unpacking fontconfig-config (2.11.94-0ubuntu1.1) ...
+  937	    default: 13:17:00 (02/07) Selecting previously unselected package libfontconfig1:amd64.
+  938	    default: 13:17:00 (02/07) Preparing to unpack .../libfontconfig1_2.11.94-0ubuntu1.1_amd64.deb ...
+  939	    default: 13:17:00 (02/07) Unpacking libfontconfig1:amd64 (2.11.94-0ubuntu1.1) ...
+  940	    default: 13:17:00 (02/07) Selecting previously unselected package libjpeg8:amd64.
+  941	    default: 13:17:00 (02/07) Preparing to unpack .../libjpeg8_8c-2ubuntu8_amd64.deb ...
+  942	    default: 13:17:00 (02/07) Unpacking libjpeg8:amd64 (8c-2ubuntu8) ...
+  943	    default: 13:17:00 (02/07) Selecting previously unselected package libtiff5:amd64.
+  944	    default: 13:17:00 (02/07) Preparing to unpack .../libtiff5_4.0.6-1ubuntu0.4_amd64.deb ...
+  945	    default: 13:17:00 (02/07) Unpacking libtiff5:amd64 (4.0.6-1ubuntu0.4) ...
+  946	    default: 13:17:00 (02/07) Selecting previously unselected package libvpx3:amd64.
+  947	    default: 13:17:00 (02/07) Preparing to unpack .../libvpx3_1.5.0-2ubuntu1_amd64.deb ...
+  948	    default: 13:17:00 (02/07) Unpacking libvpx3:amd64 (1.5.0-2ubuntu1) ...
+  949	    default: 13:17:00 (02/07) Selecting previously unselected package libxpm4:amd64.
+  950	    default: 13:17:00 (02/07) Preparing to unpack .../libxpm4_1%3a3.5.11-1ubuntu0.16.04.1_amd64.deb ...
+  951	    default: 13:17:00 (02/07) Unpacking libxpm4:amd64 (1:3.5.11-1ubuntu0.16.04.1) ...
+  952	    default: 13:17:00 (02/07) Selecting previously unselected package libgd3:amd64.
+  953	    default: 13:17:00 (02/07) Preparing to unpack .../libgd3_2.1.1-4ubuntu0.16.04.8_amd64.deb ...
+  954	    default: 13:17:00 (02/07) Unpacking libgd3:amd64 (2.1.1-4ubuntu0.16.04.8) ...
+  955	    default: 13:17:00 (02/07) Selecting previously unselected package nginx-common.
+  956	    default: 13:17:00 (02/07) Preparing to unpack .../nginx-common_1.10.3-0ubuntu0.16.04.2_all.deb ...
+  957	    default: 13:17:00 (02/07) Unpacking nginx-common (1.10.3-0ubuntu0.16.04.2) ...
+  958	    default: 13:17:00 (02/07) Selecting previously unselected package nginx-core.
+  959	    default: 13:17:00 (02/07) Preparing to unpack .../nginx-core_1.10.3-0ubuntu0.16.04.2_amd64.deb ...
+  960	    default: 13:17:00 (02/07) Unpacking nginx-core (1.10.3-0ubuntu0.16.04.2) ...
+  961	    default: 13:17:00 (02/07) Selecting previously unselected package nginx.
+  962	    default: 13:17:00 (02/07) Preparing to unpack .../nginx_1.10.3-0ubuntu0.16.04.2_all.deb ...
+  963	    default: 13:17:00 (02/07) Unpacking nginx (1.10.3-0ubuntu0.16.04.2) ...
+  964	    default: 13:17:00 (02/07) Processing triggers for libc-bin (2.23-0ubuntu10) ...
+  965	    default: 13:17:00 (02/07) Processing triggers for man-db (2.7.5-1) ...
+  966	    default: 13:17:00 (02/07) Processing triggers for ureadahead (0.100.0-19) ...
+  967	    default: 13:17:00 (02/07) Processing triggers for ufw (0.35-0ubuntu2) ...
+  968	    default: 13:17:00 (02/07) Processing triggers for systemd (229-4ubuntu21.2) ...
+  969	    default: 13:17:00 (02/07) Setting up libjpeg-turbo8:amd64 (1.4.2-0ubuntu3) ...
+  970	    default: 13:17:00 (02/07) Setting up libjbig0:amd64 (2.1-3.1) ...
+  971	    default: 13:17:00 (02/07) Setting up fonts-dejavu-core (2.35-1) ...
+  972	    default: 13:17:00 (02/07) Setting up fontconfig-config (2.11.94-0ubuntu1.1) ...
+  973	    default: 13:17:00 (02/07) Setting up libfontconfig1:amd64 (2.11.94-0ubuntu1.1) ...
+  974	    default: 13:17:00 (02/07) Setting up libjpeg8:amd64 (8c-2ubuntu8) ...
+  975	    default: 13:17:00 (02/07) Setting up libtiff5:amd64 (4.0.6-1ubuntu0.4) ...
+  976	    default: 13:17:00 (02/07) Setting up libvpx3:amd64 (1.5.0-2ubuntu1) ...
+  977	    default: 13:17:00 (02/07) Setting up libxpm4:amd64 (1:3.5.11-1ubuntu0.16.04.1) ...
+  978	    default: 13:17:00 (02/07) Setting up libgd3:amd64 (2.1.1-4ubuntu0.16.04.8) ...
+  979	    default: 13:17:00 (02/07) Setting up nginx-common (1.10.3-0ubuntu0.16.04.2) ...
+  980	    default: 13:17:00 (02/07) Setting up nginx-core (1.10.3-0ubuntu0.16.04.2) ...
+  981	    default: 13:17:00 (02/07) Setting up nginx (1.10.3-0ubuntu0.16.04.2) ...
+  982	    default: 13:17:00 (02/07) Processing triggers for libc-bin (2.23-0ubuntu10) ...
+  983	    default: 13:17:00 (02/07) Processing triggers for systemd (229-4ubuntu21.2) ...
+  984	    default: 13:17:00 (02/07) Processing triggers for ureadahead (0.100.0-19) ...
+  985	    default: 13:17:00 (02/07) Processing triggers for ufw (0.35-0ubuntu2) ...
+  986	    default: 13:17:00 (02/07) Successfully installed and reconfigured nginx
+  987	    default: 13:17:00 (02/07) nginx running...
+  988	    default: 13:17:07 (02/07) Installation complete, fixing rc.local ... 
+  989	    default: 13:17:07 (02/07) Re-boot is usually required after a dist-upgrade instead of checking just do it ... 
+  990	    default: on vagrant, do vagrant halt; vagrant up
+  991	    default: /vagrant/test-data/apply_demo_data.sh: installing locale da_DK.UTF-8 .... 
+  992	    default: Generating locales (this might take a while)...
+  993	    default:   en_DK.UTF-8
+  994	    default: ...
+  995	    default:  done
+  996	    default: Generation complete.
+  997	    default: Generating locales (this might take a while)...
+  998	    default:   da_DK.UTF-8
+  999	    default: ...
+ 1000	    default:  done
+ 1001	    default: Generation complete.
+ 1002	    default: /vagrant/test-data/apply_demo_data.sh: adding developers from unix_users.csv: no password login admin rights ... 
+ 1003	    default: Adding user `nice' ...
+ 1004	    default: Adding new user `nice' (8282) with group `staff' ...
+ 1005	    default: Creating home directory `/home/nice' ...
+ 1006	    default: Copying files from `/etc/skel' ...
+ 1007	    default: added nice ... 
+ 1008	    default: Adding user `uninth' ...
+ 1009	    default: Adding new user `uninth' (8281) with group `staff' ...
+ 1010	    default: Creating home directory `/home/uninth' ...
+ 1011	    default: Copying files from `/etc/skel' ...
+ 1012	    default: added uninth ... 
+ 1013	    default: Adding user `adue' ...
+ 1014	    default: Adding new user `adue' (8227) with group `staff' ...
+ 1015	    default: Creating home directory `/home/adue' ...
+ 1016	    default: Copying files from `/etc/skel' ...
+ 1017	    default: added adue ... 
+ 1018	    default: Adding user `asmo' ...
+ 1019	    default: Adding new user `asmo' (1921) with group `staff' ...
+ 1020	    default: Creating home directory `/home/asmo' ...
+ 1021	    default: Copying files from `/etc/skel' ...
+ 1022	    default: added asmo ... 
+ 1023	    default: Adding user `tangui' ...
+ 1024	    default: Adding new user `tangui' (4217) with group `staff' ...
+ 1025	    default: Creating home directory `/home/tangui' ...
+ 1026	    default: Copying files from `/etc/skel' ...
+ 1027	    default: added tangui ... 
+ 1028	    default: Adding user `sort' ...
+ 1029	    default: Adding new user `sort' (8233) with group `staff' ...
+ 1030	    default: Creating home directory `/home/sort' ...
+ 1031	    default: Copying files from `/etc/skel' ...
+ 1032	    default: added sort ... 
+ 1033	    default: installing ddpsadm user .... 
+ 1034	    default: adding sftpgroup .... 
+ 1035	    default: removed existing user newrules
+ 1036	    default: setting up sftp user for fastnetmon .... 
+ 1037	    default: permissions for /home/sftpgroup has been set carefully, dont change
+ 1038	    default: use chattr to lock / unlock /home/sftpgroup/newrules/.ssh/authorized_keys
+ 1039	    default: dummy key added to /home/sftpgroup/.ssh/authorized_keys
+ 1040	    default: Append /opt/db2dps/bin and /opt/mkiso/bin to PATH ... 
+ 1041	    default: /vagrant/test-data/apply_demo_data.sh: setting sudo without password ... 
+ 1042	    default: /vagrant/test-data/apply_demo_data.sh: modify /etc/sudoers so /opt/db2dps/bin and /opt/mkiso/bin is in PATH 
+ 1043	    default: enabling password less ssh root login ... 
+ 1044	    default: disabling password ssh login ... 
+ 1045	    default: adding sftp group ... 
+ 1046	    default: create example database .... 
+ 1047	    default: SET
+ 1048	    default: SET
+ 1049	    default: SET
+ 1050	    default: psql:/tmp/test-data.sql:14: 
+ 1051	    default: NOTICE:  database "netflow" does not exist, skipping
+ 1052	    default: DROP DATABASE
+ 1053	    default: psql:/tmp/test-data.sql:23: 
+ 1054	    default: NOTICE:  role "admin" does not exist, skipping
+ 1055	    default: DROP ROLE
+ 1056	    default: psql:/tmp/test-data.sql:24: 
+ 1057	    default: NOTICE:  role "dbadmin" does not exist, skipping
+ 1058	    default: DROP ROLE
+ 1059	    default: psql:/tmp/test-data.sql:25: 
+ 1060	    default: NOTICE:  role "flowuser" does not exist, skipping
+ 1061	    default: DROP ROLE
+ 1062	    default: psql:/tmp/test-data.sql:26: 
+ 1063	    default: ERROR:  current user cannot be dropped
+ 1064	    default: psql:/tmp/test-data.sql:27: 
+ 1065	    default: NOTICE:  role "repuser" does not exist, skipping
+ 1066	    default: DROP ROLE
+ 1067	    default: CREATE ROLE
+ 1068	    default: ALTER ROLE
+ 1069	    default: CREATE ROLE
+ 1070	    default: ALTER ROLE
+ 1071	    default: CREATE ROLE
+ 1072	    default: ALTER ROLE
+ 1073	    default: psql:/tmp/test-data.sql:40: ERROR:  role "postgres" already exists
+ 1074	    default: ALTER ROLE
+ 1075	    default: CREATE ROLE
+ 1076	    default: ALTER ROLE
+ 1077	    default: CREATE DATABASE
+ 1078	    default: REVOKE
+ 1079	    default: GRANT
+ 1080	    default: You are now connected to database "netflow" as user "postgres".
+ 1081	    default: SET
+ 1082	    default: SET
+ 1083	    default: SET
+ 1084	    default: SET
+ 1085	    default: SET
+ 1086	    default: SET
+ 1087	    default: SET
+ 1088	    default: SET
+ 1089	    default: SET
+ 1090	    default: CREATE SCHEMA
+ 1091	    default: ALTER SCHEMA
+ 1092	    default: CREATE EXTENSION
+ 1093	    default: COMMENT
+ 1094	    default: CREATE EXTENSION
+ 1095	    default: COMMENT
+ 1096	    default: CREATE EXTENSION
+ 1097	    default: COMMENT
+ 1098	    default: CREATE EXTENSION
+ 1099	    default: COMMENT
+ 1100	    default: SET
+ 1101	    default: SET
+ 1102	    default: SET
+ 1103	    default: CREATE TABLE
+ 1104	    default: ALTER TABLE
+ 1105	    default: CREATE TABLE
+ 1106	    default: ALTER TABLE
+ 1107	    default: CREATE SEQUENCE
+ 1108	    default: ALTER TABLE
+ 1109	    default: ALTER SEQUENCE
+ 1110	    default: CREATE TABLE
+ 1111	    default: ALTER TABLE
+ 1112	    default: CREATE SEQUENCE
+ 1113	    default: ALTER TABLE
+ 1114	    default: ALTER SEQUENCE
+ 1115	    default: CREATE TABLE
+ 1116	    default: ALTER TABLE
+ 1117	    default: CREATE SEQUENCE
+ 1118	    default: ALTER TABLE
+ 1119	    default: ALTER SEQUENCE
+ 1120	    default: CREATE TABLE
+ 1121	    default: ALTER TABLE
+ 1122	    default: CREATE SEQUENCE
+ 1123	    default: ALTER TABLE
+ 1124	    default: ALTER SEQUENCE
+ 1125	    default: CREATE TABLE
+ 1126	    default: ALTER TABLE
+ 1127	    default: CREATE SEQUENCE
+ 1128	    default: ALTER TABLE
+ 1129	    default: ALTER SEQUENCE
+ 1130	    default: CREATE TABLE
+ 1131	    default: ALTER TABLE
+ 1132	    default: CREATE SEQUENCE
+ 1133	    default: ALTER TABLE
+ 1134	    default: ALTER SEQUENCE
+ 1135	    default: CREATE TABLE
+ 1136	    default: ALTER TABLE
+ 1137	    default: CREATE SEQUENCE
+ 1138	    default: ALTER TABLE
+ 1139	    default: ALTER SEQUENCE
+ 1140	    default: CREATE TABLE
+ 1141	    default: ALTER TABLE
+ 1142	    default: CREATE SEQUENCE
+ 1143	    default: ALTER TABLE
+ 1144	    default: ALTER SEQUENCE
+ 1145	    default: CREATE TABLE
+ 1146	    default: ALTER TABLE
+ 1147	    default: CREATE SEQUENCE
+ 1148	    default: ALTER TABLE
+ 1149	    default: ALTER SEQUENCE
+ 1150	    default: CREATE TABLE
+ 1151	    default: ALTER TABLE
+ 1152	    default: CREATE SEQUENCE
+ 1153	    default: ALTER TABLE
+ 1154	    default: ALTER SEQUENCE
+ 1155	    default: CREATE TABLE
+ 1156	    default: ALTER TABLE
+ 1157	    default: CREATE SEQUENCE
+ 1158	    default: ALTER TABLE
+ 1159	    default: ALTER SEQUENCE
+ 1160	    default: CREATE TABLE
+ 1161	    default: ALTER TABLE
+ 1162	    default: CREATE SEQUENCE
+ 1163	    default: ALTER TABLE
+ 1164	    default: ALTER SEQUENCE
+ 1165	    default: CREATE TABLE
+ 1166	    default: ALTER TABLE
+ 1167	    default: CREATE SEQUENCE
+ 1168	    default: ALTER TABLE
+ 1169	    default: ALTER SEQUENCE
+ 1170	    default: CREATE TABLE
+ 1171	    default: ALTER TABLE
+ 1172	    default: CREATE SEQUENCE
+ 1173	    default: ALTER TABLE
+ 1174	    default: ALTER SEQUENCE
+ 1175	    default: CREATE TABLE
+ 1176	    default: ALTER TABLE
+ 1177	    default: CREATE SEQUENCE
+ 1178	    default: ALTER TABLE
+ 1179	    default: ALTER SEQUENCE
+ 1180	    default: SET
+ 1181	    default: CREATE TABLE
+ 1182	    default: ALTER TABLE
+ 1183	    default: CREATE TABLE
+ 1184	    default: ALTER TABLE
+ 1185	    default: SET
+ 1186	    default: ALTER TABLE
+ 1187	    default: ALTER TABLE
+ 1188	    default: ALTER TABLE
+ 1189	    default: ALTER TABLE
+ 1190	    default: ALTER TABLE
+ 1191	    default: ALTER TABLE
+ 1192	    default: ALTER TABLE
+ 1193	    default: ALTER TABLE
+ 1194	    default: ALTER TABLE
+ 1195	    default: ALTER TABLE
+ 1196	    default: ALTER TABLE
+ 1197	    default: ALTER TABLE
+ 1198	    default: ALTER TABLE
+ 1199	    default: ALTER TABLE
+ 1200	    default: ALTER TABLE
+ 1201	    default: COPY 13
+ 1202	    default: COPY 0
+ 1203	    default:  setval 
+ 1204	    default: --------
+ 1205	    default:       1
+ 1206	    default: (1 row)
+ 1207	    default: COPY 24
+ 1208	    default:  setval 
+ 1209	    default: --------
+ 1210	    default:      89
+ 1211	    default: (1 row)
+ 1212	    default: COPY 6
+ 1213	    default:  setval 
+ 1214	    default: --------
+ 1215	    default:      17
+ 1216	    default: (1 row)
+ 1217	    default:  setval 
+ 1218	    default: --------
+ 1219	    default:      38
+ 1220	    default: (1 row)
+ 1221	    default: COPY 4
+ 1222	    default:  setval 
+ 1223	    default: --------
+ 1224	    default:       1
+ 1225	    default: (1 row)
+ 1226	    default: COPY 2
+ 1227	    default: COPY 8510
+ 1228	    default:  setval 
+ 1229	    default: --------
+ 1230	    default:   29952
+ 1231	    default: (1 row)
+ 1232	    default: COPY 0
+ 1233	    default:  setval 
+ 1234	    default: --------
+ 1235	    default:       1
+ 1236	    default: (1 row)
+ 1237	    default: COPY 0
+ 1238	    default:  setval 
+ 1239	    default: --------
+ 1240	    default:       1
+ 1241	    default: (1 row)
+ 1242	    default: COPY 0
+ 1243	    default:  setval 
+ 1244	    default: --------
+ 1245	    default:       1
+ 1246	    default: (1 row)
+ 1247	    default: COPY 41
+ 1248	    default:  setval 
+ 1249	    default: --------
+ 1250	    default:      41
+ 1251	    default: (1 row)
+ 1252	    default: COPY 42
+ 1253	    default:  setval 
+ 1254	    default: --------
+ 1255	    default:      42
+ 1256	    default: (1 row)
+ 1257	    default: COPY 31
+ 1258	    default:  setval 
+ 1259	    default: --------
+ 1260	    default:      61
+ 1261	    default: (1 row)
+ 1262	    default: COPY 149
+ 1263	    default:  setval 
+ 1264	    default: --------
+ 1265	    default:     149
+ 1266	    default: (1 row)
+ 1267	    default: COPY 9886
+ 1268	    default:  setval 
+ 1269	    default: --------
+ 1270	    default:    9886
+ 1271	    default: (1 row)
+ 1272	    default: COPY 8
+ 1273	    default:  setval 
+ 1274	    default: --------
+ 1275	    default:       8
+ 1276	    default: (1 row)
+ 1277	    default: SET
+ 1278	    default: COPY 12
+ 1279	    default: COPY 2
+ 1280	    default: SET
+ 1281	    default: ALTER TABLE
+ 1282	    default: ALTER TABLE
+ 1283	    default: ALTER TABLE
+ 1284	    default: ALTER TABLE
+ 1285	    default: ALTER TABLE
+ 1286	    default: ALTER TABLE
+ 1287	    default: ALTER TABLE
+ 1288	    default: ALTER TABLE
+ 1289	    default: ALTER TABLE
+ 1290	    default: ALTER TABLE
+ 1291	    default: ALTER TABLE
+ 1292	    default: ALTER TABLE
+ 1293	    default: ALTER TABLE
+ 1294	    default: ALTER TABLE
+ 1295	    default: ALTER TABLE
+ 1296	    default: ALTER TABLE
+ 1297	    default: ALTER TABLE
+ 1298	    default: ALTER TABLE
+ 1299	    default: ALTER TABLE
+ 1300	    default: ALTER TABLE
+ 1301	    default: ALTER TABLE
+ 1302	    default: ALTER TABLE
+ 1303	    default: ALTER TABLE
+ 1304	    default: ALTER TABLE
+ 1305	    default: ALTER TABLE
+ 1306	    default: ALTER TABLE
+ 1307	    default: ALTER TABLE
+ 1308	    default: ALTER TABLE
+ 1309	    default: ALTER TABLE
+ 1310	    default: ALTER TABLE
+ 1311	    default: ALTER TABLE
+ 1312	    default: ALTER TABLE
+ 1313	    default: ALTER TABLE
+ 1314	    default: ALTER TABLE
+ 1315	    default: ALTER TABLE
+ 1316	    default: ALTER TABLE
+ 1317	    default: ALTER TABLE
+ 1318	    default: You are now connected to database "postgres" as user "postgres".
+ 1319	    default: SET
+ 1320	    default: SET
+ 1321	    default: SET
+ 1322	    default: SET
+ 1323	    default: SET
+ 1324	    default: SET
+ 1325	    default: SET
+ 1326	    default: SET
+ 1327	    default: SET
+ 1328	    default: COMMENT
+ 1329	    default: CREATE EXTENSION
+ 1330	    default: COMMENT
+ 1331	    default: CREATE EXTENSION
+ 1332	    default: COMMENT
+ 1333	    default: You are now connected to database "template1" as user "postgres".
+ 1334	    default: SET
+ 1335	    default: SET
+ 1336	    default: SET
+ 1337	    default: SET
+ 1338	    default: SET
+ 1339	    default: SET
+ 1340	    default: SET
+ 1341	    default: SET
+ 1342	    default: SET
+ 1343	    default: COMMENT
+ 1344	    default: CREATE EXTENSION
+ 1345	    default: COMMENT
+ 1346	    default: ERROR:  extension "pgpool_recovery" already exists
+ 1347	    default:      extname     | extowner | extnamespace | extrelocatable | extversion | extconfig | extcondition 
+ 1348	    default: -----------------+----------+--------------+----------------+------------+-----------+--------------
+ 1349	    default:  plpgsql         |       10 |           11 | f              | 1.0        |           | 
+ 1350	    default:  pgcrypto        |       10 |         2200 | t              | 1.3        |           | 
+ 1351	    default:  pgpool_recovery |       10 |         2200 | t              | 1.2        |           | 
+ 1352	    default:  uuid-ossp       |       10 |         2200 | t              | 1.1        |           | 
+ 1353	    default: (4 rows)
+ 1354	    default: Generating public/private rsa key pair.
+ 1355	    default: Your identification has been saved in /opt/db2dps/etc/ssh/id_rsa.
+ 1356	    default: Your public key has been saved in /opt/db2dps/etc/ssh/id_rsa.pub.
+ 1357	    default: The key fingerprint is:
+ 1358	    default: SHA256:JuiwO6YHhdRGFgHvqIlblJN6rmcuNg0Hau7yAmMJlXE root@ww1-test
+ 1359	    default: The key's randomart image is:
+ 1360	    default: +---[RSA 4096]----+
+ 1361	    default: | .=BE            |
+ 1362	    default: | .=+             |
+ 1363	    default: |.o..             |
+ 1364	    default: |o.+o .           |
+ 1365	    default: |ooO.. . S        |
+ 1366	    default: |BO *   o         |
+ 1367	    default: |XoB .            |
+ 1368	    default: |+O*o             |
+ 1369	    default: |B&*.             |
+ 1370	    default: +----[SHA256]-----+
+ 1371	    default: Service db2dps is running
+ 1372	    default: Service db2fnm is running
+ 1373	    default: Added postgress etc. configuration with the following parameters:
+ 1374	    default: -----------------------------------------------------------------
+ 1375	    default: dbusers:                      admin dbadmin flowuser postgres repuser
+ 1376	    default: dbpass:                       password
+ 1377	    default: dbname:                       netflow
+ 1378	    default: ipv4addr:                     10.0.2.15/24
+ 1379	    default: ipv4listenaddress:            10.0.2.15/24
+ 1380	    default: pcp_listen_addresses:         10.0.2.15/24
+ 1381	    default: backend_hostname0:            10.0.2.15/24
+ 1382	    default: backend_hostname1:            
+ 1383	    default: sr_check_password:            password
+ 1384	    default: sr_check_database:            netflow
+ 1385	    default: 
+ 1386	    default: default_uuid_administratorid: 3611a271-50ae-4425-86c5-b58b04393242
+ 1387	    default: bootstrap_ip:                 10.0.0.1
+ 1388	    default: 
+ 1389	    default: dbusr:                        dbadmin
+ 1390	    default: dbpassword:                   password
+ 1391	    default: dbname:                       netflow
+ 1392	    default: 
+ 1393	    default: ournetworks:                  10.0.0.0/8 172.16.0.0/12
+ 1394	    default: 
+ 1395	    default: customerid                    f561067e-10e3-44ed-ab12-9caed904d8d9
+ 1396	    default: fastnetmoninstanceid          aac8c5a6-097b-4c0c-bbe6-fe6677ff7eac
+ 1397	    default: uuid                          ddpsrules-cli-adm
+ 1398	    default: administratorid               3611a271-50ae-4425-86c5-b58b04393242
+ 1399	    default: Installed the following system users with sudo privilegies:
+ 1400	    default: ------------------------------------------------------------------------------------------------------------------------------------
+ 1401	    default:  username  | userid   | name                            | public ssh key
+ 1402	    default: -----------+----------+---------------------------------+---------------------------------------------------------------------------
+ 1403	    default:  nice      |     8282 | Nicolai Ernst                   | ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDK0bEjXr/6OFRY1z9vBc68+WI1gHfCmMo... 
+ 1404	    default:  uninth    |     8281 | Niels Thomas Haugaard           | ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILGLEp1N9ITf+6Xi9N0IBdO5rfbe4YBF4Z... 
+ 1405	    default:  adue      |     8227 | Anders Mundt Due                | ... 
+ 1406	    default:  asmo      |     1921 | Ashokaditya Mohanty             | ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICUsBACR9Dvxijx0XcdPz+bsswfmLeQSyu... 
+ 1407	    default:  tangui    |     4217 | Tangui Coulouarn                | ... 
+ 1408	    default:  sort      |     8233 | Kasper Sort                     | ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrJ0okIa2YEWrdbyb0wak6Wg/CNquBkZY... 
+ 1409	    default: 
+ 1410	    default: Postgres users:
+ 1411	    default: ------------------------------------------------------------------------------------------------------------------------------------
+ 1412	    default:  usename  | usesysid | usecreatedb | usesuper | userepl | usebypassrls |               passwd                | valuntil | useconfig 
+ 1413	    default: ----------+----------+-------------+----------+---------+--------------+-------------------------------------+----------+-----------
+ 1414	    default:  admin    |    16384 | f           | t        | t       | f            | md580a19f669b02edfbc208a5386ab5036b |          | 
+ 1415	    default:  dbadmin  |    16385 | t           | t        | f       | f            | md50b0cdb5c1d1f30fe83e5a72061749681 |          | 
+ 1416	    default:  flowuser |    16386 | f           | f        | f       | f            | md56818578dcdd44b3db5246408c78dbe79 |          | 
+ 1417	    default:  postgres |       10 | t           | t        | t       | t            | md532e12f215ba27cb750c9e093ce4b5127 |          | 
+ 1418	    default:  repuser  |    16387 | f           | f        | t       | f            | md5c0771fff9b35cfdf99ca3779467d1d05 |          | 
+ 1419	    default: Vagrant:
+ 1420	    default:     vagrant halt; vagrant up
+ 1421	    default: *:
+ 1422	    default:     reboot
+ 1423	
+ 1424	
+ 1425	Oh, and nginx serves default pages
+ 1426	

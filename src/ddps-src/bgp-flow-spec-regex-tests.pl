@@ -1,12 +1,20 @@
 #! /usr/bin/env perl -w
 #
-#
+# 
+
 use Test::Simple tests => 17;
 
 my ${match_flowspec_port}   = '';
 my ${ok_match_string}  = "";
 my ${no_match_string}  = "";
 my $tmpstr = "";
+
+# require './flowmatch.pm';
+# flowmatch:
+#   - sub is_flowspec_port_or_len(port|len, string ) { return 0|1 }
+#   - subs for de øvrige felter
+# require './sqlstr.pm';
+# osv.
 
 ${match_flowspec_port}  = '\A(=\d+\-\d+)\s+?\Z|\A(=[<>]?\d+\s+)+\Z';
 
