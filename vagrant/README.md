@@ -6,6 +6,8 @@ Quick start of DDPS using vagrant / virtualbox:
   - [how to install vagrant and virtualbox on OS X](https://gist.github.com/rrgrs/9258511)
   - [Vagrant – Getting Started on macOS](https://coolestguidesontheplanet.com/vagrant-getting-started-on-macos/)
 
+If the installation fail see [README-highsierra.md](./README-highsierra.md).
+
 ## Objectives
 
 Once vagrant and virtualbox has been installed, it is possible to play with the
