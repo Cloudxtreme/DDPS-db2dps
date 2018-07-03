@@ -12,7 +12,8 @@ You may have to either
     `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"`        
     `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`          
   - fix permissions below `/usr/local` with `sudo chown -R $(whoami) $(brew --prefix)/*`          
-  - install brew with `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`          
+  - install brew with                  
+    `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`          
   - or _reboot in recovery mode and execute_ `csrutil disable` which is not recommended)
 
 /Thomas
