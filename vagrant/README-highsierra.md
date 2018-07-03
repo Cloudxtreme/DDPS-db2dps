@@ -8,9 +8,8 @@ sierra, it may be due to
 preventing changes to parts of the file system, including `/usr/local` but _not files below it_.
 You may have to either
 
-  - uninstall home-brew and re install it with                 
+  - uninstall and re-install home-brew  with                 
     `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall)"`        
-    Then re-install it with                 
     `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`          
   - fix permissions below `/usr/local` with `sudo chown -R $(whoami) $(brew --prefix)/*`          
   - install brew with `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`          
