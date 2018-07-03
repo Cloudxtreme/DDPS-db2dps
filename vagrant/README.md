@@ -18,7 +18,6 @@ data with a copy of the production data.
 Start with updating the box image
 
   - `vagrant box update`         
-
   - **create a live test environment with test data:** from `test-data/vars.SH`:          
     `SHELL_ARGS=LIVE_TESTDATA vagrant --provision up`
   - create a ISO build environment:           
@@ -59,7 +58,5 @@ The following limitations apply
     server running (lg.TLD) and only one exabgp installed, so the `fnmcfg`
     fails to check if the announced rules are enforced.
   - Currently pgpool2 is not configured
-  - The guest OS is configured with two interfaces: NAT and PUBLIC; edit `Vagrantfile`
-    and change the binding interface to match your environment.
   - Probably a lot of other thing I've forgot
 
