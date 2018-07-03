@@ -1,6 +1,0 @@
-:
-(
-vagrant destroy -f
-vagrant box update
-SHELL_ARGS=LIVE_TESTDATA vagrant --provision up
-) 2>&1 | tee -i vagrant.log

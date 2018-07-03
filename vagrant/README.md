@@ -26,11 +26,22 @@ Start with updating the box image
 
 The ISO will be written to _vagrant_, while the test data is in `test-data`and
 the restored data must be in `restored-data` which is not no git.
- 
-TODO:
-    - NGINX, API + UI code here too.
+
+To test and see the installation process - and keep the installation log for
+later, you may execute
+
+````````bash
+(
+vagrant destroy -f
+vagrant box update
+SHELL_ARGS=LIVE_TESTDATA vagrant --provision up
+) 2>&1 | tee -i installation-log.log
+````````
 
 # Limitations
+
+The following limitations apply
+**if you are not running with VPN towards our production environment**
 
   - The graphs in the web-gui is empty as there is no fastnetmon instances
     sending rules to the test system, nor is it possible to
