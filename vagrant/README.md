@@ -38,6 +38,12 @@ SHELL_ARGS=LIVE_TESTDATA vagrant --provision up
 ) 2>&1 | tee -i installation-log.log
 ````````
 
+Accessing the system may be done with
+
+  - `vagrant ssh` - login as user `vagrant`; use `sudo bash` to obtain administrative rights 
+  - Access to the web front end from a browser: `http://127.0.0.1:8080`
+  - Access to the API from a browser: `http://127.0.0.1:9090`
+
 # Limitations
 
 The following limitations apply
