@@ -16,7 +16,7 @@ If the installation fail see [README-highsierra.md](./README-highsierra.md).
 
 ## Objectives
 
-Once vagrant and virtualbox has been installed, it is possible to play with the
+Once vagrant and virtualbox have been installed, it is possible to play with the
 software and use it for live demo and development. It is also possible to
 create a bootable CD for installation on VMware, or replace the vagrant up test
 data with a copy of the production data.
@@ -56,13 +56,13 @@ Accessing the system may be done with
 The following limitations apply
 **if you are not running with VPN towards our production environment**
 
-  - The graphs in the web-gui is empty as there is no fastnetmon instances
+  - The graphs in the web-gui are empty as there are no fastnetmon instances
     sending rules to the test system, nor is it possible to
-    query any fastnetmon / influxd for network data.
+    query any fastnetmon / influxDB for network data.
   - There is no
     [looking glass](https://www.noction.com/blog/bgp-looking-glass-servers)
     server running (lg.TLD) and only one exabgp installed, so the `fnmcfg`
     fails to check if the announced rules are enforced.
   - Currently pgpool2 is not configured
-  - Probably a lot of other thing I've forgot
+  - Probably a lot of other thing I've forgotten
 
