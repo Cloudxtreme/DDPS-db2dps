@@ -8,6 +8,12 @@ Quick start of DDPS using vagrant / virtualbox:
 
 If the installation fail see [README-highsierra.md](./README-highsierra.md).
 
+## Easy Install VirtualBox on Mac OS X High Sierra
+
+- Download install package from [VB for Mac OS X](https://www.virtualbox.org/wiki/Downloads).
+- Open the downloaded .dmg file and double click VirtualBox.pkg to install.
+- At the end of installation if it says the installation failed follow this [troubleshoot guide](https://matthewpalmer.net/blog/2017/12/10/install-virtualbox-mac-high-sierra/index.html) to allow system software from Oracle Corp to load and complete the installation.
+
 ## Objectives
 
 Once vagrant and virtualbox has been installed, it is possible to play with the
