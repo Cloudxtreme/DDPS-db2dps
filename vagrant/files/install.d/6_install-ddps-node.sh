@@ -19,6 +19,7 @@ test -d ${DDOSAPI} || mkdir -p ${DDOSAPI}
 chown -R hansolo:staff ${DDOSAPI}
 
 # install pre-requisite node.js using a PPA
+cd /tmp
 curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh
 
 # verify download
