@@ -46,8 +46,14 @@ mkdir -p ~git/.ssh && cat ~root/.ssh/id_rsa.pub >  ~git/.ssh/authorized_keys
 chown -R git:git ~git
 
 # test ssh access avoiding initial 'host key verification failed'
-ssh-keyscan -H 127.0.0.1 >> ~/.ssh/known_hosts
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no git@localhost whoami
+if [  ! -d /root/.ssh/ ]; then
+    mkdir /root/.ssh
+fi
+ssh-keyscan -H 127.0.0.1 >> /root/.ssh/known_hosts
+chmod 700 /root/.ssh/known_hosts
+
+# ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no git@localhost whoami
+ssh -o StrictHostKeyChecking=no git@localhost whoami
 case $? in
 	0)	echo "$0: user git added ok"
 	;;
@@ -205,5 +211,34 @@ npm install pm2@latest -g
 pm2 deploy ecosystem.json production setup
 pm2 deploy ecosystem.json production
 pm2 save
+
+# The API does not survive reboot, so attemtp to (also) fix that:
+
+cat << 'EOF' > /etc/init.d/pm2-init
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          scriptname
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+NAME=pm2
+PM2=/usr/bin/pm2
+export HOME="/root"
+
+case $1 in
+	*)	pm2 resurrect
+		pm2 status
+	;;
+esac
+EOF
+chmod 755 /etc/init.d/pm2-init
+
+update-rc.d pm2-init defaults
 
 exit 0
