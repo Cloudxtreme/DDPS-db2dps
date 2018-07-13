@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+#
+#
+echo "run $0 by hand"
+exit 0
+
 DDOSCLIENT='/opt/ngx/ddosgui'
 # npm install bower and ember-cli for ember build
 npm install -g bower

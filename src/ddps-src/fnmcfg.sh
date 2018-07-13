@@ -614,9 +614,9 @@ function check_announcements_matches_db()
     do
 	# this requires that you have exactly one MX80, and two exabgp instances -- and a looking glass server
 	# which is not part of this repro, sorry
-        local exabgp1_flow4=`curl -X GET -H 'Accept:application/json' http://lg.ddps.deic.dk:5000/tableinfo/ 2>/dev/null | jq '[.e21_flow4| .active] | .[]' | sed 's/"//g'`
-        local exabgp2_flow4=`curl -X GET -H 'Accept:application/json' http://lg.ddps.deic.dk:5000/tableinfo/ 2>/dev/null | jq '[.e22_flow4| .active] | .[]' | sed 's/"//g'`
-        local MX80_flow4=`curl -X GET -H 'Accept:application/json' http://lg.ddps.deic.dk:5000/tableinfo/ 2>/dev/null | jq '[.mx42_flow4| .active] | .[]' | sed 's/"//g'`
+        local exabgp1_flow4=`curl -X GET -H 'Accept:application/json' http://lg.ddps.deic.dk:5000/tableinfo/ 2>/dev/null | jq '[.e21_flow4| .active] | .[]' | sed 's/"//g; s/null/0/'`
+        local exabgp2_flow4=`curl -X GET -H 'Accept:application/json' http://lg.ddps.deic.dk:5000/tableinfo/ 2>/dev/null | jq '[.e22_flow4| .active] | .[]' | sed 's/"//g; s/null/0/'`
+        local MX80_flow4=`curl -X GET -H 'Accept:application/json' http://lg.ddps.deic.dk:5000/tableinfo/ 2>/dev/null | jq '[.mx42_flow4| .active] | .[]' | sed 's/"//g; s/null/0/'`
 
         # local RULES=`sudo su postgres -c "cd /tmp; echo 'SELECT distinct COUNT(*) from flow.flowspecrules where not isexpired \x\a\f =' |psql -d netflow -q" | sed 's/count=//'`
         # this is actually the number of uniq rules in the db; the db may contain a number of identical rules e.g. blocking icmp from src to dst

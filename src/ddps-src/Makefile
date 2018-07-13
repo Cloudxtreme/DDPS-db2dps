@@ -39,14 +39,14 @@ binfiles			= db2dps ddpsrules apply-default-rules kill_switch_restart_all_exabgp
 configs				= configs/add_new_fastnetmon.sql.SH configs/change_fastnetmon_parameters.sql.SH configs/fastnetmon.conf.SH configs/fnm2db.ini.SH configs/import.sql.SH configs/influxd.conf configs/networks_list.SH configs/networks_whitelist.SH configs/postbootstrap.sh configs/rc.conf.SH
 
 
-all: dirs Makefile version_make
+pkg: dirs Makefile version_make
 	@echo "version: ${VERSION}"
 	@echo "major_version: $(major_version)"
 	@echo "minor_version: $(minor_version)"
 	@echo "package_revision : $(package_revision)"
 	@bash mk-debian-control-files.sh
 	@$(MAKE) files
-	@dpkg-deb --build ${package}
+	@sudo dpkg-deb --build ${package}
 	@echo "Install with:"
 	@echo "apt-get install -y `dpkg -I *deb|sed '/Depends:/!d; s/Depends://; s/,//g'`"
 	@echo "dpkg -i ${package}.deb"
@@ -64,11 +64,16 @@ dirs:
 	@test -d ${package}/${prefix}/etc/init.d	|| mkdir -p ${package}/${prefix}/etc/init.d
 
 files: $(binfiles)
-	@install -m 555 -g root -o root $(binfiles)	${package}/${prefix}/bin/
-	@install -m 444 -g root -o root $(libfiles)	${package}/${prefix}/lib/
-	@install -m 555 -g root -o root $(etcfiles)	${package}/${prefix}/etc/
-	@install -m 444 -g root -o root $(configs)	${package}/${prefix}/etc/configs/
-	@install -m 555 -g root -o root $(inifiles)     ${package}/${prefix}/etc/init.d/
+	echo "installing ${binfiles} ..."
+	sudo install -m 555 -g 0 -o 0 $(binfiles)	${package}/${prefix}/bin/
+	echo "installing ${libfiles} ..."
+	sudo install -m 444 -g 0 -o 0 $(libfiles)	${package}/${prefix}/lib/
+	echo "installing ${etcfiles} ..."
+	sudo install -m 555 -g 0 -o 0 $(etcfiles)	${package}/${prefix}/etc/
+	echo "installing ${configs} ..."
+	sudo install -m 444 -g 0 -o 0 $(configs)	${package}/${prefix}/etc/configs/
+	echo "installing ${inifiles} ..."
+	sudo install -m 555 -g 0 -o 0 $(inifiles)  ${package}/${prefix}/etc/init.d/
 
 db2dps: db2dps.pl version.pm
 	sed -e '/#INCLUDE_VERSION_PM/ {' -e 'r version.pm' -e 'd' -e'}' db2dps.pl > db2dps

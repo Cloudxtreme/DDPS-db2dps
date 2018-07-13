@@ -8,6 +8,7 @@ described here:
   - [Installation and configuration of the database host](ddps-database-server-installation.md)
   - [Installation and configuration of the database daemon db2dps](db2dps-documentation.md)
   - [Short design overview](ddps-design-short.md)
+  - [fastnetmon host configurations](README-fnm.md)
 
 ## Configuration
 

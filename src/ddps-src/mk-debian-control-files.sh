@@ -60,7 +60,7 @@ Priority: optional
 Architecture: all
 Depends: libnet-openssh-compat-perl, liblist-moreutils-perl, libnet-openssh-compat-perl, libnet-ssh2-perl, libproc-daemon-perl, libnetaddr-ip-perl, libdbi-perl, libdbd-pg-perl, libtypes-path-tiny-perl, libnetaddr-ip-perl, libtypes-path-tiny-perl, libnet-sftp-foreign-perl, libnet-openssh-perl, jq 
 Maintainer: Niels Thomas Haugård <ntha@dtu.dk>
-Description: Two scripts to force backup and software update on debian and ubuntu
+Description: service /cli backend for DDPS
 EOF
 
 # Depends: libnet-openssh-compat-perl

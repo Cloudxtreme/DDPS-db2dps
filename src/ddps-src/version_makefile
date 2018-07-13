@@ -1,8 +1,8 @@
-build_date          = 2018-06-13 13:30
-build_git_sha       = 2bef06dbac9c6070291575e4c602b8fe2dc58c8b
+build_date          = 2018-07-12 19:46
+build_git_sha       = e4e09af9f7efd9a135ade9969a3121db6f34ff63
 
 major_version       = 1
 minor_version       = 0
-package_revision    = 108
-VERSION             = 1.0-108
+package_revision    = 160
+VERSION             = 1.0-160
 
