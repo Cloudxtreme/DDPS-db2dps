@@ -1,8 +1,11 @@
 #!/bin/bash
-#install ngnx
+#install ngnx and zip
+
 cd /tmp
+
 apt-get update
-apt-get -y install nginx
+apt-get -y install nginx unzip
+
 # setup configuration file
 cat>/etc/nginx/sites-available/client.conf<<EOF
 server {

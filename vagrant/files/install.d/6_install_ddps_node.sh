@@ -6,6 +6,8 @@ PM2DEPL='/opt/deploy-ddosapi'
 DDOSAPI='/opt/ddosapi'
 ME=`basename $0`
 
+# exit 0
+
 # create user hansolo without a home dir
 getent passwd ${USERNAME} > /dev/null 2>&1  >/dev/null || adduser --home /dev/null --no-create-home --shell /sbin/nologin --gecos "DDPS node admin" --ingroup staff --disabled-password ${USERNAME}
 

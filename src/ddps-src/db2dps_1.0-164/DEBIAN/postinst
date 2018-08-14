@@ -1,0 +1,38 @@
+cat << 'END_OF_SERVICE_FILE' > /etc/systemd/system/db2dps.service
+[Unit]
+Description=Regular background program processing daemon
+After=syslog.target network.target postgresql.service
+
+[Service]
+Type=forking
+ExecStart=/opt/db2dps/etc/init.d/db2dpsrc start
+ExecStop=/opt/db2dps/etc/init.d/db2dpsrc stop
+
+ExecReload=/opt/db2dps/etc/init.d/db2dpsrc reload
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+END_OF_SERVICE_FILE
+sudo systemctl enable db2dps.service
+# sudo systemctl start db2dps.service
+
+cat << 'END_OF_SERVICE_FILE' > /etc/systemd/system/db2fnm.service
+[Unit]
+Description=Regular background program processing daemon
+After=syslog.target network.target postgresql.service
+
+[Service]
+Type=simple
+ExecStart=/opt/db2dps/etc/init.d/db2fnm start
+ExecStop=/opt/db2dps/etc/init.d/db2fnm stop
+
+ExecReload=/opt/db2dps/etc/init.d/db2fnm reload
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+END_OF_SERVICE_FILE

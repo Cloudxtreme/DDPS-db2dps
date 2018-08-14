@@ -32,9 +32,15 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 
+
 Vagrant.configure("2") do |config|
     config.vm.box = "ubuntu/xenial64"
     config.vm.hostname = "ww1-test"
+
+    # ssh settings
+    config.ssh.insert_key = true
+    # config.ssh.private_key_path = ["keys/private", "~/.vagrant.d/insecure_private_key"]
+    config.vm.provision "file", source: "~/.ssh/id_ed25519.pub", destination: "~/.ssh/authorized_keys"
 
     # Add a public interface instead of portforwarding
     # config.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
@@ -63,6 +69,17 @@ Vagrant.configure("2") do |config|
     # config.vm.provision :shell, path: "provision.sh", :args => customParameter
     config.vm.provision "shell", path: "provision.sh", args: ENV['SHELL_ARGS']
 
+    config.ssh.forward_agent    = true
+    config.ssh.insert_key       = false
+    config.ssh.private_key_path =  ["~/.vagrant.d/insecure_private_key","~/.ssh/id_rsa"]
+    config.vm.provision :shell, privileged: false do |s|
+     ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+     # should test if ssh_pub_key exists (windows people ... )
+     s.inline = <<-SHELL
+     echo #{ssh_pub_key} >> /home/$USER/.ssh/authorized_keys
+     sudo bash -c "echo #{ssh_pub_key} >> /root/.ssh/authorized_keys"
+SHELL
+    end
 end
 
 # vagrant box update

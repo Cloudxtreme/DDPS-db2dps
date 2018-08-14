@@ -1600,7 +1600,7 @@ sub processnewrules()
                         s/__dscp/$dscp/g;
                         s/__frag/$frag/g;
                         s/__action/$action/g;
-                        s/__desciption/$description/g;
+                        s/__description/$description/g;
                         s/'false'/false/g;
                         s/'null'/null/g;
                         s/''/'null'/g;

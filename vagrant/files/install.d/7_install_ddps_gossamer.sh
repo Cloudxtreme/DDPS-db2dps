@@ -5,6 +5,8 @@
 # echo "run $0 by hand"
 # exit 0
 
+# exit 0
+
 DDOSCLIENT='/opt/ngx/ddosgui'
 # npm install bower and ember-cli for ember build
 npm install -g bower
@@ -32,7 +34,7 @@ IF_HOST=172.22.89.2
 IF_SCHEMA=graphite
 NODE_ENV=production
 EOF
-cp ..env.deploy.production .env
+cp .env.deploy.production .env
 
 bower install --allow-root
 npm install

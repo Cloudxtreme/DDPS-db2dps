@@ -48,7 +48,7 @@ pkg: dirs Makefile version_make
 	@$(MAKE) files
 	@sudo dpkg-deb --build ${package}
 	@echo "Install with:"
-	@echo "apt-get install -y `dpkg -I *deb|sed '/Depends:/!d; s/Depends://; s/,//g'`"
+	@echo "apt-get install -y `dpkg -I ${package}.deb |sed '/Depends:/!d; s/Depends://; s/,//g'`"
 	@echo "dpkg -i ${package}.deb"
 	@echo "remove with apt-get remove ${package}"
 	
