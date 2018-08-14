@@ -31,3 +31,11 @@ echo 'Successfully installed and reconfigured nginx'
 #run ngnix
 nginx -s reload
 echo 'nginx running...'
+
+# rm -rf /opt/ngx/ddosgui/*
+# cd /opt/ngx/ddosgui/
+# wget https://github.com/deic-dk/gossamer/releases/download/v1.0-beta/pro.zip
+# unzip pro.zip
+# mv pro/* .
+# rm -fr pro pro.zip
+
