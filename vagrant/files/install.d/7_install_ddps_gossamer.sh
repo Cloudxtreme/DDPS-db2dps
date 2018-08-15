@@ -2,10 +2,8 @@
 #
 # Work in progress -- doesn't work yet
 #
-# echo "run $0 by hand"
-# exit 0
 
-# exit 0
+exit 0
 
 DDOSCLIENT='/opt/ngx/ddosgui'
 # npm install bower and ember-cli for ember build
@@ -47,10 +45,5 @@ chown -R hansolo:staff ${DDOSCLIENT}
 # cd gossamer
 ember build -prod --output-path ${DDOSCLIENT}
 
-exit 
+exit 0
 
-#rm -rf ${DDOSCLIENT}/readme
-#ls -al ${DDOSCLIENT}
-#cd ..
-#rm -rf gossamer
-#rm -rf ${DDOSCLIENT}/

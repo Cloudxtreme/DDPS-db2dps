@@ -6,7 +6,8 @@ PM2DEPL='/opt/deploy-ddosapi'
 DDOSAPI='/opt/ddosapi'
 ME=`basename $0`
 
-# exit 0
+cat << 'KOMMET_HERTIL' > /dev/null
+KOMMET_HERTIL
 
 # create user hansolo without a home dir
 getent passwd ${USERNAME} > /dev/null 2>&1  >/dev/null || adduser --home /dev/null --no-create-home --shell /sbin/nologin --gecos "DDPS node admin" --ingroup staff --disabled-password ${USERNAME}
@@ -38,7 +39,7 @@ apt-get -y install nodejs build-essential
 # bare bone git server installation required for pm2 / ecosystem.json
 # See https://git-scm.com/book/en/v2/Git-on-the-Server-Getting-Git-on-a-Server
 
-sudo apt-get -y install git-core whois upstart
+sudo apt-get -y install git-core whois 
 sudo useradd git 
 usermod -p '*' git
 
@@ -56,7 +57,8 @@ ssh-keyscan -H 127.0.0.1 >> /root/.ssh/known_hosts
 chmod 700 /root/.ssh/known_hosts
 
 # ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no git@localhost whoami
-ssh -o StrictHostKeyChecking=no git@localhost whoami
+chsh git -s /bin/bash
+ssh -o StrictHostKeyChecking=no git@localhost /usr/bin/whoami
 case $? in
 	0)	echo "$0: user git added ok"
 	;;
@@ -76,20 +78,33 @@ touch git-daemon-export-ok
 chown -R git:git /srv/git
 
 # now for the daemon ...
-cat << EOF > /etc/event.d/local-git-daemon
-start on startup
-stop on shutdown
-exec /usr/bin/git daemon \
-    --user=git --group=git \
-    --reuseaddr \
-    --base-path=/opt/git/ \
-    /opt/git/
-respawn
+cat << 'EOF' > /etc/systemd/system/git-daemon.service
+[Unit]
+Description=Start Git Daemon
+
+[Service]
+ExecStart=/usr/bin/git daemon --reuseaddr --base-path=/srv/git/ /srv/git/
+
+Restart=always
+RestartSec=500ms
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=git-daemon
+
+User=git
+Group=git
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-initctl start local-git-daemon
+systemctl enable git-daemon
+systemctl start git-daemon
 
-echo "$0: bare bone server installed"
+service git-daemon status && echo "$0: bare bone server installed"
+
+
 
 # install ddos-api
 
@@ -99,9 +114,12 @@ ls -al ddosapi-install
 sudo bash ddosapi-install/ww-ss.sh
 echo 'Successfully installed ddosapi'
 
+
 # now add the 'project':
 
-mkdir /opt/deploy-ddosapi; cd /opt/deploy-ddosapi
+# PM2DEPL='/opt/deploy-ddosapi'
+test -d ${PM2DEPL} || mkdir ${PM2DEPL} 
+cd ${PM2DEPL}
 
 cat << 'EOF' > ecosystem.json.tmpl
 {
@@ -181,6 +199,8 @@ cat << 'EOF' > ecosystem.json.tmpl
 }
 EOF
 
+IF_HOST=`ifconfig | sed '/inet/!d; /inet6/d; /127.0.0.1/d; s/.*addr://; s/ .*$//'`
+
 (
     export SU_SEC="Tour of Enceladus and Titan"
     export SU_SEC_3SHA512="`echo 'secret phrase that would be encoded to the next field' | sha512sum  | awk -F'-' '{ print $1 }'`"
@@ -192,7 +212,7 @@ EOF
     export RU_USER="flowuser"
     export RU_PWD="password"
     export RU_SERVER_PORT="4242"
-    export IF_HOST="172.22.89.2"
+    export IF_HOST="${IF_HOST}"
     export IF_SCHEMA="graphite"
     export NODE_ENV="production"
 
@@ -208,6 +228,10 @@ git commit -m 'initial commit'
 git push origin master
 # git commit --amend --reset-author -m 'minor changes ... '
 # git push origin master
+
+# ugly to work in the same dir, but that's it
+rm -fr /opt/ddosapi
+
 git pull origin master
 
 npm install pm2@latest -g

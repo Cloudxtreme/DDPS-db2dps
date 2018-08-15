@@ -79,3 +79,5 @@ case $DO_APT_INSTALL in
     rm -f $TMPFILE
     ;;
 esac
+
+exit 0

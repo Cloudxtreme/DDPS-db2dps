@@ -387,8 +387,9 @@ function main()
 	
     find . -type f -name '*.sh' | sort -n | while read SHELLSCRIPT
     do
-        logit "executing install.d/`basename ${SHELLSCRIPT}` ... "
-        bash ${SHELLSCRIPT} 2>&1 | logit
+	logit "############################ ${SHELLSCRIPT} ####################################################"
+        bash ${SHELLSCRIPT} 2>&1 | logit || echo "failed"
+	logit "################################################################################################"
     done
     logit "Installation complete, fixing rc.local ... "
 

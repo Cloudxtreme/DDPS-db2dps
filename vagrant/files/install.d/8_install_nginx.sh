@@ -7,7 +7,7 @@ apt-get update
 apt-get -y install nginx unzip
 
 # setup configuration file
-cat>/etc/nginx/sites-available/client.conf<<EOF
+cat>/etc/nginx/sites-available/client.conf<<'EOF'
 server {
     listen 8080;
     server_name localhost;
@@ -31,6 +31,8 @@ echo 'Successfully installed and reconfigured nginx'
 #run ngnix
 nginx -s reload
 echo 'nginx running...'
+
+exit 0
 
 # rm -rf /opt/ngx/ddosgui/*
 # cd /opt/ngx/ddosgui/
